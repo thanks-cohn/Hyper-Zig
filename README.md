@@ -63,6 +63,21 @@ User documentation:
 - [ZBUS V0 User Guide](docs/MILESTONE_ZBUS_V0_USER_GUIDE.md)
 - [Documentation Contract](docs/DOCUMENTATION_CONTRACT.md)
 
+
+## Stability
+
+Known-good local Zig version: `0.14.1` at `/opt/zig/zig`. The stability contract favors repeatable proof over feature speed.
+
+Health check and smoke commands:
+
+```sh
+./scripts/doctor.sh
+./smoke/smoke-all.sh
+./smoke/smoke-stability.sh
+```
+
+See [docs/STABILITY_CONTRACT.md](docs/STABILITY_CONTRACT.md) for the stability doctrine and proof ladder.
+
 ## V0 Status
 
 - Boot: required
