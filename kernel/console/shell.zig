@@ -2,6 +2,7 @@ const uart = @import("uart.zig");
 const log = @import("../log.zig");
 const diag = @import("../diag/breadcrumb.zig");
 const mem = @import("../memory/pmm.zig");
+const memory_v0 = @import("../memory/memory.zig");
 const timer = @import("../interrupt/timer.zig");
 const cpu = @import("../arch/riscv64/cpu.zig");
 const task = @import("../task/task.zig");
@@ -70,6 +71,9 @@ fn handle(cmd: []const u8) void {
     if (cmd.len == 0) return;
     if (equals(cmd, "help")) return help();
     if (equals(cmd, "mem")) return mem.report();
+    if (equals(cmd, "memory")) return memory_v0.printMemory();
+    if (equals(cmd, "memmap")) return memory_v0.printMemmap();
+    if (equals(cmd, "kernel-bounds")) return memory_v0.printKernelBounds();
     if (equals(cmd, "uptime")) return uptime();
     if (equals(cmd, "time")) return timeCommand();
     if (equals(cmd, "ticks")) return ticksCommand();
@@ -117,7 +121,7 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
+    uart.write("commands: help mem memory memmap kernel-bounds uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
 }
 
 fn uptime() void {
@@ -194,6 +198,7 @@ fn statusCommand() void {
     phone.printStatus();
     comm.printStatusSummary();
     zbus.printSummaryFields();
+    memory_v0.printStatusFields();
     trap.printStatus();
     uart.write("status: placeholders=plic,timer-interrupts,modem,cellular,audio,sms; virtio-net=not-implemented virtio-blk=not-implemented userspace=not-implemented no-userspace-boundary filesystem=not-implemented\r\n");
 }

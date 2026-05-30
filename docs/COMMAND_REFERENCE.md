@@ -43,3 +43,11 @@ This reference documents the current user-facing shell commands by inspecting `k
 | `zbus status` / `zbus-status` | ZBUS scaffold present in current repo | Alias for ZBUS status. | `zbus status` | Same status fields as `zbus`. | Does not imply provider discovery. |
 | `zbus ping` / `zbus-ping` | ZBUS scaffold present in current repo | Reports ping not implemented because no transport is connected. | `zbus ping` | `zbus: ping=not-implemented`, `safety=no host request sent`. | Does not contact host services. |
 | `zbus providers` / `zbus-providers` | ZBUS scaffold present in current repo | Lists provider scaffold states. | `zbus providers` | Providers `none`; net/sms/modem/files/time not implemented. | Does not imply provider backends. |
+
+## MEMORY V0 commands
+
+| Command | Milestone where it appeared if known | What it does | Example usage | Expected honest output | What it does not imply |
+| --- | --- | --- | --- | --- | --- |
+| `memory` | MEMORY V0 | Prints the MEMORY V0 fixed QEMU virt model and absence of allocator, heap, paging, virtual memory, and userspace memory. | `memory` | `memory: interface=present`, `memory: model=qemu-virt-fixed`, `memory: ram_base=0x80000000`, `memory: ram_size_bytes=134217728`, `memory: ram_size_mib=128`, and `not-implemented` lines. | Does not imply heap allocation, dynamic RAM discovery, paging, or userspace isolation. |
+| `memmap` | MEMORY V0 | Prints the fixed QEMU virt RAM region and its source. | `memmap` | `memmap: region=ram base=0x80000000 size_bytes=134217728 size_mib=128 source=qemu-virt-assumption`, with live discovery and device-tree parsing marked `not-implemented`. | Does not imply device-tree parsing or live memory probing. |
+| `kernel-bounds` | MEMORY V0 | Prints linker-symbol kernel image start, end, and size. | `kernel-bounds` | `kernel-bounds: start=0x...`, `kernel-bounds: end=0x...`, `kernel-bounds: size_bytes=...`. | Does not imply relocation, modules, or userspace address spaces. |

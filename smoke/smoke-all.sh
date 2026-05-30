@@ -21,4 +21,6 @@ if [[ -f ./smoke/smoke-zbus-v0.sh ]]; then
   run_step ./smoke/smoke-zbus-v0.sh
 fi
 
+run_step ./smoke/smoke-memory-v0.sh
+
 echo "PASS ZIGN01D full smoke ladder"

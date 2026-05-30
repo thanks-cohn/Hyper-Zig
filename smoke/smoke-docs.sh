@@ -21,6 +21,10 @@ required=(
   docs/AI_ASSISTANCE_POLICY.md
   docs/COMPARATIVE_KERNEL_VISION.md
   docs/README.md
+  docs/MILESTONE_MEMORY_V0_USER_GUIDE.md
+  docs/MEMORY_V0_SPEC.md
+  docs/MEMORY_V0_AUDIT.md
+  ROADMAP.md
 )
 
 for path in "${required[@]}"; do

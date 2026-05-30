@@ -1,5 +1,6 @@
 const log = @import("../log.zig");
 const uart = @import("../console/uart.zig");
+const memory_v0 = @import("memory.zig");
 
 extern var __kernel_start: u8;
 extern var __kernel_end: u8;
@@ -8,6 +9,7 @@ extern var __bss_end: u8;
 
 pub fn init() void {
     log.info("MEM", "MEM001", "memory map initialized for qemu virt dram");
+    memory_v0.init();
     report();
 }
 
