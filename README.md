@@ -1,5 +1,9 @@
 # ZIGn01d
 
+<p align="center">
+  <img src="1980s.png" alt="ZIGN01D 1980s banner" width="720">
+</p>
+
 A phone should be a machine.
 
 Modern phones are increasingly difficult to understand, modify, repair, or own. Most software assumes permanent dependence on large vendors, proprietary ecosystems, and continuously changing platforms.
