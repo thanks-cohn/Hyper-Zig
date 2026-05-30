@@ -99,4 +99,15 @@ This index records the current milestone ladder and intentionally missing featur
 - **Smoke test:** `smoke/smoke-board-v0.sh`.
 - **Docs:** `docs/MILESTONE_BOARD_V0_USER_GUIDE.md`, `docs/BOARD_V0_SPEC.md`, `docs/BOARD_V0_AUDIT.md`.
 - **Intentionally missing features:** real hardware support, device tree parsing, live board discovery, virtio drivers, PLIC driver, CLINT driver, heap allocation, paging, filesystem, userspace, real internet, real SMS, and real modem support.
-- **Next dependency:** VIRTIO DISCOVERY V0 should add safe, non-destructive visibility into expected virtio-mmio slots without claiming driver negotiation.
+- **Next dependency:** VIRTIO DISCOVERY V0 now computes the expected virtio-mmio slots from the BOARD V0 profile; HEAP V0 is the next dependency for later queue work.
+
+## VIRTIO DISCOVERY V0
+
+- **Purpose:** compute and expose the QEMU `virt` virtio-mmio slot table from the BOARD V0 profile without claiming live probing or drivers.
+- **Actual capability proven:** the kernel computes exactly eight slot addresses from `virtio_mmio_base=0x10001000`, `virtio_mmio_stride=0x1000`, and `virtio_mmio_count=8`, then exposes them through shell output.
+- **Commands:** `virtio`, `virtio summary`, `virtio slots`, plus flat aliases `virtio-summary` and `virtio-slots`.
+- **Boot marker:** `[ZIGN01D][INFO][VIRTIO][VIRTIO000] virtio-mmio discovery table present; live probing not implemented`.
+- **Smoke test:** `smoke/smoke-virtio-discovery-v0.sh`.
+- **Docs:** `docs/MILESTONE_VIRTIO_DISCOVERY_V0_USER_GUIDE.md`, `docs/VIRTIO_DISCOVERY_V0_SPEC.md`, `docs/VIRTIO_DISCOVERY_V0_AUDIT.md`.
+- **Intentionally missing features:** live MMIO probing, magic reads, driver negotiation, queue setup, interrupt setup, virtio-block, virtio-net, heap allocation, paging, filesystem, and userspace.
+- **Next dependency:** HEAP V0 should provide constrained allocator support before later virtio queue work.

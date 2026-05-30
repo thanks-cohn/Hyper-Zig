@@ -15,6 +15,7 @@ const trap = @import("../arch/riscv64/trap.zig");
 const mmio_probe = @import("../device/mmio_probe.zig");
 const zbus = @import("../comm/zbus.zig");
 const board = @import("../board/board.zig");
+const virtio_discovery = @import("../virtio/discovery.zig");
 
 const RESET_BASE: usize = 0x0010_0000;
 const FINISHER_PASS: u32 = 0x5555;
@@ -78,6 +79,9 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "board")) return board.printBoard();
     if (equals(cmd, "board profile") or equals(cmd, "board-profile")) return board.printProfile();
     if (equals(cmd, "board devices") or equals(cmd, "board-devices")) return board.printDevices();
+    if (equals(cmd, "virtio")) return virtio_discovery.printInfo();
+    if (equals(cmd, "virtio summary") or equals(cmd, "virtio-summary")) return virtio_discovery.printSummary();
+    if (equals(cmd, "virtio slots") or equals(cmd, "virtio-slots")) return virtio_discovery.printSlots();
     if (equals(cmd, "uptime")) return uptime();
     if (equals(cmd, "time")) return timeCommand();
     if (equals(cmd, "ticks")) return ticksCommand();
@@ -125,7 +129,7 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem memory memmap kernel-bounds board board profile board devices board-profile board-devices uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
+    uart.write("commands: help mem memory memmap kernel-bounds board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
 }
 
 fn uptime() void {
@@ -204,6 +208,7 @@ fn statusCommand() void {
     zbus.printSummaryFields();
     board.printStatusFields();
     memory_v0.printStatusFields();
+    virtio_discovery.printStatusFields();
     trap.printStatus();
     uart.write("status: placeholders=plic,timer-interrupts,modem,cellular,audio,sms; virtio-net=not-implemented virtio-blk=not-implemented userspace=not-implemented no-userspace-boundary filesystem=not-implemented\r\n");
 }
