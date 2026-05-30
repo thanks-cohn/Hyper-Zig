@@ -17,11 +17,9 @@ run_step ./smoke/smoke-v3.sh
 run_step ./smoke/smoke-v4.sh
 run_step ./smoke/smoke-comm-v0.sh
 
-if [[ -f ./smoke/smoke-zbus-v0.sh ]]; then
-  run_step ./smoke/smoke-zbus-v0.sh
-fi
-
+run_step ./smoke/smoke-zbus-v0.sh
 run_step ./smoke/smoke-memory-v0.sh
 run_step ./smoke/smoke-board-v0.sh
+run_step ./smoke/smoke-virtio-discovery-v0.sh
 
 echo "PASS ZIGN01D full smoke ladder"

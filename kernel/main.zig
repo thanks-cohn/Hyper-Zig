@@ -17,12 +17,14 @@ const diag = @import("diag/breadcrumb.zig");
 const shell = @import("console/shell.zig");
 const panic_mod = @import("panic/panic.zig");
 const board = @import("board/board.zig");
+const virtio_discovery = @import("virtio/discovery.zig");
 
 pub export fn kmain() noreturn {
     runtime_mem.force_link();
     boot.markKernelEntry();
     uart.init();
     board.init();
+    virtio_discovery.init();
     memory.init();
     trap.init();
     plic.init();

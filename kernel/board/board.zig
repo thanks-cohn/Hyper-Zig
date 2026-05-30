@@ -68,6 +68,11 @@ pub fn printProfile() void {
 pub fn printDevices() void {
     uart.write("board-devices: uart0=present-assumed\r\n");
     uart.write("board-devices: virtio_mmio=present-assumed\r\n");
+    uart.write("board-devices: virtio_discovery=present\r\n");
+    uart.write("board-devices: virtio_slots=");
+    uart.writeDec(virtio_mmio_count);
+    uart.write("\r\n");
+    uart.write("board-devices: virtio_source=board-profile\r\n");
     uart.write("board-devices: plic=present-assumed\r\n");
     uart.write("board-devices: clint=present-assumed\r\n");
     uart.write("board-devices: live_probe=not-implemented\r\n");

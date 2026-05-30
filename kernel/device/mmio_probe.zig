@@ -1,5 +1,6 @@
 const uart = @import("../console/uart.zig");
 const board = @import("../board/board.zig");
+const virtio_discovery = @import("../virtio/discovery.zig");
 
 pub const VIRTIO_MMIO_MAGIC: u32 = 0x7472_6976;
 pub const POLICY = "fixed-qemu-virt-window";
@@ -7,10 +8,14 @@ pub const LIVE_PROBE_ENABLED = false;
 pub const DISABLED_REASON = "trap recovery not strong enough for absent MMIO";
 
 pub const fixed_qemu_virtio_mmio_addresses = [_]usize{
-    board.virtioMmioAddress(0),
-    board.virtioMmioAddress(1),
-    board.virtioMmioAddress(2),
-    board.virtioMmioAddress(3),
+    virtio_discovery.slotAddress(0),
+    virtio_discovery.slotAddress(1),
+    virtio_discovery.slotAddress(2),
+    virtio_discovery.slotAddress(3),
+    virtio_discovery.slotAddress(4),
+    virtio_discovery.slotAddress(5),
+    virtio_discovery.slotAddress(6),
+    virtio_discovery.slotAddress(7),
 };
 
 pub const ProbeStatus = enum {
@@ -74,6 +79,13 @@ pub fn printReport() void {
     uart.write("mmio: live_probe=");
     uart.write(if (LIVE_PROBE_ENABLED) "enabled" else "disabled");
     uart.write("\r\n");
+    uart.write("mmio: virtio_discovery=");
+    uart.write(virtio_discovery.interface);
+    uart.write("\r\n");
+    uart.write("mmio: virtio_slots=");
+    uart.writeDec(virtio_discovery.slot_count);
+    uart.write("\r\n");
+    uart.write("mmio: virtio_slot_table=computed\r\n");
     if (!LIVE_PROBE_ENABLED) {
         uart.write("mmio: reason=");
         uart.write(DISABLED_REASON);

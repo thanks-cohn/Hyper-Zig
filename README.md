@@ -42,9 +42,9 @@ Start with [docs/WHAT_IS_ZIGN01D.md](docs/WHAT_IS_ZIGN01D.md). Professors can st
 
 The educational documentation describes the current QEMU-proven teaching kernel, its smoke-test proof discipline, and its intentional limitations. It does not claim production readiness, Linux replacement status, real internet/SMS/modem support, or broad real-hardware support.
 
-## Current Milestone: BOARD V0
+## Current Milestone: VIRTIO DISCOVERY V0
 
-BOARD V0 adds a board profile for the current QEMU RISC-V `virt` machine. It names the fixed `qemu-virt` assumptions used by memory, UART, guarded MMIO, PLIC, and CLINT output, and adds board commands without claiming live board discovery or real hardware support.
+VIRTIO DISCOVERY V0 computes and exposes the QEMU `virt` virtio-mmio slot table from the BOARD V0 profile. The kernel now reports virtio discovery commands, a computed eight-slot table, board-device references, and MMIO table status without claiming live probing or drivers.
 
 This milestone is visibility, not power: it does not add device tree parsing, live detection, virtio drivers, heap allocation, virtual memory, paging, userspace, filesystem, real internet, real SMS, real modem support, or phone flashing.
 
@@ -58,15 +58,19 @@ Board smoke:
 
 ```sh
 ./smoke/smoke-board-v0.sh
+./smoke/smoke-virtio-discovery-v0.sh
 ```
 
-Board shell commands include `board`, `board profile`, and `board devices` (with flat aliases `board-profile` and `board-devices`).
+Board shell commands include `board`, `board profile`, and `board devices` (with flat aliases `board-profile` and `board-devices`). Virtio discovery commands include `virtio`, `virtio summary`, and `virtio slots` (with flat aliases `virtio-summary` and `virtio-slots`).
 
 User documentation:
 
 - [BOARD V0 User Guide](docs/MILESTONE_BOARD_V0_USER_GUIDE.md)
 - [BOARD V0 Spec](docs/BOARD_V0_SPEC.md)
 - [BOARD V0 Audit](docs/BOARD_V0_AUDIT.md)
+- [VIRTIO DISCOVERY V0 User Guide](docs/MILESTONE_VIRTIO_DISCOVERY_V0_USER_GUIDE.md)
+- [VIRTIO DISCOVERY V0 Spec](docs/VIRTIO_DISCOVERY_V0_SPEC.md)
+- [VIRTIO DISCOVERY V0 Audit](docs/VIRTIO_DISCOVERY_V0_AUDIT.md)
 - [MEMORY V0 User Guide](docs/MILESTONE_MEMORY_V0_USER_GUIDE.md)
 - [MEMORY V0 Spec](docs/MEMORY_V0_SPEC.md)
 - [MEMORY V0 Audit](docs/MEMORY_V0_AUDIT.md)
@@ -104,7 +108,7 @@ Stability proof also includes:
 
 ## Roadmap
 
-The living educational roadmap is [ROADMAP.md](ROADMAP.md). Near-term planned milestones after BOARD V0 are VIRTIO DISCOVERY V0 and HEAP V0.
+The living educational roadmap is [ROADMAP.md](ROADMAP.md). Near-term planned milestones after VIRTIO DISCOVERY V0 begin with HEAP V0.
 
 ## V0 Status
 
