@@ -9,6 +9,7 @@ const device = @import("../device/device.zig");
 const syscall = @import("../syscall/syscall.zig");
 const net = @import("../net/net.zig");
 const phone = @import("../phone/phone.zig");
+const comm = @import("../comm/comm.zig");
 const trap = @import("../arch/riscv64/trap.zig");
 const mmio_probe = @import("../device/mmio_probe.zig");
 
@@ -87,6 +88,18 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "devices")) return device.printStatus();
     if (equals(cmd, "mmio")) return mmio_probe.printReport();
     if (equals(cmd, "syscalls")) return syscall.printStatus();
+    if (equals(cmd, "comm")) return comm.printStatus();
+    if (equals(cmd, "bridge status") or equals(cmd, "bridge-status")) return comm.bridge.printStatus();
+    if (equals(cmd, "net status") or equals(cmd, "net-status")) return comm.net.printStatus();
+    if (startsWith(cmd, "net get ")) return comm.net.printGet(cmd["net get ".len..]);
+    if (startsWith(cmd, "net-get ")) return comm.net.printGet(cmd["net-get ".len..]);
+    if (equals(cmd, "net get") or equals(cmd, "net-get")) return comm.net.printGet("");
+    if (equals(cmd, "sms inbox") or equals(cmd, "sms-inbox")) return comm.sms.printInbox();
+    if (startsWith(cmd, "sms send ")) return smsSendCommand(cmd["sms send ".len..]);
+    if (startsWith(cmd, "sms-send ")) return smsSendCommand(cmd["sms-send ".len..]);
+    if (equals(cmd, "sms send") or equals(cmd, "sms-send")) return comm.sms.printSend("");
+    if (equals(cmd, "sms wait") or equals(cmd, "sms-wait")) return comm.sms.printWait();
+    if (equals(cmd, "modem status") or equals(cmd, "modem-status")) return comm.modem.printStatus();
     if (equals(cmd, "net")) return net.printStatus();
     if (startsWith(cmd, "ping")) return pingCommand(cmd);
     if (equals(cmd, "phone")) return phone.printStatus();
@@ -100,7 +113,7 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test\r\n");
+    uart.write("commands: help mem uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm bridge status net status net get sms inbox sms send sms wait modem status\r\n");
 }
 
 fn uptime() void {
@@ -175,6 +188,7 @@ fn statusCommand() void {
     syscall.printStatus();
     net.printStatus();
     phone.printStatus();
+    comm.printStatusSummary();
     trap.printStatus();
     uart.write("status: placeholders active=plic timer-interrupts userspace-traps virtio-net virtio-blk modem cellular audio sms; none are fake success\r\n");
 }
@@ -227,6 +241,18 @@ fn smsCommand(cmd: []const u8) void {
         return;
     }
     unknownArgument("PHONE", "PHONE005", "sms command malformed; expected sms <number> <message>; inspect kernel/console/shell.zig");
+}
+
+fn smsSendCommand(args: []const u8) void {
+    comm.sms.printSend(firstToken(args));
+}
+
+fn firstToken(args: []const u8) []const u8 {
+    var i: usize = 0;
+    while (i < args.len) : (i += 1) {
+        if (args[i] == ' ') return args[0..i];
+    }
+    return args;
 }
 
 fn unknownArgument(subsystem: []const u8, code: []const u8, message: []const u8) void {
