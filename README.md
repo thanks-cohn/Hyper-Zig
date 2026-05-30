@@ -496,6 +496,452 @@ Future releases may add graphical interfaces, runtime hosting,
 application compatibility layers, and distributed capabilities.
 These are intentionally deferred until the platform itself is proven.
 
+---
+```text
+---
+VX Repo Outline
+Status: FUTURE TARGET
+Target: Full competitive personal mobile operating system
+Hardware: RISC-V first, portable beyond RISC-V
+Scope: Secure phone, runtime host, personal machine, clustered device platform
+
+Core Claim:
+
+    ZIGN01D VX is no longer only a phone.
+
+    It is a personal computing platform that can operate as:
+
+        - a secure daily-driver phone
+        - a local-first workstation
+        - a runtime host
+        - a clustered compute node
+        - a RAMMY participant
+        - a portable machine standard
+
+Repository:
+
+zign01d/
+
+├── README.md
+├── LICENSE
+├── build.zig
+├── build.zig.zon
+│
+├── docs/
+│   ├── vision.md
+│   ├── vx-definition.md
+│   ├── security-model.md
+│   ├── threat-model.md
+│   ├── hardware-support.md
+│   ├── runtime-hosting.md
+│   ├── rammy.md
+│   ├── application-model.md
+│   ├── update-model.md
+│   ├── recovery-model.md
+│   └── smoke-test.md
+│
+├── kernel/
+│   ├── arch/
+│   │   ├── riscv64/
+│   │   ├── arm64/
+│   │   └── x86_64/
+│   │
+│   ├── memory/
+│   ├── scheduler/
+│   ├── process/
+│   ├── syscall/
+│   ├── ipc/
+│   ├── security/
+│   ├── sandbox/
+│   ├── permissions/
+│   ├── crypto/
+│   ├── update/
+│   ├── recovery/
+│   └── main.zig
+│
+├── drivers/
+│   ├── display/
+│   ├── input/
+│   ├── touchscreen/
+│   ├── storage/
+│   ├── net/
+│   ├── wifi/
+│   ├── bluetooth/
+│   ├── modem/
+│   ├── audio/
+│   ├── camera/
+│   ├── battery/
+│   ├── sensors/
+│   ├── usb/
+│   └── secure_element/
+│
+├── storage/
+│   ├── vfs/
+│   ├── devfs/
+│   ├── ramfs/
+│   ├── userfs/
+│   ├── snapshots/
+│   ├── encrypted_store/
+│   └── recovery_store/
+│
+├── networking/
+│   ├── tcp/
+│   ├── udp/
+│   ├── dns/
+│   ├── dhcp/
+│   ├── ipv4/
+│   ├── ipv6/
+│   ├── vpn/
+│   ├── firewall/
+│   └── net_policy/
+│
+├── phone/
+│   ├── dialer/
+│   ├── sms/
+│   ├── contacts/
+│   ├── emergency/
+│   ├── voicemail/
+│   ├── modem_manager/
+│   └── carrier_profile/
+│
+├── gui/
+│   ├── compositor/
+│   ├── shell/
+│   ├── lockscreen/
+│   ├── launcher/
+│   ├── notifications/
+│   ├── settings/
+│   ├── keyboard/
+│   └── accessibility/
+│
+├── applications/
+│   ├── phone/
+│   ├── messages/
+│   ├── browser/
+│   ├── files/
+│   ├── terminal/
+│   ├── settings/
+│   ├── camera/
+│   ├── gallery/
+│   └── updater/
+│
+├── runtime/
+│   ├── abi/
+│   ├── c/
+│   ├── cpp/
+│   ├── zig/
+│   ├── jvm/
+│   ├── kotlin/
+│   ├── dotnet/
+│   ├── wasm/
+│   └── android-compat/
+│
+├── package-manager/
+│   ├── packages/
+│   ├── signing/
+│   ├── rollback/
+│   ├── permissions/
+│   └── repository/
+│
+├── rammy/
+│   ├── kernel/
+│   ├── memory_pool/
+│   ├── page_broker/
+│   ├── remote_pages/
+│   ├── cache_policy/
+│   ├── cluster_discovery/
+│   ├── node_identity/
+│   ├── failover/
+│   ├── integrity/
+│   └── diagnostics/
+│
+├── cluster/
+│   ├── node/
+│   ├── scheduler/
+│   ├── remote_exec/
+│   ├── shared_storage/
+│   ├── sync/
+│   ├── trust/
+│   └── monitor/
+│
+├── userspace/
+│   ├── init/
+│   ├── shell/
+│   ├── commands/
+│   ├── services/
+│   ├── daemons/
+│   └── lib/
+│
+├── services/
+│   ├── initd/
+│   ├── logd/
+│   ├── netd/
+│   ├── phoned/
+│   ├── smsd/
+│   ├── powerd/
+│   ├── updated/
+│   ├── sandboxd/
+│   ├── rammyd/
+│   └── crashd/
+│
+├── smoke/
+│   ├── README.md
+│   ├── smoke-vx.sh
+│   ├── expected-output/
+│   │   ├── boot.txt
+│   │   ├── security.txt
+│   │   ├── phone.txt
+│   │   ├── internet.txt
+│   │   ├── gui.txt
+│   │   ├── app-runtime.txt
+│   │   ├── update.txt
+│   │   ├── recovery.txt
+│   │   ├── rammy.txt
+│   │   └── cluster.txt
+│   │
+│   ├── scenarios/
+│   │   ├── 00_boot_verified.scn
+│   │   ├── 01_unlock_device.scn
+│   │   ├── 02_make_call.scn
+│   │   ├── 03_send_sms.scn
+│   │   ├── 04_connect_wifi.scn
+│   │   ├── 05_open_browser.scn
+│   │   ├── 06_launch_terminal.scn
+│   │   ├── 07_run_c_binary.scn
+│   │   ├── 08_run_jvm_app.scn
+│   │   ├── 09_run_dotnet_app.scn
+│   │   ├── 10_install_package.scn
+│   │   ├── 11_apply_update.scn
+│   │   ├── 12_rollback_update.scn
+│   │   ├── 13_enable_rammy_pool.scn
+│   │   ├── 14_join_cluster.scn
+│   │   ├── 15_remote_memory_test.scn
+│   │   ├── 16_remote_exec_test.scn
+│   │   └── 17_recovery_boot.scn
+│   │
+│   └── transcripts/
+│       └── .gitkeep
+│
+├── tests/
+│   ├── kernel/
+│   ├── memory/
+│   ├── scheduler/
+│   ├── syscall/
+│   ├── sandbox/
+│   ├── permissions/
+│   ├── storage/
+│   ├── networking/
+│   ├── modem/
+│   ├── phone/
+│   ├── gui/
+│   ├── runtime/
+│   ├── package-manager/
+│   ├── rammy/
+│   ├── cluster/
+│   ├── update/
+│   └── recovery/
+│
+├── configs/
+│   ├── qemu-riscv64.toml
+│   ├── devboard-riscv64.toml
+│   ├── phone-riscv64.toml
+│   ├── security-policy.toml
+│   ├── rammy-cluster.toml
+│   └── package-repo.toml
+│
+├── scripts/
+│   ├── build.sh
+│   ├── run-qemu.sh
+│   ├── debug-qemu.sh
+│   ├── flash-device.sh
+│   ├── smoke-vx.sh
+│   ├── package.sh
+│   ├── update.sh
+│   ├── rollback.sh
+│   ├── rammy-start.sh
+│   ├── cluster-join.sh
+│   └── clean.sh
+│
+└── tools/
+    ├── image-builder/
+    ├── serial-console/
+    ├── modem-sim/
+    ├── net-sim/
+    ├── rammy-sim/
+    ├── cluster-sim/
+    ├── package-builder/
+    ├── update-builder/
+    └── log-parser/
+
+
+VX Smoke Test
+-------------
+
+The VX smoke test proves that ZIGN01D has crossed from prototype into platform.
+
+Required path:
+
+    verified boot
+    local login
+    phone call
+    SMS
+    WiFi
+    internet access
+    GUI launch
+    terminal launch
+    local package install
+    C binary execution
+    JVM application execution
+    .NET application execution
+    sandbox enforcement
+    permission denial test
+    encrypted storage test
+    system update
+    rollback
+    recovery boot
+    RAMMY pool activation
+    cluster join
+    remote memory allocation
+    remote execution
+    clean shutdown
+
+Required user-visible commands:
+
+    zign status
+    zign phone status
+    zign net status
+    zign storage status
+    zign security status
+    zign runtime list
+    zign package install
+    zign update apply
+    zign update rollback
+    zign rammy status
+    zign rammy pool
+    zign cluster status
+    zign cluster join
+    zign shutdown
+
+Pass Criteria:
+
+    ✓ boots with verified system state
+    ✓ unlocks into a usable local environment
+    ✓ makes and receives calls
+    ✓ sends and receives SMS
+    ✓ connects to WiFi
+    ✓ accesses the internet
+    ✓ launches graphical shell
+    ✓ launches terminal
+    ✓ runs native C/C++ programs
+    ✓ runs JVM/Kotlin programs
+    ✓ runs .NET/C# programs
+    ✓ enforces sandbox rules
+    ✓ denies unauthorized access
+    ✓ stores user data encrypted
+    ✓ applies system update
+    ✓ rolls back failed update
+    ✓ boots recovery environment
+    ✓ joins RAMMY memory pool
+    ✓ allocates remote memory
+    ✓ survives remote node loss
+    ✓ joins compute cluster
+    ✓ executes remote task
+    ✓ shuts down cleanly
+
+
+VX Competitive Position
+-----------------------
+
+VX is the version where ZIGN01D can reasonably be discussed beside hardened
+mobile operating systems such as GrapheneOS.
+
+It should not claim to be better merely because it is different.
+
+It should be competitive only when it can demonstrate serious answers to the
+same categories that matter in the modern mobile landscape:
+
+    - verified boot
+    - memory safety strategy
+    - application sandboxing
+    - permission control
+    - secure updates
+    - rollback protection
+    - encrypted storage
+    - network policy
+    - exploit containment
+    - recovery path
+    - long-term maintainability
+
+GrapheneOS is respected because it treats the phone as a hostile environment
+and hardens the system accordingly.
+
+ZIGN01D VX must earn comparison by doing the same.
+
+The difference is architectural ambition.
+
+GrapheneOS hardens an existing Android-compatible world.
+
+ZIGN01D VX attempts to build a smaller, more inspectable, runtime-hosting
+machine from the bottom up.
+
+The competitive argument is not:
+
+    "We have more apps."
+
+The competitive argument is:
+
+    "We have a cleaner foundation."
+
+The outscaling argument comes from RAMMY.
+
+A normal secure phone is one device.
+
+ZIGN01D VX with RAMMY becomes a secure personal machine that can participate
+in a trusted pool of devices.
+
+That allows future scaling beyond the normal phone model:
+
+    - pooled memory
+    - remote cold pages
+    - shared cache
+    - clustered builds
+    - distributed indexing
+    - local AI model sharding
+    - multi-device recovery
+    - device-to-device continuity
+    - phone-as-node computation
+
+In that model, the phone is no longer only a phone.
+
+It is a node.
+
+A secure mobile node.
+
+A pocket machine that can stand alone, but can also join other machines and
+become larger than itself.
+
+That is where ZIGN01D can eventually differ from the current landscape.
+
+GrapheneOS asks:
+
+    How secure can Android become?
+
+ZIGN01D asks:
+
+    What would a secure personal machine look like if we rebuilt the stack
+    around ownership, inspectability, runtime hosting, and clustered memory
+    from the beginning?
+
+VX is not complete because it looks like Android.
+
+VX is complete when it becomes credible to say:
+
+    This is a secure phone.
+    This is a personal computer.
+    This is a runtime host.
+    This is a cluster node.
+    This is a machine the user owns.
+```
 
 
  
