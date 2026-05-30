@@ -66,6 +66,7 @@ check_file smoke/smoke-v4.sh
 check_file smoke/smoke-comm-v0.sh
 check_file smoke/smoke-all.sh
 check_file smoke/smoke-memory-v0.sh
+check_file smoke/smoke-board-v0.sh
 
 if [[ "$failures" -eq 0 ]]; then
   echo "PASS ZIGN01D doctor"

@@ -24,6 +24,9 @@ required=(
   docs/MILESTONE_MEMORY_V0_USER_GUIDE.md
   docs/MEMORY_V0_SPEC.md
   docs/MEMORY_V0_AUDIT.md
+  docs/MILESTONE_BOARD_V0_USER_GUIDE.md
+  docs/BOARD_V0_SPEC.md
+  docs/BOARD_V0_AUDIT.md
   ROADMAP.md
 )
 

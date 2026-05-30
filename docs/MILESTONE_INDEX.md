@@ -89,4 +89,14 @@ This index records the current milestone ladder and intentionally missing featur
 - **Smoke test file:** `smoke/smoke-memory-v0.sh`.
 - **Docs:** `docs/MILESTONE_MEMORY_V0_USER_GUIDE.md`, `docs/MEMORY_V0_SPEC.md`, `docs/MEMORY_V0_AUDIT.md`.
 - **Intentionally missing features:** heap allocation, allocator, paging, virtual memory, userspace memory, live RAM discovery, device-tree memory parsing.
-- **Next dependency:** BOARD V0 should group QEMU virt memory/device assumptions before VIRTIO DISCOVERY V0 and HEAP V0.
+- **Next dependency:** BOARD V0 now groups QEMU virt memory/device assumptions; VIRTIO DISCOVERY V0 should safely expose expected virtio-mmio slots next.
+
+## BOARD V0
+
+- **Purpose:** Collect the current QEMU RISC-V `virt` fixed assumptions into an explicit board profile layer before adding any discovery or drivers.
+- **Commands:** `board`, `board profile`, `board devices`, plus flat aliases `board-profile` and `board-devices`.
+- **Boot marker:** `[ZIGN01D][INFO][BOARD][BOARD000] board profile present; qemu-virt fixed assumptions active`.
+- **Smoke test:** `smoke/smoke-board-v0.sh`.
+- **Docs:** `docs/MILESTONE_BOARD_V0_USER_GUIDE.md`, `docs/BOARD_V0_SPEC.md`, `docs/BOARD_V0_AUDIT.md`.
+- **Intentionally missing features:** real hardware support, device tree parsing, live board discovery, virtio drivers, PLIC driver, CLINT driver, heap allocation, paging, filesystem, userspace, real internet, real SMS, and real modem support.
+- **Next dependency:** VIRTIO DISCOVERY V0 should add safe, non-destructive visibility into expected virtio-mmio slots without claiming driver negotiation.
