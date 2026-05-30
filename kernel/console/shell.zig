@@ -10,11 +10,12 @@ const syscall = @import("../syscall/syscall.zig");
 const net = @import("../net/net.zig");
 const phone = @import("../phone/phone.zig");
 const trap = @import("../arch/riscv64/trap.zig");
+const mmio_probe = @import("../device/mmio_probe.zig");
 
 const RESET_BASE: usize = 0x0010_0000;
 const FINISHER_PASS: u32 = 0x5555;
 const FINISHER_RESET: u32 = 0x7777;
-const VERSION = "ZIGN01D V3 timer and trap recovery readiness";
+const VERSION = "ZIGN01D V4 guarded MMIO probe foundation";
 const BUILD_MODE = "ReleaseSmall";
 const TARGET = "riscv64-freestanding-none";
 
@@ -26,6 +27,7 @@ pub fn start() noreturn {
     log.info("SHELL", "SHELL001", "shell ready");
     uart.write("ZIGN01D V1 interactive diagnostic shell\r\n");
     uart.write("ZIGN01D V3 timer and trap recovery readiness\r\n");
+    uart.write("ZIGN01D V4 guarded MMIO probe foundation\r\n");
     uart.write("Type 'help' for commands. Placeholders report missing drivers honestly.\r\n");
 
     var line: [128]u8 = undefined;
@@ -83,6 +85,7 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "breadcrumbs")) return breadcrumbsCommand();
     if (equals(cmd, "tasks")) return task.printStatus();
     if (equals(cmd, "devices")) return device.printStatus();
+    if (equals(cmd, "mmio")) return mmio_probe.printReport();
     if (equals(cmd, "syscalls")) return syscall.printStatus();
     if (equals(cmd, "net")) return net.printStatus();
     if (startsWith(cmd, "ping")) return pingCommand(cmd);
@@ -97,7 +100,7 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices syscalls net ping phone call sms panic-test trap-test\r\n");
+    uart.write("commands: help mem uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test\r\n");
 }
 
 fn uptime() void {
@@ -162,6 +165,11 @@ fn statusCommand() void {
     uart.write("trap: vector installed; cause names available; recovery limited\r\n");
     uart.write("heartbeat: polling diagnostic active\r\n");
     uart.write("virtio-mmio: probing deferred until fault recovery is proven\r\n");
+    uart.write("guarded-mmio: V4 fixed QEMU virt window scaffold live_probe=");
+    uart.write(if (mmio_probe.LIVE_PROBE_ENABLED) "enabled" else "disabled");
+    uart.write(" policy=");
+    uart.write(mmio_probe.POLICY);
+    uart.write("\r\n");
     task.printStatus();
     device.printStatus();
     syscall.printStatus();
