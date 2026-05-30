@@ -1,4 +1,5 @@
-/// Platform-Level Interrupt Controller placeholder.
+const log = @import("../log.zig");
+
 pub fn init() void {
-    // TODO: configure external interrupt priorities and enables for QEMU virt.
+    log.warn("IRQ", "IRQ001", "interrupt controller stub active; polling uart shell enabled");
 }

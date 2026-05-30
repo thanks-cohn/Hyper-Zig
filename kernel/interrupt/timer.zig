@@ -1,4 +1,13 @@
-/// Timer interrupt placeholder for scheduler ticks and uptime.
+const log = @import("../log.zig");
+
 pub fn init() void {
-    // TODO: program the RISC-V timer and connect it to scheduler ticks.
+    log.warn("TIMER", "TIMER001", "timer stub active; uptime uses rdtime polling");
+}
+
+pub fn ticks() u64 {
+    var value: u64 = 0;
+    asm volatile ("rdtime %[value]"
+        : [value] "=r" (value),
+    );
+    return value;
 }

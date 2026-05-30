@@ -28,6 +28,28 @@ The system should eventually be capable of hosting:
 
 and any future runtime that can be supported through stable system interfaces.
 
+## V0 Status
+
+- Boot: required
+- UART: required
+- Memory report: required
+- Shell: required
+- Smoke test: required
+- Networking: not started
+- Storage: not started
+- Modem: not started
+- GUI: not started
+
+## V0 Commands
+
+```sh
+./scripts/build.sh
+./scripts/run-qemu.sh
+./smoke/smoke-v0.sh
+```
+
+Latest build, QEMU, smoke, and transcript evidence is stored under `logs/latest/`.
+
 Milestones:
 
 V0

@@ -1,18 +1,26 @@
+const std = @import("std");
 const boot = @import("arch/riscv64/boot.zig");
+const uart = @import("console/uart.zig");
 const memory = @import("memory/pmm.zig");
-const interrupts = @import("interrupt/timer.zig");
+const plic = @import("interrupt/plic.zig");
+const timer = @import("interrupt/timer.zig");
+const trap = @import("arch/riscv64/trap.zig");
 const scheduler = @import("scheduler/scheduler.zig");
 const shell = @import("console/shell.zig");
+const panic_mod = @import("panic/panic.zig");
 
-/// V0 kernel entry after the architecture bootstrap hands control to Zig.
 pub export fn kmain() noreturn {
     boot.markKernelEntry();
+    uart.init();
     memory.init();
-    interrupts.init();
+    trap.init();
+    plic.init();
+    timer.init();
     scheduler.init();
+    @import("../userspace/init/init.zig").start();
     shell.start();
+}
 
-    while (true) {
-        scheduler.idle();
-    }
+pub fn panic(message: []const u8, _: ?*std.builtin.StackTrace, _: ?usize) noreturn {
+    panic_mod.panic(message);
 }
