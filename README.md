@@ -33,6 +33,15 @@ The system should eventually be capable of hosting:
 and any future runtime that can be supported through stable system interfaces.
 
 
+
+## Educational Use
+
+ZIGN01D is a proof-driven RISC-V Zig teaching kernel. It exists to make the invisible parts of a kernel visible.
+
+Start with [docs/WHAT_IS_ZIGN01D.md](docs/WHAT_IS_ZIGN01D.md). Professors can start with [docs/PROFESSOR_QUICKSTART.md](docs/PROFESSOR_QUICKSTART.md). Students can start with [docs/STUDENT_QUICKSTART.md](docs/STUDENT_QUICKSTART.md). Labs are in [docs/LAB_MANUAL.md](docs/LAB_MANUAL.md). The proof contract is in [docs/PROOF_CONTRACT.md](docs/PROOF_CONTRACT.md).
+
+The educational documentation describes the current QEMU-proven teaching kernel, its smoke-test proof discipline, and its intentional limitations. It does not claim production readiness, Linux replacement status, real internet/SMS/modem support, or broad real-hardware support.
+
 ## Current Milestone: ZBUS V0
 
 ZBUS V0 adds the host capability bus scaffold. It is a command and documentation milestone only: no real host transport, internet, SMS, modem, calls, or Wi-Fi calling are implemented.
