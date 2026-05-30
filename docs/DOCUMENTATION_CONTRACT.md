@@ -28,14 +28,26 @@ docs/<SUBSYSTEM>_AUDIT.md when changing a subsystem
 
 Each milestone user guide must explain:
 
-- What was added.
-- What commands were added.
-- How to use the commands.
-- How to run the smoke test.
-- What passing output looks like.
-- What is intentionally not implemented.
-- What files changed.
-- What future milestone comes next.
+- what was added;
+- what commands were added;
+- how to use the commands;
+- how to run the smoke test;
+- what passing output looks like;
+- what is intentionally not implemented;
+- what files changed;
+- what future milestone comes next.
+
+## Manual verification checklist requirement
+
+Every milestone must include a checklist with exact commands and expected output. A checklist item should be specific enough that a student can run it and compare output without guessing.
+
+## Expected passing output requirement
+
+A documentation page must name the smoke script and PASS line for the milestone. If a command prints a not-implemented state, the documentation must preserve that wording instead of translating it into a feature claim.
+
+## Generated proof artifacts
+
+Generated transcripts and logs are evidence from a run. They are useful for debugging and classroom reports, but they should not be committed unless the assignment or milestone explicitly says to preserve a transcript.
 
 ## Examples
 
