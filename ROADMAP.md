@@ -8,7 +8,7 @@ This roadmap is the living educational plan for the repository. It describes wha
 
 ## Current identity
 
-ZIGN01D is a small RISC-V kernel for QEMU `virt`, written in Zig, with smoke-test proof requirements. It currently teaches boot, UART diagnostics, machine boundaries, trap/timer readiness, guarded MMIO policy, communication placeholders, ZBUS capability boundaries, stability discipline, educational documentation, and MEMORY V0 visibility.
+ZIGN01D is a small RISC-V kernel for QEMU `virt`, written in Zig, with smoke-test proof requirements. It currently teaches boot, UART diagnostics, machine boundaries, trap/timer readiness, guarded MMIO policy, communication placeholders, ZBUS capability boundaries, stability discipline, educational documentation, MEMORY V0 visibility, and BOARD V0 board-profile visibility.
 
 ## Current verified foundation
 
@@ -24,6 +24,7 @@ The current verified foundation includes:
 - STABILITY V0.
 - EDUCATIONAL DOCS V0.
 - MEMORY V0.
+- BOARD V0.
 
 Each item must remain backed by build scripts, smoke tests, and documentation.
 
@@ -52,11 +53,12 @@ The educational track should keep pairing every kernel feature with:
 
 ## Kernel milestone roadmap
 
+BOARD V0 is the current implemented milestone: it groups QEMU `virt` memory and device assumptions into a fixed board profile without discovery or drivers.
+
 Near-term kernel milestones are planned in this order:
 
-1. BOARD V0 — group QEMU virt memory and device assumptions into a board profile.
-2. VIRTIO DISCOVERY V0 — safely enumerate known virtio MMIO windows without claiming drivers.
-3. HEAP V0 — add the first constrained heap only after board assumptions are explicit.
+1. VIRTIO DISCOVERY V0 — safely enumerate known virtio MMIO windows without claiming drivers.
+2. HEAP V0 — add the first constrained heap only after board assumptions are explicit.
 
 Later kernel milestones may include page allocation, trap recovery improvements, scheduler evolution, virtual memory, filesystems, and userspace, but these are not current features.
 
@@ -118,7 +120,6 @@ ZIGN01D is not yet:
 
 ## Near-term priorities
 
-- BOARD V0.
 - VIRTIO DISCOVERY V0.
 - HEAP V0.
 - Keep MEMORY V0 smoke and docs stable.

@@ -42,11 +42,11 @@ Start with [docs/WHAT_IS_ZIGN01D.md](docs/WHAT_IS_ZIGN01D.md). Professors can st
 
 The educational documentation describes the current QEMU-proven teaching kernel, its smoke-test proof discipline, and its intentional limitations. It does not claim production readiness, Linux replacement status, real internet/SMS/modem support, or broad real-hardware support.
 
-## Current Milestone: MEMORY V0
+## Current Milestone: BOARD V0
 
-MEMORY V0 adds a memory visibility scaffold. It reports the fixed QEMU `virt` RAM assumption, exposes linker-symbol kernel bounds, and clearly marks heap allocation, allocator support, paging, virtual memory, and userspace memory as not implemented.
+BOARD V0 adds a board profile for the current QEMU RISC-V `virt` machine. It names the fixed `qemu-virt` assumptions used by memory, UART, guarded MMIO, PLIC, and CLINT output, and adds board commands without claiming live board discovery or real hardware support.
 
-This milestone is visibility, not power: it does not add heap allocation, virtual memory, paging, userspace, filesystem, real internet, real SMS, real modem support, or phone flashing.
+This milestone is visibility, not power: it does not add device tree parsing, live detection, virtio drivers, heap allocation, virtual memory, paging, userspace, filesystem, real internet, real SMS, real modem support, or phone flashing.
 
 Build:
 
@@ -54,14 +54,19 @@ Build:
 ./scripts/build.sh
 ```
 
-Memory smoke:
+Board smoke:
 
 ```sh
-./smoke/smoke-memory-v0.sh
+./smoke/smoke-board-v0.sh
 ```
+
+Board shell commands include `board`, `board profile`, and `board devices` (with flat aliases `board-profile` and `board-devices`).
 
 User documentation:
 
+- [BOARD V0 User Guide](docs/MILESTONE_BOARD_V0_USER_GUIDE.md)
+- [BOARD V0 Spec](docs/BOARD_V0_SPEC.md)
+- [BOARD V0 Audit](docs/BOARD_V0_AUDIT.md)
 - [MEMORY V0 User Guide](docs/MILESTONE_MEMORY_V0_USER_GUIDE.md)
 - [MEMORY V0 Spec](docs/MEMORY_V0_SPEC.md)
 - [MEMORY V0 Audit](docs/MEMORY_V0_AUDIT.md)
@@ -99,7 +104,7 @@ Stability proof also includes:
 
 ## Roadmap
 
-The living educational roadmap is [ROADMAP.md](ROADMAP.md). Near-term planned milestones after MEMORY V0 are BOARD V0, VIRTIO DISCOVERY V0, and HEAP V0.
+The living educational roadmap is [ROADMAP.md](ROADMAP.md). Near-term planned milestones after BOARD V0 are VIRTIO DISCOVERY V0 and HEAP V0.
 
 ## V0 Status
 

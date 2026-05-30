@@ -56,6 +56,9 @@
 - [MEMORY V0 User Guide](MILESTONE_MEMORY_V0_USER_GUIDE.md)
 - [MEMORY V0 Spec](MEMORY_V0_SPEC.md)
 - [MEMORY V0 Audit](MEMORY_V0_AUDIT.md)
+- [BOARD V0 User Guide](MILESTONE_BOARD_V0_USER_GUIDE.md)
+- [BOARD V0 Spec](BOARD_V0_SPEC.md)
+- [BOARD V0 Audit](BOARD_V0_AUDIT.md)
 
 ## Comparative Kernel Vision
 

@@ -14,6 +14,7 @@ const comm = @import("../comm/comm.zig");
 const trap = @import("../arch/riscv64/trap.zig");
 const mmio_probe = @import("../device/mmio_probe.zig");
 const zbus = @import("../comm/zbus.zig");
+const board = @import("../board/board.zig");
 
 const RESET_BASE: usize = 0x0010_0000;
 const FINISHER_PASS: u32 = 0x5555;
@@ -74,6 +75,9 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "memory")) return memory_v0.printMemory();
     if (equals(cmd, "memmap")) return memory_v0.printMemmap();
     if (equals(cmd, "kernel-bounds")) return memory_v0.printKernelBounds();
+    if (equals(cmd, "board")) return board.printBoard();
+    if (equals(cmd, "board profile") or equals(cmd, "board-profile")) return board.printProfile();
+    if (equals(cmd, "board devices") or equals(cmd, "board-devices")) return board.printDevices();
     if (equals(cmd, "uptime")) return uptime();
     if (equals(cmd, "time")) return timeCommand();
     if (equals(cmd, "ticks")) return ticksCommand();
@@ -121,7 +125,7 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem memory memmap kernel-bounds uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
+    uart.write("commands: help mem memory memmap kernel-bounds board board profile board devices board-profile board-devices uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
 }
 
 fn uptime() void {
@@ -198,6 +202,7 @@ fn statusCommand() void {
     phone.printStatus();
     comm.printStatusSummary();
     zbus.printSummaryFields();
+    board.printStatusFields();
     memory_v0.printStatusFields();
     trap.printStatus();
     uart.write("status: placeholders=plic,timer-interrupts,modem,cellular,audio,sms; virtio-net=not-implemented virtio-blk=not-implemented userspace=not-implemented no-userspace-boundary filesystem=not-implemented\r\n");

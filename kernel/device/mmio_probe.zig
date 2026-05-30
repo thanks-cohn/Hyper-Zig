@@ -1,4 +1,5 @@
 const uart = @import("../console/uart.zig");
+const board = @import("../board/board.zig");
 
 pub const VIRTIO_MMIO_MAGIC: u32 = 0x7472_6976;
 pub const POLICY = "fixed-qemu-virt-window";
@@ -6,10 +7,10 @@ pub const LIVE_PROBE_ENABLED = false;
 pub const DISABLED_REASON = "trap recovery not strong enough for absent MMIO";
 
 pub const fixed_qemu_virtio_mmio_addresses = [_]usize{
-    0x1000_1000,
-    0x1000_2000,
-    0x1000_3000,
-    0x1000_4000,
+    board.virtioMmioAddress(0),
+    board.virtioMmioAddress(1),
+    board.virtioMmioAddress(2),
+    board.virtioMmioAddress(3),
 };
 
 pub const ProbeStatus = enum {
@@ -64,6 +65,9 @@ pub fn probe32(address: usize) ProbeResult {
 }
 
 pub fn printReport() void {
+    uart.write("mmio: board=");
+    uart.write(board.board_name);
+    uart.write(" source=board-profile\r\n");
     uart.write("mmio: policy=");
     uart.write(POLICY);
     uart.write("\r\n");

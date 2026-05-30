@@ -24,7 +24,7 @@ This reference documents the current user-facing shell commands by inspecting `k
 | `breadcrumbs` | V1 diagnostic foundation | Prints breadcrumb format doctrine. | `breadcrumbs` | `breadcrumbs: format=[ZIGN01D][LEVEL][SUBSYSTEM][CODE] message` | Does not imply persistent breadcrumb storage. |
 | `tasks` | V1 diagnostic foundation | Prints cooperative task table/status. | `tasks` | Task status records from `kernel/task/task.zig`. | Does not imply preemptive multitasking. |
 | `devices` | V1/V4 device boundary | Prints device registry and boundary statuses. | `devices` | UART/timer active, PLIC placeholder, virtio deferred/missing. | Does not imply virtio drivers. |
-| `mmio` | V4 guarded MMIO | Prints guarded MMIO probe policy and deferred fixed-window results. | `mmio` | `mmio: live_probe=disabled`, `result=deferred`. | Does not imply live MMIO scanning or driver negotiation. |
+| `mmio` | V4 guarded MMIO / BOARD V0 | Prints guarded MMIO probe policy and deferred fixed-window results, now labeled with `source=board-profile`. | `mmio` | `mmio: board=qemu-virt source=board-profile`, `mmio: live_probe=disabled`, `result=deferred`. | Does not imply live MMIO scanning or driver negotiation. |
 | `syscalls` | V1 diagnostic foundation | Prints syscall table entries. | `syscalls` | Entries marked table-only and trap boundary not implemented. | Does not imply userspace syscall ABI. |
 | `net` | V1 placeholder | Prints legacy network placeholder status. | `net` | `network driver not implemented...` status. | Does not imply internet access. |
 | `ping <target>` | V1 placeholder | Reports ping/network unavailable. | `ping example.com` | Network driver not implemented warning. | Does not send packets. |
@@ -43,6 +43,14 @@ This reference documents the current user-facing shell commands by inspecting `k
 | `zbus status` / `zbus-status` | ZBUS scaffold present in current repo | Alias for ZBUS status. | `zbus status` | Same status fields as `zbus`. | Does not imply provider discovery. |
 | `zbus ping` / `zbus-ping` | ZBUS scaffold present in current repo | Reports ping not implemented because no transport is connected. | `zbus ping` | `zbus: ping=not-implemented`, `safety=no host request sent`. | Does not contact host services. |
 | `zbus providers` / `zbus-providers` | ZBUS scaffold present in current repo | Lists provider scaffold states. | `zbus providers` | Providers `none`; net/sms/modem/files/time not implemented. | Does not imply provider backends. |
+
+## BOARD V0 commands
+
+| Command | Milestone where it appeared if known | What it does | Example usage | Expected honest output | What it does not imply |
+| --- | --- | --- | --- | --- | --- |
+| `board` | BOARD V0 | Prints the active fixed board identity and explicitly states detection/device-tree parsing are not implemented. | `board` | `board: name=qemu-virt`, `board: arch=riscv64`, `board: source=fixed-assumption`, `board: detection=not-implemented`, `board: device_tree_parse=not-implemented`. | Does not imply live board discovery or real hardware support. |
+| `board profile` / `board-profile` | BOARD V0 | Prints fixed QEMU `virt` profile constants for RAM, UART0, virtio-mmio, PLIC, and CLINT. | `board profile` | `board-profile: ram_base=0x80000000`, `ram_size_mib=128`, `uart0_base=0x10000000`, `virtio_mmio_base=0x10001000`, `virtio_mmio_count=8`. | Does not imply those devices have drivers or were probed live. |
+| `board devices` / `board-devices` | BOARD V0 | Prints assumed board device presence and explicitly marks live probing and driver binding as not implemented. | `board devices` | `board-devices: uart0=present-assumed`, `virtio_mmio=present-assumed`, `live_probe=not-implemented`, `driver_binding=not-implemented`. | Does not imply virtio, PLIC, or CLINT driver support. |
 
 ## MEMORY V0 commands
 

@@ -1,9 +1,10 @@
 const log = @import("../log.zig");
 const uart = @import("../console/uart.zig");
+const board = @import("../board/board.zig");
 
-pub const ram_base: usize = 0x8000_0000;
-pub const ram_size_bytes: usize = 128 * 1024 * 1024;
-pub const ram_size_mib: usize = 128;
+pub const ram_base: usize = board.ram_base;
+pub const ram_size_bytes: usize = board.ram_size_bytes;
+pub const ram_size_mib: usize = board.ram_size_mib;
 
 extern var __kernel_start: u8;
 extern var __kernel_end: u8;
@@ -27,6 +28,9 @@ pub fn kernelSizeBytes() usize {
 pub fn printMemory() void {
     uart.write("memory: interface=present\r\n");
     uart.write("memory: model=qemu-virt-fixed\r\n");
+    uart.write("memory: board=");
+    uart.write(board.board_name);
+    uart.write("\r\n");
     uart.write("memory: ram_base=");
     uart.writeHex(ram_base);
     uart.write("\r\n");
@@ -51,6 +55,7 @@ pub fn printMemmap() void {
     uart.write(" size_mib=");
     uart.writeDec(ram_size_mib);
     uart.write(" source=qemu-virt-assumption\r\n");
+    uart.write("memmap: source=board-profile\r\n");
     uart.write("memmap: live_discovery=not-implemented\r\n");
     uart.write("memmap: device_tree_parse=not-implemented\r\n");
 }
