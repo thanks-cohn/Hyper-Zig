@@ -3,6 +3,8 @@ const uart = @import("../console/uart.zig");
 pub const Status = struct {
     backend: []const u8,
     bridge: []const u8,
+    provider: []const u8,
+    zbus_state: []const u8,
     internet: []const u8,
     direct_virtio_net: []const u8,
 };
@@ -11,6 +13,8 @@ pub fn status() Status {
     return .{
         .backend = "none",
         .bridge = "not-connected",
+        .provider = "zbus",
+        .zbus_state = "not-connected",
         .internet = "not-implemented",
         .direct_virtio_net = "not-implemented",
     };
@@ -20,6 +24,12 @@ pub fn printStatus() void {
     const s = status();
     uart.write("net: backend=");
     uart.write(s.backend);
+    uart.write("\r\n");
+    uart.write("net: provider=");
+    uart.write(s.provider);
+    uart.write("\r\n");
+    uart.write("net: zbus=");
+    uart.write(s.zbus_state);
     uart.write("\r\n");
     uart.write("net: bridge=");
     uart.write(s.bridge);
@@ -37,6 +47,12 @@ pub fn printGet(url: []const u8) void {
     const s = status();
     uart.write("net: backend=");
     uart.write(s.backend);
+    uart.write("\r\n");
+    uart.write("net: provider=");
+    uart.write(s.provider);
+    uart.write("\r\n");
+    uart.write("net: zbus=");
+    uart.write(s.zbus_state);
     uart.write("\r\n");
     uart.write("net: get=not-implemented\r\n");
     uart.write("net: url=");
