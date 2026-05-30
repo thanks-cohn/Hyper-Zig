@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-ELF="${1:-$ROOT/zig-out/bin/zign01d-v0.elf}"
+ELF="${1:-$ROOT/zig-out/bin/zign01d-v0}"
 LOG_DIR="$ROOT/logs/latest"
 LOG="$LOG_DIR/qemu.log"
 mkdir -p "$LOG_DIR"

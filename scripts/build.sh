@@ -4,7 +4,7 @@ set -Eeuo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="$ROOT/logs/latest"
 LOG="$LOG_DIR/build.log"
-ELF="$ROOT/zig-out/bin/zign01d-v0.elf"
+ELF="$ROOT/zig-out/bin/zign01d-v0"
 BUILD_CMD=(zig build)
 
 mkdir -p "$LOG_DIR"
@@ -27,7 +27,7 @@ else
 fi
 log "host_uname=$(uname -a)"
 log "build_command=${BUILD_CMD[*]}"
-log "output_elf=$ELF"
+log "output_kernel=$ELF"
 
 cd "$ROOT"
 log "starting zig build"
