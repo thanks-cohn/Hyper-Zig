@@ -190,7 +190,7 @@ fn statusCommand() void {
     phone.printStatus();
     comm.printStatusSummary();
     trap.printStatus();
-    uart.write("status: placeholders active=plic timer-interrupts userspace-traps virtio-net virtio-blk modem cellular audio sms; none are fake success\r\n");
+    uart.write("status: placeholders=plic,timer-interrupts,modem,cellular,audio,sms; virtio-net=not-implemented virtio-blk=not-implemented userspace=not-implemented no-userspace-boundary filesystem=not-implemented\r\n");
 }
 
 fn machineCommand() void {

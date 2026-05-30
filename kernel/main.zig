@@ -43,5 +43,5 @@ pub fn panic(message: []const u8, _: ?*std.builtin.StackTrace, _: ?usize) noretu
 
 
 fn userspace_init_stub() void {
-    uart.write("[ZIGN01D][WARN][INIT][INIT001] userspace init stub active\r\n");
+    uart.write("[ZIGN01D][WARN][INIT][INIT001] userspace not implemented; init stub only; no userspace boundary\r\n");
 }
