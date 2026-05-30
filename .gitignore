@@ -2,3 +2,6 @@
 zig-out/
 logs/latest/
 *.log
+
+# Generated smoke transcripts
+smoke/transcripts/latest-*.txt
