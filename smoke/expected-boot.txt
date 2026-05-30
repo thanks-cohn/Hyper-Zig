@@ -1,0 +1,24 @@
+ZIGN01D V0
+kernel entry
+memory online
+interrupts online
+scheduler online
+userspace init
+shell ready
+> help
+help mem uptime reboot shutdown
+> mem
+memory: online
+> uptime
+uptime: <nonzero>
+> reboot
+rebooting
+ZIGN01D V0
+kernel entry
+memory online
+interrupts online
+scheduler online
+userspace init
+shell ready
+> shutdown
+shutdown
