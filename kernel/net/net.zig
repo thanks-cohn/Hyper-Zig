@@ -16,7 +16,7 @@ var current_state: NetworkState = .down;
 pub fn init() void {
     initialized = true;
     current_state = .driver_missing;
-    diag.warn("NET", "NET001", "virtio-net driver placeholder active");
+    diag.warn("NET", "NET001", "network driver not implemented; virtio-net placeholder only; no fake packet path");
 }
 
 pub fn status() Status {

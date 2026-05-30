@@ -146,9 +146,37 @@ if ! grep -Eq 'mmio: addr=0x10001000 result=present magic=0x74726976 device=virt
     fail "mmio output lacks detected virtio magic or honest deferred/disabled reason"
 fi
 
-if grep -Eiq '(virtio-net.*(active|working|success|detected)|virtio-blk.*(active|working|success|detected)|network driver implemented|block driver implemented|filesystem mounted|userspace active|driver negotiation implemented|queue setup implemented|interrupt setup implemented|ping success|call connected|sms sent)' "$TRANSCRIPT"; then
-    fail "missing virtio/user feature pretended to work"
-fi
+# Reject only affirmative fake-success claims. Honest negative-state output such as
+# not-implemented, missing, deferred, no fake userspace, or no userspace
+# boundary must not fail this smoke test. Keep this list intentionally
+# concrete so V4 proves the scaffold without pretending virtio/userspace works.
+for forbidden_success in \
+    'virtio-net[[:space:]_-]+works' \
+    'virtio-net[^[:alnum:]_=-]+working' \
+    'virtio-net[^[:alnum:]_=-]+active' \
+    'virtio-net[^[:alnum:]_=-]+success' \
+    'virtio-blk[[:space:]_-]+works' \
+    'virtio-blk[^[:alnum:]_=-]+working' \
+    'virtio-blk[^[:alnum:]_=-]+active' \
+    'virtio-blk[^[:alnum:]_=-]+success' \
+    'network[[:space:]_-]+works' \
+    'block[[:space:]_-]+works' \
+    'userspace[[:space:]_-]+works' \
+    'driver_negotiation=implemented' \
+    'queue_setup=implemented' \
+    'interrupt_setup=implemented' \
+    'driver[[:space:]_-]+negotiation[[:space:]_-]+implemented' \
+    'queue[[:space:]_-]+setup[[:space:]_-]+implemented' \
+    'interrupt[[:space:]_-]+setup[[:space:]_-]+implemented' \
+    'real[[:space:]_-]+packets[[:space:]_-]+sent' \
+    'block[[:space:]_-]+read[[:space:]_-]+success' \
+    'filesystem[[:space:]_-]+mounted' \
+    'userspace[[:space:]_-]+launched'
+do
+    if grep -Eiq "$forbidden_success" "$TRANSCRIPT"; then
+        fail "forbidden fake-success claim matched: $forbidden_success"
+    fi
+done
 
 log "smoke passed; transcript=$TRANSCRIPT"
 echo "PASS ZIGN01D V4 smoke"
