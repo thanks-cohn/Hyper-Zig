@@ -12,6 +12,7 @@ const device = @import("device/device.zig");
 const syscall = @import("syscall/syscall.zig");
 const net = @import("net/net.zig");
 const phone = @import("phone/phone.zig");
+const comm = @import("comm/comm.zig");
 const diag = @import("diag/breadcrumb.zig");
 const shell = @import("console/shell.zig");
 const panic_mod = @import("panic/panic.zig");
@@ -30,6 +31,7 @@ pub export fn kmain() noreturn {
     syscall.init();
     net.init();
     phone.init();
+    comm.init();
     userspace_init_stub();
     diag.bootStep("BOOT090", "boot sequence complete");
     shell.start();
