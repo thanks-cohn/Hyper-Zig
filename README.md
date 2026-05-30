@@ -32,6 +32,28 @@ The system should eventually be capable of hosting:
 
 and any future runtime that can be supported through stable system interfaces.
 
+
+## Current Milestone: ZBUS V0
+
+ZBUS V0 adds the host capability bus scaffold. It is a command and documentation milestone only: no real host transport, internet, SMS, modem, calls, or Wi-Fi calling are implemented.
+
+Build:
+
+```sh
+./scripts/build.sh
+```
+
+Full smoke ladder:
+
+```sh
+./smoke/smoke-all.sh
+```
+
+User documentation:
+
+- [ZBUS V0 User Guide](docs/MILESTONE_ZBUS_V0_USER_GUIDE.md)
+- [Documentation Contract](docs/DOCUMENTATION_CONTRACT.md)
+
 ## V0 Status
 
 - Boot: required

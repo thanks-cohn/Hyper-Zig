@@ -3,11 +3,11 @@ set -Eeuo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="$ROOT/logs/latest"
-SMOKE_LOG="$LOG_DIR/smoke-comm-v0.log"
-QEMU_LOG="$LOG_DIR/qemu-comm-v0.log"
+SMOKE_LOG="$LOG_DIR/smoke-zbus-v0.log"
+QEMU_LOG="$LOG_DIR/qemu-zbus-v0.log"
 BUILD_LOG="$LOG_DIR/build.log"
-TRANSCRIPT="$ROOT/smoke/transcripts/latest-comm-v0.txt"
-TRANSCRIPT_COPY="$LOG_DIR/qemu-smoke-comm-v0-transcript.txt"
+TRANSCRIPT="$ROOT/smoke/transcripts/latest-zbus-v0.txt"
+TRANSCRIPT_COPY="$LOG_DIR/qemu-smoke-zbus-v0-transcript.txt"
 ELF="$ROOT/zig-out/bin/zign01d-v0"
 
 mkdir -p "$LOG_DIR" "$ROOT/smoke/transcripts"
@@ -16,16 +16,16 @@ mkdir -p "$LOG_DIR" "$ROOT/smoke/transcripts"
 : > "$TRANSCRIPT"
 
 stamp() { date -u '+%Y-%m-%dT%H:%M:%SZ'; }
-log() { printf '[%s][ZIGN01D][INFO][SMOKE][COMM001] %s\n' "$(stamp)" "$*" | tee -a "$SMOKE_LOG"; }
+log() { printf '[%s][ZIGN01D][INFO][SMOKE][ZBUS001] %s\n' "$(stamp)" "$*" | tee -a "$SMOKE_LOG"; }
 fail_note() {
     {
-        echo "[ZIGN01D][ERROR][SMOKE][COMM099] COMM V0 smoke failure evidence:"
+        echo "[ZIGN01D][ERROR][SMOKE][ZBUS099] ZBUS V0 smoke failure evidence:"
         echo "  build.log: $BUILD_LOG"
         echo "  qemu.log: $QEMU_LOG"
         echo "  smoke.log: $SMOKE_LOG"
         echo "  transcript: $TRANSCRIPT"
-        echo "  likely cause: communication scaffold marker/command missing or fake communication success claimed"
-        echo "  inspect next: kernel/comm/ kernel/console/shell.zig docs/COMM_V0_AUDIT.md"
+        echo "  likely cause: ZBUS marker/command/status missing or fake capability success claimed"
+        echo "  inspect next: kernel/comm/zbus.zig kernel/console/shell.zig docs/ZBUS_V0_AUDIT.md"
     } | tee -a "$SMOKE_LOG" >&2
 }
 fail() { echo "FAIL $*" | tee -a "$SMOKE_LOG"; fail_note; exit 1; }
@@ -56,11 +56,11 @@ fi
 command -v qemu-system-riscv64 >/dev/null 2>&1 || fail "qemu-system-riscv64 not found"
 
 QEMU_CMD=(qemu-system-riscv64 -machine virt -cpu rv64 -smp 1 -m 128M -nographic -monitor none -serial stdio -kernel "$ELF")
-printf '[%s][ZIGN01D][INFO][QEMU][COMM001] command:' "$(stamp)" | tee -a "$QEMU_LOG" "$SMOKE_LOG"
+printf '[%s][ZIGN01D][INFO][QEMU][ZBUS001] command:' "$(stamp)" | tee -a "$QEMU_LOG" "$SMOKE_LOG"
 printf ' %q' "${QEMU_CMD[@]}" | tee -a "$QEMU_LOG" "$SMOKE_LOG"
 printf '\n' | tee -a "$QEMU_LOG" "$SMOKE_LOG"
 
-log "launching COMM V0 controlled qemu session and waiting for shell readiness"
+log "launching ZBUS V0 controlled qemu session and waiting for shell readiness"
 set +e
 python3 - "$TRANSCRIPT" "${QEMU_CMD[@]}" <<'PYSMOKE'
 import os
@@ -74,13 +74,13 @@ cmd = sys.argv[2:]
 commands = [
     "help",
     "status",
+    "zbus",
+    "zbus status",
+    "zbus providers",
+    "zbus ping",
     "comm",
-    "bridge status",
-    "net status",
     "net get http://example.com",
-    "sms inbox",
     "sms send +15551234567 hello",
-    "sms wait",
     "modem status",
     "shutdown",
 ]
@@ -145,35 +145,35 @@ cp "$TRANSCRIPT" "$TRANSCRIPT_COPY"
 
 for marker in \
     'zign01d>' \
-    '[ZIGN01D][INFO][COMM][COMM000] communication scaffold present; bridge not connected' \
+    '[ZIGN01D][INFO][ZBUS][ZBUS000] host capability bus scaffold present; transport not connected' \
     'commands:' \
-    'comm' \
-    'bridge status' \
-    'net status' \
-    'net get' \
-    'sms inbox' \
-    'sms send' \
-    'modem status' \
-    'comm_interface=present' \
+    'zbus' \
+    'zbus status' \
+    'zbus ping' \
+    'zbus providers' \
+    'zbus: interface=present' \
+    'zbus: transport=none' \
+    'zbus: connected=no' \
+    'zbus: providers=none' \
+    'zbus: net=not-implemented' \
+    'zbus: sms=not-implemented' \
+    'zbus: modem=not-implemented' \
+    'zbus: files=not-implemented' \
+    'zbus: time=not-implemented' \
+    'zbus: ping=not-implemented' \
+    'zbus: reason=no transport connected' \
+    'zbus: safety=no host request sent' \
+    'zbus_interface=present' \
+    'zbus_transport=none' \
+    'zbus_connected=no' \
+    'zbus_providers=none' \
     'comm_bridge=zbus' \
-    'real_internet=not-implemented' \
-    'real_sms=not-implemented' \
-    'comm: interface=present' \
-    'comm: comm_bridge=zbus' \
-    'comm: zbus_transport=none' \
-    'comm: zbus_connected=no' \
-    'bridge: connected=no' \
-    'net: backend=none' \
     'net: provider=zbus' \
     'net: zbus=not-connected' \
-    'net: get=not-implemented' \
     'net: safety=no network request sent' \
-    'sms: inbox=unavailable' \
-    'sms: send=not-implemented' \
     'sms: provider=zbus' \
     'sms: zbus=not-connected' \
     'sms: safety=not-sent' \
-    'sms: wait=not-implemented' \
     'modem: provider=zbus' \
     'modem: zbus=not-connected' \
     'modem: real_modem=not-attached'
@@ -186,7 +186,8 @@ reject_regex 'sms[[:space:]_-]*(was[[:space:]]*)?(sent|delivered|success|succeed
 reject_regex 'real_modem=(attached|present|connected)$|modem:[[:space:]]+(attached|present|connected)' 'real modem attached'
 reject_regex 'call[[:space:]_-]*(works|working|connected|success|succeeded)' 'calls work'
 reject_regex 'wifi[ -]?calling[[:space:]_-]*(works|working|enabled|success|succeeded)' 'Wi-Fi calling works'
-reject_regex 'cellular[[:space:]_-]*(works|working|connected|online|success|succeeded)' 'cellular works'
+reject_regex 'host[[:space:]_-]*bridge[[:space:]_-]*(connected|works|working|success|succeeded)' 'host bridge connected'
+reject_regex 'providers[[:space:]_-]*(available|connected|enabled)' 'providers available'
 
 log "smoke passed; transcript=$TRANSCRIPT"
-echo "PASS ZIGN01D COMM V0 smoke"
+echo "PASS ZIGN01D ZBUS V0 smoke"

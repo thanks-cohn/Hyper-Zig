@@ -4,11 +4,14 @@ pub const bridge = @import("bridge.zig");
 pub const net = @import("net.zig");
 pub const sms = @import("sms.zig");
 pub const modem = @import("modem.zig");
+pub const zbus = @import("zbus.zig");
 
 pub const Status = struct {
     interface: []const u8,
     bridge_state: []const u8,
     bridge_transport: []const u8,
+    zbus_transport: []const u8,
+    zbus_connected: []const u8,
     net_backend: []const u8,
     sms_backend: []const u8,
     modem_backend: []const u8,
@@ -22,13 +25,16 @@ pub const Status = struct {
 
 pub fn init() void {
     log.info("COMM", "COMM000", "communication scaffold present; bridge not connected");
+    zbus.init();
 }
 
 pub fn status() Status {
     return .{
         .interface = "present",
-        .bridge_state = "not-connected",
+        .bridge_state = "zbus",
         .bridge_transport = "none",
+        .zbus_transport = zbus.status().transport,
+        .zbus_connected = zbus.status().connected,
         .net_backend = "none",
         .sms_backend = "none",
         .modem_backend = "none",
@@ -51,6 +57,13 @@ pub fn printStatus() void {
     uart.write("\r\n");
     uart.write("comm: bridge_transport=");
     uart.write(s.bridge_transport);
+    uart.write("\r\n");
+    uart.write("comm: comm_bridge=zbus\r\n");
+    uart.write("comm: zbus_transport=");
+    uart.write(s.zbus_transport);
+    uart.write("\r\n");
+    uart.write("comm: zbus_connected=");
+    uart.write(s.zbus_connected);
     uart.write("\r\n");
     uart.write("comm: net_backend=");
     uart.write(s.net_backend);
@@ -88,6 +101,12 @@ pub fn printStatusSummary() void {
     uart.write("\r\n");
     uart.write("comm_bridge=");
     uart.write(s.bridge_state);
+    uart.write("\r\n");
+    uart.write("zbus_transport=");
+    uart.write(s.zbus_transport);
+    uart.write("\r\n");
+    uart.write("zbus_connected=");
+    uart.write(s.zbus_connected);
     uart.write("\r\n");
     uart.write("comm_net_backend=");
     uart.write(s.net_backend);
