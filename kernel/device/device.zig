@@ -30,12 +30,16 @@ pub const Status = struct {
 
 var initialized: bool = false;
 
+// V3 deliberately keeps virtio-mmio probing as design scaffolding only.
+// Before this registry may claim a detected virtio-mmio transport, the trap path
+// must prove it can recover from guarded load/store faults and resume after the
+// faulting instruction. Until then, absent MMIO slots must not be scanned.
 const devices = [_]DeviceRecord{
     .{ .name = "uart0", .subsystem = "UART", .boundary_status = .active, .detail = "polling 16550 mmio 0x10000000", .inspect_hint = "kernel/console/uart.zig" },
-    .{ .name = "timer0", .subsystem = "TIMER", .boundary_status = .active, .detail = "rdtime polling; timer interrupt setup missing", .inspect_hint = "kernel/interrupt/timer.zig" },
+    .{ .name = "timer0", .subsystem = "TIMER", .boundary_status = .active, .detail = "rdtime polling; timer interrupts not enabled", .inspect_hint = "kernel/interrupt/timer.zig" },
     .{ .name = "plic0", .subsystem = "IRQ", .boundary_status = .placeholder, .detail = "qemu virt PLIC assumed but no claim/complete driver", .inspect_hint = "kernel/interrupt/plic.zig" },
     .{ .name = "ram0", .subsystem = "MEM", .boundary_status = .active, .detail = "qemu virt dram map", .inspect_hint = "kernel/memory/pmm.zig and boot/linker.ld" },
-    .{ .name = "virtio-mmio-transport", .subsystem = "DEV", .boundary_status = .unknown, .detail = "not probed: unsafe before trap recovery for absent MMIO slots", .inspect_hint = "add guarded virtio-mmio probe after trap recovery in kernel/device/device.zig" },
+    .{ .name = "virtio-mmio-transport", .subsystem = "DEV", .boundary_status = .unknown, .detail = "probing deferred until guarded load/store fault recovery is proven", .inspect_hint = "kernel/device/device.zig docs/V3_TIMER_AND_TRAP_AUDIT.md" },
     .{ .name = "virtio-mmio-net0", .subsystem = "NET", .boundary_status = .missing, .detail = "network driver not implemented; no fake packet path", .inspect_hint = "kernel/net/net.zig then virtio-mmio transport" },
     .{ .name = "virtio-mmio-blk0", .subsystem = "DEV", .boundary_status = .missing, .detail = "block driver missing", .inspect_hint = "kernel/device/device.zig then virtio-blk driver" },
     .{ .name = "modem0", .subsystem = "PHONE", .boundary_status = .placeholder, .detail = "modem/cellular/audio/sms boundary only; no fake userspace", .inspect_hint = "kernel/phone/phone.zig then modem transport" },
@@ -46,8 +50,8 @@ pub fn init() void {
     if (devices.len == 0) {
         diag.err("DEV", "DEV999", "device registry empty during init; inspect kernel/device/device.zig");
     }
-    diag.info("DEV", "DEV001", "device registry initialized with V2 boundary statuses");
-    diag.warn("DEV", "DEV002", "virtio-mmio probing deferred until trap recovery can safely classify absent MMIO; inspect kernel/device/device.zig");
+    diag.info("DEV", "DEV001", "device registry initialized with V3 honest boundary statuses");
+    diag.warn("DEV", "DEV002", "virtio-mmio probing deferred until guarded load/store fault recovery is proven; inspect kernel/device/device.zig docs/V3_TIMER_AND_TRAP_AUDIT.md");
 }
 
 pub fn status() Status {
