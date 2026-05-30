@@ -7,6 +7,12 @@ const plic = @import("interrupt/plic.zig");
 const timer = @import("interrupt/timer.zig");
 const trap = @import("arch/riscv64/trap.zig");
 const scheduler = @import("scheduler/scheduler.zig");
+const task = @import("task/task.zig");
+const device = @import("device/device.zig");
+const syscall = @import("syscall/syscall.zig");
+const net = @import("net/net.zig");
+const phone = @import("phone/phone.zig");
+const diag = @import("diag/breadcrumb.zig");
 const shell = @import("console/shell.zig");
 const panic_mod = @import("panic/panic.zig");
 
@@ -19,7 +25,13 @@ pub export fn kmain() noreturn {
     plic.init();
     timer.init();
     scheduler.init();
+    task.init();
+    device.init();
+    syscall.init();
+    net.init();
+    phone.init();
     userspace_init_stub();
+    diag.bootStep("BOOT090", "boot sequence complete");
     shell.start();
 }
 
