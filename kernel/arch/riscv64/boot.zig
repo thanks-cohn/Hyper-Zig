@@ -1,4 +1,6 @@
-/// RISC-V bootstrap state for the V0 skeleton.
+const log = @import("../../log.zig");
+
 pub fn markKernelEntry() void {
-    // TODO: validate hart id, stack, BSS clearing, and handoff metadata.
+    log.info("BOOT", "BOOT001", "kernel entry reached");
+    log.info("BOOT", "BOOT002", "ZIGN01D V0");
 }

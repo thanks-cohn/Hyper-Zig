@@ -1,6 +1,7 @@
-/// V0 scheduler placeholder.
+const log = @import("../log.zig");
+
 pub fn init() void {
-    // TODO: create the idle task and userspace init task.
+    log.info("SCHED", "SCHED001", "scheduler stub active");
 }
 
 pub fn idle() void {

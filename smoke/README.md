@@ -1,5 +1,16 @@
-# Smoke Tests
+# ZIGN01D V0 Smoke
 
-This directory holds the V0 smoke-test target transcript and future captured
-runs. The first real pass should place a transcript under `smoke/transcripts/`
-showing QEMU boot, shell startup, command responses, reboot, and shutdown.
+`smoke-v0.sh` is an evidence-producing boot test. It builds the kernel, launches QEMU in a controlled serial session, captures the transcript, and verifies every marker in `expected-markers.txt`.
+
+Run from the repository root:
+
+```sh
+./smoke/smoke-v0.sh
+```
+
+Artifacts:
+
+- `smoke/transcripts/latest.txt`
+- `logs/latest/smoke.log`
+- `logs/latest/qemu.log`
+- `logs/latest/qemu-smoke-transcript.txt`

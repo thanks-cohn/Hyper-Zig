@@ -1,8 +1,9 @@
-/// Install the RISC-V trap vector and dispatch exceptions/interrupts.
+const log = @import("../../log.zig");
+
 pub fn init() void {
-    // TODO: set stvec/mtvec and connect trap dispatch to panic/interrupt code.
+    log.warn("IRQ", "IRQ002", "trap vector stub active");
 }
 
 pub fn handleTrap() void {
-    // TODO: decode cause, preserve context, and route to the right subsystem.
+    log.err("IRQ", "IRQ003", "unhandled trap reached stub handler");
 }

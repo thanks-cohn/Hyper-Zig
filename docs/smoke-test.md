@@ -1,34 +1,42 @@
 # V0 Smoke Test
 
-The smoke test is the definition of done for V0.
+Run the V0 smoke test from the repository root:
 
-## Required Sequence
-
-```text
-power on
-  -> kernel entry
-  -> memory online
-  -> interrupts online
-  -> scheduler online
-  -> userspace init
-  -> shell
+```sh
+./smoke/smoke-v0.sh
 ```
 
-## Required Commands
+## What It Proves
 
-- `help`
-- `mem`
-- `uptime`
-- `reboot`
-- `shutdown`
+The smoke test proves that:
 
-## Pass Criteria
+- `./scripts/build.sh` produced `zig-out/bin/zign01d-v0.elf`.
+- `qemu-system-riscv64 -machine virt -nographic` launched the produced ELF.
+- The kernel emitted the required boot log markers over the real QEMU virt UART.
+- The interactive shell reached the `zign01d>` prompt.
+- The shell accepts real typed commands from the test harness.
+- The transcript used for validation is saved as failure evidence.
 
-- Boots every run.
-- Shell appears.
-- Commands respond.
-- Reboot works.
-- Shutdown works.
+## What It Does Not Prove
 
-Until implementation lands, `smoke/expected-boot.txt` records the target
-transcript and `scripts/run-qemu.sh` documents the intended QEMU invocation.
+The smoke test does not prove that:
+
+- Memory management has a complete allocator or page-frame database.
+- Interrupts are fully enabled and dispatched.
+- The timer is programmed for scheduler ticks.
+- The scheduler runs multiple tasks.
+- Userspace isolation exists.
+
+Those systems are explicitly marked as V0 stubs where applicable.
+
+## Failure Evidence
+
+On failure, inspect:
+
+- `logs/latest/build.log`
+- `logs/latest/qemu.log`
+- `logs/latest/smoke.log`
+- `smoke/transcripts/latest.txt`
+- `logs/latest/qemu-smoke-transcript.txt`
+
+The smoke script prints PASS or FAIL for every marker in `smoke/expected-markers.txt` and returns nonzero if any marker is missing.
