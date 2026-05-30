@@ -5,7 +5,17 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="$ROOT/logs/latest"
 LOG="$LOG_DIR/build.log"
 ELF="$ROOT/zig-out/bin/zign01d-v0"
-BUILD_CMD=(zig build)
+ZIG_BIN="${ZIG:-}"
+if [[ -z "$ZIG_BIN" ]]; then
+  if command -v zig >/dev/null 2>&1; then
+    ZIG_BIN="$(command -v zig)"
+  elif [[ -x /opt/zig/zig ]]; then
+    ZIG_BIN="/opt/zig/zig"
+  else
+    ZIG_BIN="zig"
+  fi
+fi
+BUILD_CMD=("$ZIG_BIN" build)
 
 mkdir -p "$LOG_DIR"
 : > "$LOG"
@@ -20,10 +30,11 @@ if git -C "$ROOT" rev-parse --short HEAD >/dev/null 2>&1; then
 else
   log "git_commit=unavailable"
 fi
-if command -v zig >/dev/null 2>&1; then
-  log "zig_version=$(zig version)"
+if [[ -x "$ZIG_BIN" ]] || command -v "$ZIG_BIN" >/dev/null 2>&1; then
+  log "zig_path=$ZIG_BIN"
+  log "zig_version=$($ZIG_BIN version)"
 else
-  fail "zig executable not found in PATH"
+  fail "zig executable not found; tried PATH zig and /opt/zig/zig"
 fi
 log "host_uname=$(uname -a)"
 log "build_command=${BUILD_CMD[*]}"

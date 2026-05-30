@@ -33,10 +33,10 @@ pub fn readByteBlocking() u8 {
     return reg(UART_RHR).*;
 }
 
-pub fn writeDec(value: u64) void {
+pub fn writeDec(value: anytype) void {
     var buf: [20]u8 = undefined;
     var i: usize = buf.len;
-    var n = value;
+    var n: u64 = @intCast(value);
     if (n == 0) {
         putByte('0');
         return;
