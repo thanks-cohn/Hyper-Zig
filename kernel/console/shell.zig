@@ -9,11 +9,12 @@ const device = @import("../device/device.zig");
 const syscall = @import("../syscall/syscall.zig");
 const net = @import("../net/net.zig");
 const phone = @import("../phone/phone.zig");
+const trap = @import("../arch/riscv64/trap.zig");
 
 const RESET_BASE: usize = 0x0010_0000;
 const FINISHER_PASS: u32 = 0x5555;
 const FINISHER_RESET: u32 = 0x7777;
-const VERSION = "ZIGN01D V1 diagnostic foundation";
+const VERSION = "ZIGN01D V2 machine boundary";
 const BUILD_MODE = "ReleaseSmall";
 const TARGET = "riscv64-freestanding-none";
 
@@ -70,6 +71,8 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "log")) return logCommand();
     if (equals(cmd, "logs")) return logsCommand();
     if (equals(cmd, "status")) return statusCommand();
+    if (equals(cmd, "machine") or equals(cmd, "cpu")) return machineCommand();
+    if (equals(cmd, "panic-test")) return panicTestCommand();
     if (equals(cmd, "version")) return versionCommand();
     if (equals(cmd, "build")) return buildCommand();
     if (equals(cmd, "breadcrumbs")) return breadcrumbsCommand();
@@ -89,7 +92,7 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem uptime reboot shutdown log status version build breadcrumbs logs tasks devices syscalls net ping phone call sms\r\n");
+    uart.write("commands: help mem uptime reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices syscalls net ping phone call sms panic-test\r\n");
 }
 
 fn uptime() void {
@@ -155,8 +158,19 @@ fn statusCommand() void {
     syscall.printStatus();
     net.printStatus();
     phone.printStatus();
-    uart.write("status: placeholders active=plic timer-interrupts userspace-traps virtio-net virtio-blk modem cellular audio sms\r\n");
+    trap.printStatus();
+    uart.write("status: placeholders active=plic timer-interrupts userspace-traps virtio-net virtio-blk modem cellular audio sms; none are fake success\r\n");
 }
+
+fn machineCommand() void {
+    cpu.printMachineStatus();
+    trap.printStatus();
+}
+
+fn panicTestCommand() void {
+    trap.controlledPanicReport();
+}
+
 
 fn pingCommand(cmd: []const u8) void {
     if (cmd.len == "ping".len or startsWith(cmd, "ping ")) {
