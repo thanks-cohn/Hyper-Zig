@@ -70,3 +70,23 @@ This index records the current milestone ladder and intentionally missing featur
 - `docs/MILESTONE_V3_USER_GUIDE.md`: missing, recommended.
 - `docs/MILESTONE_V4_USER_GUIDE.md`: missing, recommended.
 - `docs/MILESTONE_COMM_V0_USER_GUIDE.md`: missing, recommended.
+
+## ZBUS V0 host capability bus scaffold
+
+- **Purpose:** Make future host-provided capabilities visible while proving that no transport or providers are connected.
+- **Key commands added:** `zbus`, `zbus status`, `zbus ping`, `zbus providers`.
+- **Key boot marker:** `ZBUS000`.
+- **Smoke test file:** `smoke/smoke-zbus-v0.sh`.
+- **Docs if present:** `docs/MILESTONE_ZBUS_V0_USER_GUIDE.md`, `docs/ZBUS_V0_SPEC.md`, `docs/ZBUS_V0_AUDIT.md`, `docs/ZBUS_SECURITY_MODEL.md`.
+- **Intentionally missing features:** host transport, real internet, real SMS, real modem, calls, Wi-Fi calling, file providers.
+- **Next dependency:** memory visibility and board assumptions.
+
+## MEMORY V0 memory visibility scaffold
+
+- **Purpose:** Let learners ask where QEMU RAM starts, how large the fixed RAM assumption is, where the kernel image starts/ends, and which memory powers are not implemented.
+- **Key commands added:** `memory`, `memmap`, `kernel-bounds`.
+- **Key boot marker:** `MEMORY000`.
+- **Smoke test file:** `smoke/smoke-memory-v0.sh`.
+- **Docs:** `docs/MILESTONE_MEMORY_V0_USER_GUIDE.md`, `docs/MEMORY_V0_SPEC.md`, `docs/MEMORY_V0_AUDIT.md`.
+- **Intentionally missing features:** heap allocation, allocator, paging, virtual memory, userspace memory, live RAM discovery, device-tree memory parsing.
+- **Next dependency:** BOARD V0 should group QEMU virt memory/device assumptions before VIRTIO DISCOVERY V0 and HEAP V0.

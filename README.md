@@ -42,9 +42,11 @@ Start with [docs/WHAT_IS_ZIGN01D.md](docs/WHAT_IS_ZIGN01D.md). Professors can st
 
 The educational documentation describes the current QEMU-proven teaching kernel, its smoke-test proof discipline, and its intentional limitations. It does not claim production readiness, Linux replacement status, real internet/SMS/modem support, or broad real-hardware support.
 
-## Current Milestone: ZBUS V0
+## Current Milestone: MEMORY V0
 
-ZBUS V0 adds the host capability bus scaffold. It is a command and documentation milestone only: no real host transport, internet, SMS, modem, calls, or Wi-Fi calling are implemented.
+MEMORY V0 adds a memory visibility scaffold. It reports the fixed QEMU `virt` RAM assumption, exposes linker-symbol kernel bounds, and clearly marks heap allocation, allocator support, paging, virtual memory, and userspace memory as not implemented.
+
+This milestone is visibility, not power: it does not add heap allocation, virtual memory, paging, userspace, filesystem, real internet, real SMS, real modem support, or phone flashing.
 
 Build:
 
@@ -52,17 +54,18 @@ Build:
 ./scripts/build.sh
 ```
 
-Full smoke ladder:
+Memory smoke:
 
 ```sh
-./smoke/smoke-all.sh
+./smoke/smoke-memory-v0.sh
 ```
 
 User documentation:
 
-- [ZBUS V0 User Guide](docs/MILESTONE_ZBUS_V0_USER_GUIDE.md)
+- [MEMORY V0 User Guide](docs/MILESTONE_MEMORY_V0_USER_GUIDE.md)
+- [MEMORY V0 Spec](docs/MEMORY_V0_SPEC.md)
+- [MEMORY V0 Audit](docs/MEMORY_V0_AUDIT.md)
 - [Documentation Contract](docs/DOCUMENTATION_CONTRACT.md)
-
 
 ## Stability
 
@@ -77,6 +80,26 @@ Health check and smoke commands:
 ```
 
 See [docs/STABILITY_CONTRACT.md](docs/STABILITY_CONTRACT.md) for the stability doctrine and proof ladder.
+
+## Full Smoke Command
+
+Run the full smoke ladder with:
+
+```sh
+./smoke/smoke-all.sh
+```
+
+Stability proof also includes:
+
+```sh
+./scripts/doctor.sh
+./smoke/smoke-stability.sh
+```
+
+
+## Roadmap
+
+The living educational roadmap is [ROADMAP.md](ROADMAP.md). Near-term planned milestones after MEMORY V0 are BOARD V0, VIRTIO DISCOVERY V0, and HEAP V0.
 
 ## V0 Status
 
@@ -104,20 +127,20 @@ Milestones:
 
 V0
 - Boot on RISC-V under QEMU.
-- Memory management.
+- Memory visibility only; heap, allocator, paging, and userspace memory are not implemented.
 - Interrupts.
 - Scheduler.
 - Shell.
 
-V1
-- Calls.
-- SMS.
-- Internet access.
-- Local storage.
+Future personal-device work
+- Calls: not implemented.
+- SMS: not implemented.
+- Internet access: not implemented.
+- Local storage: not implemented.
 
-If V1 can call, text, and access the internet, it is a phone.
+ZIGN01D is not a phone yet; these are future research goals that require board profiles, drivers, storage, networking, and safety proof first.
 
-Everything else can be built on top.
+Everything else must be built on proven kernel foundations.
 
 Long term:
 
@@ -140,10 +163,10 @@ Scope: Kernel foundation only
 What works:
     - Boot
     - UART console
-    - Memory initialization
+    - Memory visibility initialization
     - Interrupt initialization
     - Scheduler startup
-    - Userspace init
+    - Userspace init stub only; userspace is not implemented
     - Interactive shell
     - Reboot
     - Shutdown
