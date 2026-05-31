@@ -40,8 +40,8 @@ The reported RAM size is `128MiB`, or `134217728` bytes. The smoke tests launch 
 - `memory_model=qemu-virt-fixed`
 - `ram_base=0x80000000`
 - `ram_size_mib=128`
-- `heap=not-implemented`
-- `allocator=not-implemented`
+- `heap=implemented-v0`
+- `allocator=kernel-bump-reset-v0`
 - `paging=not-implemented`
 
 ## Command surface

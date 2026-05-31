@@ -16,6 +16,7 @@ const mmio_probe = @import("../device/mmio_probe.zig");
 const zbus = @import("../comm/zbus.zig");
 const board = @import("../board/board.zig");
 const virtio_discovery = @import("../virtio/discovery.zig");
+const heap = @import("../memory/heap.zig");
 
 const RESET_BASE: usize = 0x0010_0000;
 const FINISHER_PASS: u32 = 0x5555;
@@ -76,6 +77,11 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "memory")) return memory_v0.printMemory();
     if (equals(cmd, "memmap")) return memory_v0.printMemmap();
     if (equals(cmd, "kernel-bounds")) return memory_v0.printKernelBounds();
+    if (equals(cmd, "heap")) return heap.printHeap();
+    if (equals(cmd, "heap stats") or equals(cmd, "heap-stats")) return heap.printStats();
+    if (equals(cmd, "heap alloc-test") or equals(cmd, "heap-alloc-test")) return heap.printAllocTest();
+    if (equals(cmd, "heap reset-test") or equals(cmd, "heap-reset-test")) return heap.printResetTest();
+    if (equals(cmd, "heap overflow-test") or equals(cmd, "heap-overflow-test")) return heap.printOverflowTest();
     if (equals(cmd, "board")) return board.printBoard();
     if (equals(cmd, "board profile") or equals(cmd, "board-profile")) return board.printProfile();
     if (equals(cmd, "board devices") or equals(cmd, "board-devices")) return board.printDevices();
@@ -129,7 +135,7 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem memory memmap kernel-bounds board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
+    uart.write("commands: help mem memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
 }
 
 fn uptime() void {
