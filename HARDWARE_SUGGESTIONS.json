@@ -1,0 +1,352 @@
+{
+  "document": {
+    "title": "ZIGN01D Hardware Suggestions",
+    "purpose": "Structured hardware candidates for a proof-first, phone-oriented RISC-V ZIGN01D bench-phone path.",
+    "rule": "Use certified modem/radio parts. ZIGN01D is the application processor OS. The modem handles cellular radio. ZIGN01D controls, logs, and debugs the modem through USB, UART, PCIe, or M.2.",
+    "north_star": "RISC-V connects to external certified parts, proves interaction, and climbs toward a flashable phone-like device without fake phone claims."
+  },
+  "--- compute_soc_and_board_candidates ---": [
+    {
+      "name": "StarFive VisionFive 2",
+      "soc": "StarFive JH7110",
+      "role": "first physical RISC-V board target",
+      "why_it_matters": "Mature hobbyist/developer RISC-V SBC class with Linux history, USB, Ethernet, GPIO, HDMI, and serial debug access.",
+      "zign01d_fit": "Excellent first board for BOARD_JH7110_V0 because one SoC family can teach boot, UART, memory map, interrupt, and device-tree realities.",
+      "risk": "Not phone-shaped. It is a board first, phone dream later.",
+      "priority": "highest"
+    },
+    {
+      "name": "PINE64 Star64",
+      "soc": "StarFive JH7110",
+      "role": "alternate JH7110 board",
+      "why_it_matters": "PINE64 culture overlaps with open Linux hardware and open mobile experiments.",
+      "zign01d_fit": "Useful second board after VisionFive 2 if we want the same SoC family with a different board layout.",
+      "risk": "Board-specific boot and device quirks still need proof.",
+      "priority": "high"
+    },
+    {
+      "name": "Milk-V Mars",
+      "soc": "StarFive JH7110",
+      "role": "low-cost JH7110 board",
+      "why_it_matters": "Another board in the JH7110 ecosystem, useful for portability within one SoC family.",
+      "zign01d_fit": "Good later target once VisionFive 2 support is real.",
+      "risk": "Do not scatter to too many boards before one is sealed.",
+      "priority": "medium-high"
+    },
+    {
+      "name": "PineTab-V",
+      "soc": "StarFive JH7110",
+      "role": "RISC-V tablet / phone-like dream object",
+      "why_it_matters": "Closer to the mobile form factor because it includes display, touch, and battery-style integration.",
+      "zign01d_fit": "Good emotional hardware target after JH7110 board support becomes real.",
+      "risk": "More integration complexity: display, touch, power, storage, boot chain, and peripherals.",
+      "priority": "medium"
+    },
+    {
+      "name": "Banana Pi BPI-F3",
+      "soc": "SpacemiT K1",
+      "role": "newer stronger RISC-V board",
+      "why_it_matters": "8-core RV64 board family with more long-term performance potential than many early boards.",
+      "zign01d_fit": "Good second-generation performance target after the OS has board abstraction.",
+      "risk": "Not the simplest first bare-metal target.",
+      "priority": "medium"
+    },
+    {
+      "name": "Lichee Pi 4A",
+      "soc": "T-Head TH1520",
+      "role": "higher-performance RISC-V SBC / laptop-class experiment",
+      "why_it_matters": "Known RISC-V Linux development board class with stronger compute ambitions.",
+      "zign01d_fit": "Useful later for performance and desktop-class RISC-V exploration.",
+      "risk": "Hardware/software support may be more complex than JH7110 for a first port.",
+      "priority": "medium"
+    },
+    {
+      "name": "BeagleV-Ahead",
+      "soc": "T-Head TH1520",
+      "role": "developer board from BeagleBoard ecosystem",
+      "why_it_matters": "Developer-board culture and documentation discipline are attractive for a serious OS port.",
+      "zign01d_fit": "Worth watching as a documented TH1520 route.",
+      "risk": "Still not the first target before JH7110 is sealed.",
+      "priority": "medium"
+    },
+    {
+      "name": "Milk-V Megrez",
+      "soc": "ESWIN EIC7700X-class RISC-V",
+      "role": "higher-end future target",
+      "why_it_matters": "Interesting performance direction for later RISC-V ecosystem work.",
+      "zign01d_fit": "Useful after the kernel has a real board layer and stable boot architecture.",
+      "risk": "Too complex for first proof staircase.",
+      "priority": "low-medium"
+    },
+    {
+      "name": "Milk-V Titan",
+      "soc": "UltraRISC UR-DP1000",
+      "role": "desktop/workstation RISC-V board direction",
+      "why_it_matters": "Mini-ITX-style RISC-V board class with more PC-like expansion possibilities.",
+      "zign01d_fit": "Strong long-term workstation OS port target, less phone-like but useful for serious computing legitimacy.",
+      "risk": "Not mobile-first and may require external GPU/display assumptions.",
+      "priority": "low-medium"
+    }
+  ],
+  "--- certified_cellular_modem_candidates ---": [
+    {
+      "name": "Quectel EG25-G USB/M.2 module or dev board",
+      "class": "LTE Cat 4",
+      "interfaces": ["USB", "UART", "AT commands", "QMI depending integration"],
+      "role": "first emotional modem target",
+      "why_it_matters": "Known from Linux phone-style ecosystems and realistic for SIM, signal, SMS, and data experiments.",
+      "zign01d_fit": "Excellent for MODEM_USB_AT_V0, SIM_STATUS_V0, SIGNAL_V0, and SMS_LAB_V0.",
+      "risk": "Carrier band support, firmware behavior, antennas, power stability, and regulatory/certification details still matter.",
+      "priority": "highest"
+    },
+    {
+      "name": "Quectel EC25 series dev kit",
+      "class": "LTE Cat 4",
+      "interfaces": ["USB", "UART", "AT commands", "QMI depending variant"],
+      "role": "practical bench LTE modem",
+      "why_it_matters": "Common LTE module family with many Linux examples and developer kits.",
+      "zign01d_fit": "Very strong first bench-phone modem if available in a clean USB dev kit.",
+      "risk": "Variant and regional bands must match intended SIM/carrier.",
+      "priority": "highest"
+    },
+    {
+      "name": "Sixfab 4G/LTE modem kit using Quectel EC25/EG25-class modules",
+      "class": "LTE dev kit",
+      "interfaces": ["USB", "UART", "AT commands"],
+      "role": "easy bench integration kit",
+      "why_it_matters": "Raspberry Pi-oriented kits can still be useful if they expose standard USB serial/modem interfaces.",
+      "zign01d_fit": "Good for early host-side Linux experiments and later ZIGN01D USB modem control.",
+      "risk": "HAT form factor may need adapters or USB mode rather than GPIO-first assumptions.",
+      "priority": "high"
+    },
+    {
+      "name": "Waveshare SIM7600G-H 4G HAT / USB modem board",
+      "class": "SIMCom LTE module board",
+      "interfaces": ["USB", "UART", "AT commands"],
+      "role": "AT-command lab modem",
+      "why_it_matters": "Useful for learning SIM status, signal query, SMS, GNSS variants, and modem command handling.",
+      "zign01d_fit": "Good MODEM_AT_V0 target if USB/UART use is straightforward.",
+      "risk": "Power draw, HAT wiring assumptions, and exact board revision details must be checked.",
+      "priority": "medium-high"
+    },
+    {
+      "name": "SIMCom A7670 / A7600 dev boards",
+      "class": "LTE Cat 1 / Cat 4 depending model",
+      "interfaces": ["USB", "UART", "AT commands"],
+      "role": "lower-cost AT-command modem learning path",
+      "why_it_matters": "Good for SIM, signal, SMS, and basic data-session learning.",
+      "zign01d_fit": "Useful backup path if Quectel kits are unavailable or expensive.",
+      "risk": "Band support, documentation quality, and carrier compatibility vary heavily by exact model.",
+      "priority": "medium"
+    },
+    {
+      "name": "Sierra Wireless / Semtech EM7455 or EM7565 M.2 modem",
+      "class": "LTE M.2 modem",
+      "interfaces": ["M.2 USB", "MBIM", "QMI"],
+      "role": "PC-like modem target",
+      "why_it_matters": "Common laptop-style modem path, useful once M.2 and USB-over-M.2 are part of the hardware plan.",
+      "zign01d_fit": "Good later for MODEM_M2_V0 and MBIM/QMI protocol work.",
+      "risk": "More firmware, carrier, and protocol complexity than simple AT-command USB dev boards.",
+      "priority": "medium-later"
+    },
+    {
+      "name": "Fibocom L850-GL / FM350-class modules",
+      "class": "LTE / 5G M.2 modem depending model",
+      "interfaces": ["M.2 USB/PCIe depending model", "MBIM", "QMI or vendor protocols"],
+      "role": "later-stage modem target",
+      "why_it_matters": "Represents the kind of laptop/phone-class modem complexity we may eventually face.",
+      "zign01d_fit": "Not first. Useful when the stack can already handle simpler modem control and logs.",
+      "risk": "Firmware, vendor quirks, PCIe/USB mode, power, antennas, and carrier behavior make this hard.",
+      "priority": "later"
+    }
+  ],
+  "--- best_first_pairings ---": [
+    {
+      "pairing": "StarFive VisionFive 2 + Quectel EG25-G/EC25 USB dev board",
+      "goal": "cleanest RISC-V talks to certified modem proof",
+      "proof_targets": ["BOARD_JH7110_V0", "MODEM_USB_AT_V0", "SIM_STATUS_V0", "SIGNAL_V0", "SMS_LAB_V0"],
+      "why": "JH7110 board support plus USB modem AT commands gives the fastest honest bench-phone path."
+    },
+    {
+      "pairing": "PINE64 Star64 + Quectel EG25-G/EC25 USB modem",
+      "goal": "alternate JH7110 board with open-hardware culture",
+      "proof_targets": ["BOARD_JH7110_ALT_V0", "MODEM_USB_AT_V0"],
+      "why": "Same SoC family keeps the OS port focused while adding board portability."
+    },
+    {
+      "pairing": "Milk-V Mars + Waveshare SIM7600G-H USB/UART board",
+      "goal": "lower-cost JH7110 + SIMCom AT-command proof",
+      "proof_targets": ["BOARD_JH7110_ALT_V0", "MODEM_AT_ALT_V0"],
+      "why": "Good backup route if Quectel hardware is not available."
+    },
+    {
+      "pairing": "PineTab-V + external USB LTE modem",
+      "goal": "mobile-shaped RISC-V experiment",
+      "proof_targets": ["TABLET_BOOT_V0", "FRAMEBUFFER_V0", "INPUT_V0", "MODEM_USB_AT_V0"],
+      "why": "Closer to the phone dream, but only after board-level truth is earned."
+    }
+  ],
+  "--- bench_phone_shopping_stack ---": {
+    "minimum_recommended": [
+      {
+        "item": "StarFive VisionFive 2 8GB",
+        "purpose": "first RISC-V physical board target"
+      },
+      {
+        "item": "USB-C power supply for board",
+        "purpose": "stable board power"
+      },
+      {
+        "item": "microSD card or eMMC module if supported",
+        "purpose": "boot storage"
+      },
+      {
+        "item": "USB-UART adapter, 3.3V logic",
+        "purpose": "boot logs, panic rescue, serial debugging"
+      },
+      {
+        "item": "HDMI display",
+        "purpose": "first framebuffer/screen output"
+      },
+      {
+        "item": "USB keyboard",
+        "purpose": "first physical input"
+      },
+      {
+        "item": "Powered USB hub",
+        "purpose": "avoid modem brownouts and USB power instability"
+      },
+      {
+        "item": "Quectel EC25/EG25 USB dev board or Sixfab LTE kit",
+        "purpose": "first certified LTE path"
+      },
+      {
+        "item": "Nano-SIM card or data SIM",
+        "purpose": "SIM detection and cellular proof"
+      },
+      {
+        "item": "LTE antennas matched to module bands",
+        "purpose": "signal proof"
+      },
+      {
+        "item": "USB audio dongle",
+        "purpose": "later audio proof before I2S codec work"
+      }
+    ]
+  },
+  "--- serious_future_carrier_board_direction ---": [
+    {
+      "part": "RISC-V SOM",
+      "purpose": "application processor module"
+    },
+    {
+      "part": "M.2 B-key slot",
+      "purpose": "LTE/5G modem module slot"
+    },
+    {
+      "part": "Nano-SIM slot",
+      "purpose": "physical SIM support"
+    },
+    {
+      "part": "USB 2.0 lines to modem",
+      "purpose": "first modem control and data path"
+    },
+    {
+      "part": "UART debug header",
+      "purpose": "rescue console and boot logs"
+    },
+    {
+      "part": "microSD/eMMC",
+      "purpose": "boot storage"
+    },
+    {
+      "part": "MIPI DSI display connector",
+      "purpose": "phone screen later"
+    },
+    {
+      "part": "I2C touch connector",
+      "purpose": "touch input later"
+    },
+    {
+      "part": "I2S audio codec",
+      "purpose": "call and media audio later"
+    },
+    {
+      "part": "battery charger IC",
+      "purpose": "mobile power later"
+    },
+    {
+      "part": "fuel gauge IC",
+      "purpose": "battery reporting later"
+    },
+    {
+      "part": "USB-C power/data",
+      "purpose": "charging, flashing, debugging"
+    },
+    {
+      "part": "antenna connectors",
+      "purpose": "LTE, Wi-Fi, GNSS antenna paths"
+    }
+  ],
+  "--- milestone_names ---": [
+    {
+      "name": "BOARD_JH7110_V0",
+      "definition": "Boot or board-identity proof for the first JH7110 physical target."
+    },
+    {
+      "name": "UART_DEBUG_V0",
+      "definition": "Reliable physical serial logs and panic rescue path."
+    },
+    {
+      "name": "BOOT_IMAGE_V0",
+      "definition": "Build a flashable image for one supported board."
+    },
+    {
+      "name": "FRAMEBUFFER_HW_V0",
+      "definition": "Physical display output proof on supported hardware."
+    },
+    {
+      "name": "INPUT_HW_V0",
+      "definition": "Physical keyboard or touch input proof."
+    },
+    {
+      "name": "MODEM_USB_DETECT_V0",
+      "definition": "Detect a USB modem and print vendor/product/device path."
+    },
+    {
+      "name": "MODEM_USB_AT_V0",
+      "definition": "Open modem control channel, send AT, receive OK, log timeout/error paths."
+    },
+    {
+      "name": "SIM_STATUS_V0",
+      "definition": "Run AT+CPIN?, prove SIM ready or explain SIM failure while masking sensitive identifiers."
+    },
+    {
+      "name": "SIGNAL_V0",
+      "definition": "Run AT+CSQ or equivalent signal query and report parsed signal state."
+    },
+    {
+      "name": "SMS_LAB_V0",
+      "definition": "Send a lab SMS through certified modem hardware with masked phone/SIM identifiers."
+    },
+    {
+      "name": "DATA_SESSION_LAB_V0",
+      "definition": "Open a cellular data session through the modem in a lab setup."
+    }
+  ],
+  "--- non_claims ---": [
+    "not a carrier-certified phone",
+    "not emergency-call capable",
+    "not Android-compatible",
+    "not a production modem stack",
+    "not an integrated baseband",
+    "not a daily-driver phone",
+    "not a promise that every consumer phone can be flashed",
+    "not a claim that ZIGN01D implements cellular radio"
+  ],
+  "--- governing_principle ---": {
+    "short": "Do not build illegal or uncertified radio hardware. Buy certified modem modules. Make ZIGN01D command them honestly.",
+    "architecture": "RISC-V board or SOM -> USB/UART/PCIe/M.2 -> certified LTE/5G modem -> SIM/eSIM -> carrier network",
+    "first_real_win": "A bench-phone: RISC-V board on desk, modem attached, SIM inserted, serial logs active, screen attached, ZIGN01D sends AT commands, reads SIM status, reads signal, and sends an SMS in the lab."
+  }
+}
