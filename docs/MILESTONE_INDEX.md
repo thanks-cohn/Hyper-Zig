@@ -122,4 +122,14 @@ This index records the current milestone ladder and intentionally missing featur
 - **Smoke test:** `smoke/smoke-heap-v0.sh`.
 - **Docs:** `docs/MILESTONE_HEAP_V0_USER_GUIDE.md`, `docs/HEAP_V0_SPEC.md`, `docs/HEAP_V0_AUDIT.md`.
 - **Intentionally missing features:** paging, virtual memory, userspace memory, user-program malloc, filesystem, process isolation, individual block free, free lists, general-purpose allocator maturity, thread safety, SMP safety, and production safety.
-- **Next dependency:** PMM V0 should add physical page tracking over the known qemu-virt RAM range before larger memory consumers are introduced.
+- **Next dependency:** PMM V0 now adds physical page tracking over the known qemu-virt RAM range before larger memory consumers are introduced.
+
+## PMM V0
+
+- **Purpose:** Track physical page ownership over the known QEMU virt RAM range, reserve kernel-owned/unavailable pages honestly, and prove allocation/free/rejection behavior through shell commands.
+- **Key commands added:** `pmm`, `pmm stats`, `pmm alloc-test`, `pmm free-test`, `pmm invalid-free-test`, `pmm double-free-test`, `pmm exhaustion-test`.
+- **Key boot marker:** `PMM000`.
+- **Smoke test file:** `smoke/smoke-pmm-v0.sh`.
+- **Docs:** `docs/PMM_V0.md`.
+- **Intentionally missing features:** virtual memory, paging, userspace memory, swap, NUMA, production PMM policy, DMA zones, SMP safety.
+- **Next dependency:** Later paging, userspace, filesystems, fork, and program loading should build on PMM page ownership proof rather than hidden assumptions.

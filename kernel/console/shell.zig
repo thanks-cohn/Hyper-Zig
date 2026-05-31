@@ -74,6 +74,13 @@ fn handle(cmd: []const u8) void {
     if (cmd.len == 0) return;
     if (equals(cmd, "help")) return help();
     if (equals(cmd, "mem")) return mem.report();
+    if (equals(cmd, "pmm")) return mem.printPmm();
+    if (equals(cmd, "pmm stats") or equals(cmd, "pmm-stats")) return mem.printStats();
+    if (equals(cmd, "pmm alloc-test") or equals(cmd, "pmm-alloc-test")) return mem.printAllocTest();
+    if (equals(cmd, "pmm free-test") or equals(cmd, "pmm-free-test")) return mem.printFreeTest();
+    if (equals(cmd, "pmm invalid-free-test") or equals(cmd, "pmm-invalid-free-test")) return mem.printInvalidFreeTest();
+    if (equals(cmd, "pmm double-free-test") or equals(cmd, "pmm-double-free-test")) return mem.printDoubleFreeTest();
+    if (equals(cmd, "pmm exhaustion-test") or equals(cmd, "pmm-exhaustion-test")) return mem.printExhaustionTest();
     if (equals(cmd, "memory")) return memory_v0.printMemory();
     if (equals(cmd, "memmap")) return memory_v0.printMemmap();
     if (equals(cmd, "kernel-bounds")) return memory_v0.printKernelBounds();
@@ -135,7 +142,7 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
+    uart.write("commands: help mem pmm pmm stats pmm alloc-test pmm free-test pmm invalid-free-test pmm double-free-test pmm exhaustion-test pmm-stats pmm-alloc-test pmm-free-test pmm-invalid-free-test pmm-double-free-test pmm-exhaustion-test memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
 }
 
 fn uptime() void {
@@ -214,6 +221,7 @@ fn statusCommand() void {
     zbus.printSummaryFields();
     board.printStatusFields();
     memory_v0.printStatusFields();
+    mem.printStatusFields();
     virtio_discovery.printStatusFields();
     trap.printStatus();
     uart.write("status: placeholders=plic,timer-interrupts,modem,cellular,audio,sms; virtio-net=not-implemented virtio-blk=not-implemented userspace=not-implemented no-userspace-boundary filesystem=not-implemented\r\n");

@@ -1,16 +1,22 @@
-# ZIGN01D V0 Smoke
+# ZIGN01D Smoke Tests
 
-`smoke-v0.sh` is an evidence-producing boot test. It builds the kernel, launches QEMU in a controlled serial session, captures the transcript, and verifies every marker in `expected-markers.txt`.
+Smoke tests are evidence-producing boot tests. They build the kernel, launch QEMU in a controlled serial session, capture the transcript, and verify milestone markers plus honest not-implemented boundaries.
 
-Run from the repository root:
+Run the PMM V0 proof from the repository root:
 
 ```sh
-./smoke/smoke-v0.sh
+./smoke/smoke-pmm-v0.sh
 ```
 
-Artifacts:
+Run the full ladder:
 
-- `smoke/transcripts/latest.txt`
-- `logs/latest/smoke.log`
-- `logs/latest/qemu.log`
-- `logs/latest/qemu-smoke-transcript.txt`
+```sh
+./smoke/smoke-all.sh
+```
+
+PMM V0 runs after HEAP V0 in the full ladder and proves page accounting, allocation/free counter changes, invalid-free rejection, double-free rejection, and exhaustion rejection.
+
+Artifacts are written under:
+
+- `smoke/transcripts/`
+- `logs/latest/`

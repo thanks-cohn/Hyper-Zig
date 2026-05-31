@@ -52,6 +52,18 @@ This reference documents the current user-facing shell commands by inspecting `k
 | `zbus ping` / `zbus-ping` | ZBUS scaffold present in current repo | Reports ping not implemented because no transport is connected. | `zbus ping` | `zbus: ping=not-implemented`, `safety=no host request sent`. | Does not contact host services. |
 | `zbus providers` / `zbus-providers` | ZBUS scaffold present in current repo | Lists provider scaffold states. | `zbus providers` | Providers `none`; net/sms/modem/files/time not implemented. | Does not imply provider backends. |
 
+## PMM V0 commands
+
+| Command | Milestone where it appeared if known | What it does | Example usage | Expected honest output | What it does not imply |
+| --- | --- | --- | --- | --- | --- |
+| `pmm` | PMM V0 | Prints PMM interface markers, page size, live counters, managed range, reserved kernel boundary, and non-claims. | `pmm` | `pmm_interface=present`, `pmm_kind=bitmap-or-stack-v0`, `pmm_page_size=4096`, page counters, and `production_pmm=not-implemented`. | Does not imply paging, virtual memory, userspace memory, swap, NUMA, or production PMM policy. |
+| `pmm stats` / `pmm-stats` | PMM V0 | Prints compact PMM page counters and last error. | `pmm stats` | `pmm_total_pages=...`, `pmm_free_pages=...`, `pmm_used_pages=...`, `pmm_reserved_pages=...`, `pmm_last_error=...`. | Does not allocate or free by itself. |
+| `pmm alloc-test` / `pmm-alloc-test` | PMM V0 | Resets PMM accounting, allocates one physical page, and verifies free/used/allocation counters changed. | `pmm alloc-test` | `pmm_alloc_page_ok=yes`, `pmm_alloc_test=pass`. | Does not map the page into a virtual address space. |
+| `pmm free-test` / `pmm-free-test` | PMM V0 | Allocates one page, frees it, and verifies free/used/free counters changed back. | `pmm free-test` | `pmm_free_page_ok=yes`, `pmm_free_test=pass`. | Does not imply arbitrary memory reclamation outside PMM-managed pages. |
+| `pmm invalid-free-test` / `pmm-invalid-free-test` | PMM V0 | Attempts to free an address outside the managed range and proves it is rejected. | `pmm invalid-free-test` | `pmm_invalid_free_rejected=yes`, `pmm-invalid-free-test: result=pass`. | Does not accept invalid physical addresses. |
+| `pmm double-free-test` / `pmm-double-free-test` | PMM V0 | Frees an allocated page, tries to free it again, and proves the second free is rejected. | `pmm double-free-test` | `pmm_double_free_rejected=yes`, `pmm-double-free-test: result=pass`. | Does not permit double-free success. |
+| `pmm exhaustion-test` / `pmm-exhaustion-test` | PMM V0 | Allocates all currently free managed pages, verifies the next allocation is rejected, and prints breadcrumbs. | `pmm exhaustion-test` | `pmm_exhaustion_free_after_fill=0`, `pmm_exhaustion_rejected=yes`, `pmm-exhaustion-test: result=pass`. | Does not imply overcommit, swap, or recovery beyond allocation failure. |
+
 ## BOARD V0 commands
 
 | Command | Milestone where it appeared if known | What it does | Example usage | Expected honest output | What it does not imply |
@@ -64,6 +76,6 @@ This reference documents the current user-facing shell commands by inspecting `k
 
 | Command | Milestone where it appeared if known | What it does | Example usage | Expected honest output | What it does not imply |
 | --- | --- | --- | --- | --- | --- |
-| `memory` | MEMORY V0 / HEAP V0 integration | Prints the fixed QEMU virt model plus current heap allocator stats and missing memory powers. | `memory` | `memory: heap=implemented-v0`, `memory: allocator=kernel-bump-reset-v0`, `memory: heap_total_bytes=...`, and `paging=not-implemented`. | Does not imply dynamic RAM discovery, paging, virtual memory, userspace memory, or individual free. |
+| `memory` | MEMORY V0 / HEAP V0 / PMM V0 integration | Prints the fixed QEMU virt model plus current heap allocator stats, PMM presence, and missing memory powers. | `memory` | `memory: heap=implemented-v0`, `memory: pmm=implemented-v0`, `memory: allocator=kernel-bump-reset-v0`, heap counters, and `paging=not-implemented`. | Does not imply dynamic RAM discovery, paging, virtual memory, userspace memory, swap, NUMA, individual heap free, or production PMM behavior. |
 | `memmap` | MEMORY V0 | Prints the fixed QEMU virt RAM region and its source. | `memmap` | `memmap: region=ram base=0x80000000 size_bytes=134217728 size_mib=128 source=qemu-virt-assumption`, with live discovery and device-tree parsing marked `not-implemented`. | Does not imply device-tree parsing or live memory probing. |
 | `kernel-bounds` | MEMORY V0 | Prints linker-symbol kernel image start, end, and size. | `kernel-bounds` | `kernel-bounds: start=0x...`, `kernel-bounds: end=0x...`, `kernel-bounds: size_bytes=...`. | Does not imply relocation, modules, or userspace address spaces. |
