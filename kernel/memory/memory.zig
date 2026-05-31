@@ -62,6 +62,8 @@ pub fn printMemory() void {
     uart.write("memory: userspace_memory=not-implemented\r\n");
     uart.write("memory: swap=not-implemented\r\n");
     uart.write("memory: numa=not-implemented\r\n");
+    uart.write("memory: memory_hotplug=not-implemented\r\n");
+    uart.write("memory: page_cache=not-implemented\r\n");
 }
 
 pub fn printMemmap() void {
@@ -110,4 +112,6 @@ pub fn printStatusFields() void {
     uart.write("paging=not-implemented\r\n");
     uart.write("virtual_memory=not-implemented\r\n");
     uart.write("userspace_memory=not-implemented\r\n");
+    uart.write("memory_hotplug=not-implemented\r\n");
+    uart.write("page_cache=not-implemented\r\n");
 }
