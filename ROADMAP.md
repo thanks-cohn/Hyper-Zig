@@ -8,7 +8,7 @@ This roadmap is the living educational plan for the repository. It describes wha
 
 ## Current identity
 
-ZIGN01D is a small RISC-V kernel for QEMU `virt`, written in Zig, with smoke-test proof requirements. It currently teaches boot, UART diagnostics, machine boundaries, trap/timer readiness, guarded MMIO policy, communication placeholders, ZBUS capability boundaries, stability discipline, educational documentation, MEMORY V0 visibility, BOARD V0 board-profile visibility, VIRTIO DISCOVERY V0 slot-table visibility, and HEAP V0 kernel bump-reset allocation.
+ZIGN01D is a small RISC-V kernel for QEMU `virt`, written in Zig, with smoke-test proof requirements. It currently teaches boot, UART diagnostics, machine boundaries, trap/timer readiness, guarded MMIO policy, communication placeholders, ZBUS capability boundaries, stability discipline, educational documentation, MEMORY V0 visibility, BOARD V0 board-profile visibility, VIRTIO DISCOVERY V0 slot-table visibility, HEAP V0 kernel bump-reset allocation, and PMM V0 physical page accounting.
 
 ## Current verified foundation
 
@@ -27,6 +27,7 @@ The current verified foundation includes:
 - BOARD V0.
 - VIRTIO DISCOVERY V0.
 - HEAP V0.
+- PMM V0.
 
 Each item must remain backed by build scripts, smoke tests, and documentation.
 
@@ -35,7 +36,7 @@ Each item must remain backed by build scripts, smoke tests, and documentation.
 - Proof before claims.
 - Keep not-implemented features visible.
 - Do not remove existing commands without a migration and smoke update.
-- Do not add fake internet, SMS, modem, phone, paging, or userspace claims; heap claims must remain limited to HEAP V0 bump-reset behavior.
+- Do not add fake internet, SMS, modem, phone, paging, userspace, swap, NUMA, or production PMM claims; heap claims must remain limited to HEAP V0 bump-reset behavior and PMM claims must remain limited to PMM V0 page accounting.
 - Preserve legacy planning material under `legacy/` when replacing root-level plans.
 
 ## Stability first
@@ -55,13 +56,9 @@ The educational track should keep pairing every kernel feature with:
 
 ## Kernel milestone roadmap
 
-HEAP V0 is the current implemented milestone: it adds a fixed-size kernel bump-reset heap with shell-visible stats, deterministic allocation/reset/overflow tests, and no claim of paging, userspace memory, individual free, or production allocator maturity.
+PMM V0 is the current implemented milestone: it adds physical page accounting over the known qemu-virt RAM range with visible page stats, kernel-reserved page accounting, allocation/free tests, invalid/double-free rejection, and exhaustion rejection. HEAP V0 remains a fixed-size kernel bump-reset heap, not a production allocator.
 
-Near-term kernel milestones are planned in this order:
-
-1. PMM V0 — add physical page tracking over the known qemu-virt RAM range with visible page stats and reserved kernel region accounting.
-
-Later kernel milestones may include page allocation, trap recovery improvements, scheduler evolution, virtual memory, filesystems, and userspace, but these are not current features.
+Later kernel milestones may include trap recovery improvements, scheduler evolution, virtual memory, filesystems, and userspace, but these are not current features.
 
 ## Phone/personal-device roadmap
 
@@ -97,6 +94,7 @@ A student should be able to progress through:
 7. Memory visibility.
 8. Board profiles.
 9. Discovery and allocation foundations.
+10. Physical page ownership and PMM accounting.
 
 ## Comparative kernel vision
 
@@ -121,8 +119,7 @@ ZIGN01D is not yet:
 
 ## Near-term priorities
 
-- PMM V0.
-- Keep HEAP V0, MEMORY V0, and VIRTIO DISCOVERY V0 smoke and docs stable.
+- Keep PMM V0, HEAP V0, MEMORY V0, and VIRTIO DISCOVERY V0 smoke and docs stable.
 - Keep generated transcripts out of git status.
 
 ## Medium-term priorities

@@ -7,7 +7,7 @@ Target: RISC-V under QEMU.
 V0 proves the boot path and kernel foundation:
 
 1. Enter the kernel from firmware/boot code.
-2. Bring memory management online.
+2. Bring memory visibility online, including HEAP V0 bump-reset allocation and PMM V0 physical page accounting.
 3. Bring traps, interrupts, and timers online.
 4. Start the scheduler.
 5. Launch userspace init.

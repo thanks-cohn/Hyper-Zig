@@ -44,6 +44,7 @@ pub fn printMemory() void {
     uart.write("\r\n");
     const hs = heap.stats();
     uart.write("memory: heap=implemented-v0\r\n");
+    uart.write("memory: pmm=implemented-v0\r\n");
     uart.write("memory: allocator=kernel-bump-reset-v0\r\n");
     uart.write("memory: heap_total_bytes=");
     uart.writeDec(hs.total_bytes);
@@ -59,6 +60,8 @@ pub fn printMemory() void {
     uart.write("memory: paging=not-implemented\r\n");
     uart.write("memory: virtual_memory=not-implemented\r\n");
     uart.write("memory: userspace_memory=not-implemented\r\n");
+    uart.write("memory: swap=not-implemented\r\n");
+    uart.write("memory: numa=not-implemented\r\n");
 }
 
 pub fn printMemmap() void {
@@ -75,6 +78,8 @@ pub fn printMemmap() void {
     uart.write("memmap: heap_total_bytes=");
     uart.writeDec(heap.heap_total_bytes);
     uart.write("\r\n");
+    uart.write("memmap: region=pmm-managed-ram\r\n");
+    uart.write("memmap: pmm_page_size=4096\r\n");
     uart.write("memmap: live_discovery=not-implemented\r\n");
     uart.write("memmap: device_tree_parse=not-implemented\r\n");
 }

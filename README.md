@@ -42,11 +42,11 @@ Start with [docs/WHAT_IS_ZIGN01D.md](docs/WHAT_IS_ZIGN01D.md). Professors can st
 
 The educational documentation describes the current QEMU-proven teaching kernel, its smoke-test proof discipline, and its intentional limitations. It does not claim production readiness, Linux replacement status, real internet/SMS/modem support, or broad real-hardware support.
 
-## Current Milestone: HEAP V0
+## Current Milestone: PMM V0
 
-HEAP V0 adds a real kernel bump-reset heap. The kernel can allocate from a fixed static heap region, track heap stats, reset the heap, reject overflow, and expose deterministic allocator tests through heap shell commands.
+PMM V0 adds physical page accounting over the known QEMU `virt` RAM range. The kernel reserves kernel-owned pages, tracks total/free/used/reserved pages, allocates and frees single physical pages, rejects invalid frees and double frees, and proves allocation exhaustion rejection through shell commands and smoke tests.
 
-This milestone is constrained allocator power, not production memory management: it does not add paging, virtual memory, userspace memory, user-program malloc, filesystem, process isolation, individual block free, thread safety, SMP safety, real internet, real SMS, real modem support, or phone flashing.
+This milestone is physical page visibility, not production memory management: it does not add paging, virtual memory, userspace memory, user-program malloc, filesystem, process isolation, swap, NUMA, production PMM policy, thread safety, SMP safety, real internet, real SMS, real modem support, or phone flashing. HEAP V0 remains a constrained bump-reset kernel heap proof.
 
 Build:
 
@@ -54,13 +54,13 @@ Build:
 ./scripts/build.sh
 ```
 
-Heap smoke:
+PMM smoke:
 
 ```sh
-./smoke/smoke-heap-v0.sh
+./smoke/smoke-pmm-v0.sh
 ```
 
-Heap shell commands include `heap`, `heap stats`, `heap alloc-test`, `heap reset-test`, and `heap overflow-test` (with flat aliases `heap-stats`, `heap-alloc-test`, `heap-reset-test`, and `heap-overflow-test`). Board and virtio discovery commands remain available.
+PMM shell commands include `pmm`, `pmm stats`, `pmm alloc-test`, `pmm free-test`, `pmm invalid-free-test`, `pmm double-free-test`, and `pmm exhaustion-test` (with flat aliases). HEAP V0 commands (`heap`, `heap stats`, `heap alloc-test`, `heap reset-test`, and `heap overflow-test`) remain available, as do board and virtio discovery commands.
 
 User documentation:
 
@@ -70,6 +70,7 @@ User documentation:
 - [VIRTIO DISCOVERY V0 User Guide](docs/MILESTONE_VIRTIO_DISCOVERY_V0_USER_GUIDE.md)
 - [VIRTIO DISCOVERY V0 Spec](docs/VIRTIO_DISCOVERY_V0_SPEC.md)
 - [VIRTIO DISCOVERY V0 Audit](docs/VIRTIO_DISCOVERY_V0_AUDIT.md)
+- [PMM V0](docs/PMM_V0.md)
 - [HEAP V0 User Guide](docs/MILESTONE_HEAP_V0_USER_GUIDE.md)
 - [HEAP V0 Spec](docs/HEAP_V0_SPEC.md)
 - [HEAP V0 Audit](docs/HEAP_V0_AUDIT.md)
@@ -110,7 +111,7 @@ Stability proof also includes:
 
 ## Roadmap
 
-The living educational roadmap is [ROADMAP.md](ROADMAP.md). Near-term planned milestones after HEAP V0 begin with PMM V0.
+The living educational roadmap is [ROADMAP.md](ROADMAP.md). PMM V0 is current; later memory milestones must not claim paging or userspace until smoke-proven.
 
 ## V0 Status
 
@@ -138,7 +139,7 @@ Milestones:
 
 V0
 - Boot on RISC-V under QEMU.
-- Memory visibility plus HEAP V0 kernel bump-reset allocation; paging and userspace memory are not implemented.
+- Memory visibility plus HEAP V0 kernel bump-reset allocation and PMM V0 physical page accounting; paging and userspace memory are not implemented.
 - Interrupts.
 - Scheduler.
 - Shell.
