@@ -24,5 +24,6 @@ run_step ./smoke/smoke-virtio-discovery-v0.sh
 run_step ./smoke/smoke-heap-v0.sh
 run_step ./smoke/smoke-pmm-v0.sh
 run_step ./smoke/smoke-tarfs-v0.sh
+run_step ./smoke/smoke-ramfs-v0.sh
 
 echo "PASS ZIGN01D full smoke ladder"
