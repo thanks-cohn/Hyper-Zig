@@ -1,5 +1,9 @@
 # ZIGN01D
 
+<p align="center">
+  <img src="1980s.png" alt="ZIGN01D 1980s banner" width="720">
+</p>
+
 A small operating-system laboratory for learning how a machine comes alive.
 
 ZIGN01D boots on RISC-V under QEMU, speaks through a serial shell, and grows one proven step at a time. It is simple on purpose. Each milestone should make the machine a little more real, while keeping the reader curious instead of buried.
