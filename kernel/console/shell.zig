@@ -18,6 +18,7 @@ const board = @import("../board/board.zig");
 const virtio_discovery = @import("../virtio/discovery.zig");
 const heap = @import("../memory/heap.zig");
 const tarfs = @import("../fs/tarfs.zig");
+const ramfs = @import("../fs/ramfs.zig");
 
 const RESET_BASE: usize = 0x0010_0000;
 const FINISHER_PASS: u32 = 0x5555;
@@ -105,6 +106,26 @@ fn handle(cmd: []const u8) void {
     if (startsWith(cmd, "fs checksum ")) return tarfs.printChecksum(cmd["fs checksum ".len..]);
     if (equals(cmd, "fs checksum")) return tarfs.printChecksum("");
     if (equals(cmd, "fs write-test")) return tarfs.printWriteTest();
+    if (equals(cmd, "ramfs")) return ramfs.printOverview();
+    if (equals(cmd, "ramfs stats")) return ramfs.printStats();
+    if (equals(cmd, "ramfs list")) return ramfs.printList();
+    if (startsWith(cmd, "ramfs create ")) return ramfs.printCreate(cmd["ramfs create ".len..]);
+    if (equals(cmd, "ramfs create")) return ramfs.printCreate("");
+    if (startsWith(cmd, "ramfs write ")) return ramfsWriteCommand(cmd["ramfs write ".len..]);
+    if (equals(cmd, "ramfs write")) return ramfs.printWrite("", "");
+    if (startsWith(cmd, "ramfs append ")) return ramfsAppendCommand(cmd["ramfs append ".len..]);
+    if (equals(cmd, "ramfs append")) return ramfs.printAppend("", "");
+    if (startsWith(cmd, "ramfs cat ")) return ramfs.printCat(cmd["ramfs cat ".len..]);
+    if (equals(cmd, "ramfs cat")) return ramfs.printCat("");
+    if (startsWith(cmd, "ramfs stat ")) return ramfs.printStat(cmd["ramfs stat ".len..]);
+    if (equals(cmd, "ramfs stat")) return ramfs.printStat("");
+    if (startsWith(cmd, "ramfs checksum ")) return ramfs.printChecksum(cmd["ramfs checksum ".len..]);
+    if (equals(cmd, "ramfs checksum")) return ramfs.printChecksum("");
+    if (startsWith(cmd, "ramfs delete ")) return ramfs.printDelete(cmd["ramfs delete ".len..]);
+    if (equals(cmd, "ramfs delete")) return ramfs.printDelete("");
+    if (equals(cmd, "ramfs missing-test")) return ramfs.printMissingTest();
+    if (equals(cmd, "ramfs capacity-test")) return ramfs.printCapacityTest();
+    if (equals(cmd, "ramfs overflow-test")) return ramfs.printOverflowTest();
     if (equals(cmd, "uptime")) return uptime();
     if (equals(cmd, "time")) return timeCommand();
     if (equals(cmd, "ticks")) return ticksCommand();
@@ -152,7 +173,26 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem pmm pmm stats pmm alloc-test pmm free-test pmm invalid-free-test pmm double-free-test pmm exhaustion-test pmm-stats pmm-alloc-test pmm-free-test pmm-invalid-free-test pmm-double-free-test pmm-exhaustion-test memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots fs fs list fs stat fs cat fs checksum fs write-test uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
+    uart.write("commands: help mem pmm pmm stats pmm alloc-test pmm free-test pmm invalid-free-test pmm double-free-test pmm exhaustion-test pmm-stats pmm-alloc-test pmm-free-test pmm-invalid-free-test pmm-double-free-test pmm-exhaustion-test memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots fs fs list fs stat fs cat fs checksum fs write-test ramfs ramfs stats ramfs list ramfs create ramfs write ramfs cat ramfs append ramfs stat ramfs checksum ramfs delete ramfs missing-test ramfs capacity-test ramfs overflow-test uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
+}
+
+fn ramfsWriteCommand(args: []const u8) void {
+    if (splitOnce(args)) |parts| return ramfs.printWrite(parts.path, parts.rest);
+    return ramfs.printWrite(args, "");
+}
+
+fn ramfsAppendCommand(args: []const u8) void {
+    if (splitOnce(args)) |parts| return ramfs.printAppend(parts.path, parts.rest);
+    return ramfs.printAppend(args, "");
+}
+
+const Split = struct { path: []const u8, rest: []const u8 };
+
+fn splitOnce(args: []const u8) ?Split {
+    for (args, 0..) |ch, i| {
+        if (ch == ' ') return Split{ .path = args[0..i], .rest = args[i + 1 ..] };
+    }
+    return null;
 }
 
 fn uptime() void {
