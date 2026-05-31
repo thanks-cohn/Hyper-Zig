@@ -227,7 +227,7 @@ for marker in \
     'ramfs_last_error=file-too-large' \
     'persistent_storage=not-implemented' \
     'block_device_fs=not-implemented' \
-    'vfs=not-implemented' \
+    'vfs_layer=implemented-mount-router-v0' \
     'journaling=not-implemented' \
     'permissions=not-implemented' \
     'directories=limited-or-not-implemented' \
@@ -307,7 +307,6 @@ set -e
 for marker in \
     'persistent_storage=implemented' \
     'block_device_fs=implemented' \
-    'vfs=implemented' \
     'journaling=implemented' \
     'permissions=implemented' \
     'executable_apps=implemented' \

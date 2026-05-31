@@ -19,6 +19,7 @@ const virtio_discovery = @import("../virtio/discovery.zig");
 const heap = @import("../memory/heap.zig");
 const tarfs = @import("../fs/tarfs.zig");
 const ramfs = @import("../fs/ramfs.zig");
+const vfs = @import("../fs/vfs.zig");
 
 const RESET_BASE: usize = 0x0010_0000;
 const FINISHER_PASS: u32 = 0x5555;
@@ -126,6 +127,26 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "ramfs missing-test")) return ramfs.printMissingTest();
     if (equals(cmd, "ramfs capacity-test")) return ramfs.printCapacityTest();
     if (equals(cmd, "ramfs overflow-test")) return ramfs.printOverflowTest();
+    if (equals(cmd, "vfs")) return vfs.printOverview();
+    if (equals(cmd, "vfs mounts")) return vfs.printMounts();
+    if (startsWith(cmd, "vfs route ")) return vfs.printRoute(cmd["vfs route ".len..]);
+    if (equals(cmd, "vfs route")) return vfs.printRoute("");
+    if (startsWith(cmd, "vfs list ")) return vfs.printList(cmd["vfs list ".len..]);
+    if (equals(cmd, "vfs list")) return vfs.printList("");
+    if (startsWith(cmd, "vfs stat ")) return vfs.printStat(cmd["vfs stat ".len..]);
+    if (equals(cmd, "vfs stat")) return vfs.printStat("");
+    if (startsWith(cmd, "vfs cat ")) return vfs.printCat(cmd["vfs cat ".len..]);
+    if (equals(cmd, "vfs cat")) return vfs.printCat("");
+    if (startsWith(cmd, "vfs checksum ")) return vfs.printChecksum(cmd["vfs checksum ".len..]);
+    if (equals(cmd, "vfs checksum")) return vfs.printChecksum("");
+    if (startsWith(cmd, "vfs create ")) return vfs.printCreate(cmd["vfs create ".len..]);
+    if (equals(cmd, "vfs create")) return vfs.printCreate("");
+    if (startsWith(cmd, "vfs write ")) return vfsWriteCommand(cmd["vfs write ".len..]);
+    if (equals(cmd, "vfs write")) return vfs.printWrite("", "");
+    if (startsWith(cmd, "vfs append ")) return vfsAppendCommand(cmd["vfs append ".len..]);
+    if (equals(cmd, "vfs append")) return vfs.printAppend("", "");
+    if (startsWith(cmd, "vfs delete ")) return vfs.printDelete(cmd["vfs delete ".len..]);
+    if (equals(cmd, "vfs delete")) return vfs.printDelete("");
     if (equals(cmd, "uptime")) return uptime();
     if (equals(cmd, "time")) return timeCommand();
     if (equals(cmd, "ticks")) return ticksCommand();
@@ -173,7 +194,17 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem pmm pmm stats pmm alloc-test pmm free-test pmm invalid-free-test pmm double-free-test pmm exhaustion-test pmm-stats pmm-alloc-test pmm-free-test pmm-invalid-free-test pmm-double-free-test pmm-exhaustion-test memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots fs fs list fs stat fs cat fs checksum fs write-test ramfs ramfs stats ramfs list ramfs create ramfs write ramfs cat ramfs append ramfs stat ramfs checksum ramfs delete ramfs missing-test ramfs capacity-test ramfs overflow-test uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
+    uart.write("commands: help mem pmm pmm stats pmm alloc-test pmm free-test pmm invalid-free-test pmm double-free-test pmm exhaustion-test pmm-stats pmm-alloc-test pmm-free-test pmm-invalid-free-test pmm-double-free-test pmm-exhaustion-test memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots fs fs list fs stat fs cat fs checksum fs write-test ramfs ramfs stats ramfs list ramfs create ramfs write ramfs cat ramfs append ramfs stat ramfs checksum ramfs delete ramfs missing-test ramfs capacity-test ramfs overflow-test vfs vfs mounts vfs route vfs list vfs stat vfs cat vfs checksum vfs create vfs write vfs append vfs delete uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
+}
+
+fn vfsWriteCommand(args: []const u8) void {
+    if (splitOnce(args)) |parts| return vfs.printWrite(parts.path, parts.rest);
+    return vfs.printWrite(args, "");
+}
+
+fn vfsAppendCommand(args: []const u8) void {
+    if (splitOnce(args)) |parts| return vfs.printAppend(parts.path, parts.rest);
+    return vfs.printAppend(args, "");
 }
 
 fn ramfsWriteCommand(args: []const u8) void {

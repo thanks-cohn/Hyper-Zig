@@ -1,6 +1,6 @@
 # ZIGN01D TARFS V0 / INITRD V0
 
-TARFS V0 is the first tiny read-only file world embedded directly in the ZIGN01D kernel image. It exists so the kernel can list, inspect, read, and checksum real byte contents before the project grows a RAM filesystem, VFS, application ABI, WASM loader, boot image format, or phone shell file workflows.
+TARFS V0 is the first tiny read-only file world embedded directly in the ZIGN01D kernel image. It exists so the kernel can list, inspect, read, and checksum real byte contents before the project grows an application ABI, WASM loader, boot image format, or phone shell file workflows.
 
 This milestone is deliberately small and inspectable. It is not a production filesystem. It is a proof stone: the shell walks a real in-kernel file table, returns bytes from that table, reports sizes and checksums derived from those bytes, and rejects unsupported operations with stable breadcrumbs.
 
@@ -37,7 +37,7 @@ This milestone is deliberately small and inspectable. It is not a production fil
 TARFS V0 intentionally emits honest non-claims:
 
 - `fs_write=not-implemented`
-- `vfs=not-implemented`
+- `vfs_layer=implemented-mount-router-v0` (VFS now sits above TARFS; TARFS itself remains a read-only archive)
 - `block_device_fs=not-implemented`
 - `persistent_storage=not-implemented`
 - `executable_apps=not-implemented`
@@ -48,7 +48,7 @@ TARFS V0 intentionally emits honest non-claims:
 
 The `/apps/hello.app` record is manifest-like data only. It is not executable, not loaded as userspace, and not interpreted as WASM.
 
-## Why this comes before RAMFS, VFS, apps, WASM, and phone shell work
+## Why this comes before apps, WASM, and phone shell work
 
 A phone-oriented OS needs files before it can responsibly grow app manifests, boot images, recovery bundles, configuration, WASM modules, logs, and user-facing shell workflows. TARFS V0 is the smallest safe step: immutable bytes compiled into the kernel, no block driver dependency, no allocator dependency for file data, no persistence claims, and no permission model claims.
 

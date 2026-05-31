@@ -7,7 +7,7 @@ const capacity_files: usize = 8;
 const max_file_bytes: usize = 64;
 const empty_error = "none";
 
-const File = struct {
+pub const File = struct {
     used: bool = false,
     path: [48]u8 = [_]u8{0} ** 48,
     path_len: usize = 0,
@@ -316,6 +316,139 @@ pub fn printOverflowTest() void {
     uart.write("ramfs_overflow_rejected=yes\r\n");
 }
 
+pub const OpStatus = enum {
+    ok,
+    invalid_path,
+    not_found,
+    already_exists,
+    capacity_full,
+    file_too_large,
+};
+
+pub const ReadResult = struct {
+    status: OpStatus,
+    data: []const u8 = "",
+};
+
+pub const StatResult = struct {
+    status: OpStatus,
+    size: usize = 0,
+    sum: u32 = 0,
+};
+
+pub fn create(path: []const u8) OpStatus {
+    if (!validPath(path)) return setMissing(path, "invalid-path", .invalid_path);
+    if (findIndex(path) != null) return setMissing(path, "already-exists", .already_exists);
+    if (freeIndex()) |index| {
+        files[index] = File{};
+        files[index].used = true;
+        copyInto(files[index].path[0..], path);
+        files[index].path_len = path.len;
+        files[index].data_len = 0;
+        counters.create_count += 1;
+        last_error = empty_error;
+        return .ok;
+    }
+    counters.capacity_reject_count += 1;
+    last_error = "capacity-full";
+    return .capacity_full;
+}
+
+pub fn write(path: []const u8, bytes: []const u8) OpStatus {
+    const data = stripQuotes(bytes);
+    if (findIndex(path)) |index| {
+        if (data.len > max_file_bytes) {
+            counters.overflow_reject_count += 1;
+            last_error = "file-too-large";
+            return .file_too_large;
+        }
+        copyInto(files[index].data[0..], data);
+        files[index].data_len = data.len;
+        counters.write_count += 1;
+        last_error = empty_error;
+        return .ok;
+    }
+    return setMissing(path, "not-found", .not_found);
+}
+
+pub fn append(path: []const u8, bytes: []const u8) OpStatus {
+    const data = stripQuotes(bytes);
+    if (findIndex(path)) |index| {
+        const old_len = files[index].data_len;
+        if (old_len + data.len > max_file_bytes) {
+            counters.overflow_reject_count += 1;
+            last_error = "file-too-large";
+            return .file_too_large;
+        }
+        for (data, 0..) |byte, i| files[index].data[old_len + i] = byte;
+        files[index].data_len = old_len + data.len;
+        counters.append_count += 1;
+        last_error = empty_error;
+        return .ok;
+    }
+    return setMissing(path, "not-found", .not_found);
+}
+
+pub fn read(path: []const u8) ReadResult {
+    if (findIndex(path)) |index| {
+        counters.read_count += 1;
+        last_error = empty_error;
+        return .{ .status = .ok, .data = files[index].data[0..files[index].data_len] };
+    }
+    _ = setMissing(path, "not-found", .not_found);
+    return .{ .status = .not_found };
+}
+
+pub fn stat(path: []const u8) StatResult {
+    if (findIndex(path)) |index| {
+        const data = files[index].data[0..files[index].data_len];
+        last_error = empty_error;
+        return .{ .status = .ok, .size = data.len, .sum = checksum(data) };
+    }
+    _ = setMissing(path, "not-found", .not_found);
+    return .{ .status = .not_found };
+}
+
+pub fn delete(path: []const u8) OpStatus {
+    if (findIndex(path)) |index| {
+        files[index] = File{};
+        counters.delete_count += 1;
+        last_error = empty_error;
+        return .ok;
+    }
+    return setMissing(path, "not-found", .not_found);
+}
+
+pub fn fileAt(index: usize) ?File {
+    var seen: usize = 0;
+    for (files) |file| {
+        if (file.used) {
+            if (seen == index) return file;
+            seen += 1;
+        }
+    }
+    return null;
+}
+
+pub fn pathOf(file: File) []const u8 {
+    return file.path[0..file.path_len];
+}
+
+pub fn dataOf(file: File) []const u8 {
+    return file.data[0..file.data_len];
+}
+
+pub fn count() usize {
+    return fileCount();
+}
+
+fn setMissing(path: []const u8, reason: []const u8, status: OpStatus) OpStatus {
+    _ = path;
+    counters.missing_count += 1;
+    last_error = reason;
+    return status;
+}
+
 fn createSilent(path: []const u8) void {
     if (freeIndex()) |index| {
         files[index] = File{};
@@ -402,7 +535,7 @@ fn rejectOverflow(path: []const u8) void {
 fn printNonClaims() void {
     uart.write("persistent_storage=not-implemented\r\n");
     uart.write("block_device_fs=not-implemented\r\n");
-    uart.write("vfs=not-implemented\r\n");
+    uart.write("vfs_layer=implemented-mount-router-v0\r\n");
     uart.write("journaling=not-implemented\r\n");
     uart.write("permissions=not-implemented\r\n");
     uart.write("directories=limited-or-not-implemented\r\n");
