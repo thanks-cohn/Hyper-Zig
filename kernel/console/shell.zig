@@ -17,6 +17,7 @@ const zbus = @import("../comm/zbus.zig");
 const board = @import("../board/board.zig");
 const virtio_discovery = @import("../virtio/discovery.zig");
 const heap = @import("../memory/heap.zig");
+const tarfs = @import("../fs/tarfs.zig");
 
 const RESET_BASE: usize = 0x0010_0000;
 const FINISHER_PASS: u32 = 0x5555;
@@ -95,6 +96,15 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "virtio")) return virtio_discovery.printInfo();
     if (equals(cmd, "virtio summary") or equals(cmd, "virtio-summary")) return virtio_discovery.printSummary();
     if (equals(cmd, "virtio slots") or equals(cmd, "virtio-slots")) return virtio_discovery.printSlots();
+    if (equals(cmd, "fs")) return tarfs.printOverview();
+    if (equals(cmd, "fs list")) return tarfs.printList();
+    if (startsWith(cmd, "fs stat ")) return tarfs.printStat(cmd["fs stat ".len..]);
+    if (equals(cmd, "fs stat")) return tarfs.printStat("");
+    if (startsWith(cmd, "fs cat ")) return tarfs.printCat(cmd["fs cat ".len..]);
+    if (equals(cmd, "fs cat")) return tarfs.printCat("");
+    if (startsWith(cmd, "fs checksum ")) return tarfs.printChecksum(cmd["fs checksum ".len..]);
+    if (equals(cmd, "fs checksum")) return tarfs.printChecksum("");
+    if (equals(cmd, "fs write-test")) return tarfs.printWriteTest();
     if (equals(cmd, "uptime")) return uptime();
     if (equals(cmd, "time")) return timeCommand();
     if (equals(cmd, "ticks")) return ticksCommand();
@@ -142,7 +152,7 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem pmm pmm stats pmm alloc-test pmm free-test pmm invalid-free-test pmm double-free-test pmm exhaustion-test pmm-stats pmm-alloc-test pmm-free-test pmm-invalid-free-test pmm-double-free-test pmm-exhaustion-test memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
+    uart.write("commands: help mem pmm pmm stats pmm alloc-test pmm free-test pmm invalid-free-test pmm double-free-test pmm exhaustion-test pmm-stats pmm-alloc-test pmm-free-test pmm-invalid-free-test pmm-double-free-test pmm-exhaustion-test memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots fs fs list fs stat fs cat fs checksum fs write-test uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
 }
 
 fn uptime() void {
@@ -224,7 +234,7 @@ fn statusCommand() void {
     mem.printStatusFields();
     virtio_discovery.printStatusFields();
     trap.printStatus();
-    uart.write("status: placeholders=plic,timer-interrupts,modem,cellular,audio,sms; virtio-net=not-implemented virtio-blk=not-implemented userspace=not-implemented no-userspace-boundary filesystem=not-implemented\r\n");
+    uart.write("status: placeholders=plic,timer-interrupts,modem,cellular,audio,sms; virtio-net=not-implemented virtio-blk=not-implemented userspace=not-implemented no-userspace-boundary tarfs=implemented-v0 filesystem_core=not-implemented\r\n");
 }
 
 fn machineCommand() void {

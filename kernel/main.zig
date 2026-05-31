@@ -18,6 +18,7 @@ const shell = @import("console/shell.zig");
 const panic_mod = @import("panic/panic.zig");
 const board = @import("board/board.zig");
 const virtio_discovery = @import("virtio/discovery.zig");
+const tarfs = @import("fs/tarfs.zig");
 
 pub export fn kmain() noreturn {
     runtime_mem.force_link();
@@ -25,6 +26,7 @@ pub export fn kmain() noreturn {
     uart.init();
     board.init();
     virtio_discovery.init();
+    tarfs.init();
     memory.init();
     trap.init();
     plic.init();
