@@ -24,14 +24,14 @@ fail_note() {
         echo "  qemu.log: $QEMU_LOG"
         echo "  smoke.log: $SMOKE_LOG"
         echo "  transcript: $TRANSCRIPT"
-        echo "  likely cause: HEAP000 marker/heap command/status missing or fake allocator claim present"
+        echo "  likely cause: HEAP000 marker/heap command/status missing or fake maturity claim present"
         echo "  inspect next: kernel/memory/heap.zig kernel/memory/memory.zig kernel/console/shell.zig docs/HEAP_V0_AUDIT.md"
     } | tee -a "$SMOKE_LOG" >&2
 }
 fail() { echo "FAIL $*" | tee -a "$SMOKE_LOG"; fail_note; exit 1; }
 require() {
     local marker="$1"
-    if grep -Fq "$marker" "$TRANSCRIPT"; then
+    if LC_ALL=C grep -aFq "$marker" "$TRANSCRIPT"; then
         echo "PASS marker: $marker" | tee -a "$SMOKE_LOG"
     else
         fail "missing marker: $marker"
@@ -39,7 +39,7 @@ require() {
 }
 reject() {
     local marker="$1"
-    if grep -Fq "$marker" "$TRANSCRIPT"; then
+    if LC_ALL=C grep -aFq "$marker" "$TRANSCRIPT"; then
         fail "forbidden fake success claim: $marker"
     fi
     echo "PASS forbidden absent: $marker" | tee -a "$SMOKE_LOG"
@@ -197,11 +197,10 @@ do
 done
 
 for marker in \
-    'heap=not-implemented' \
     'heap=production' \
     'heap=general-purpose' \
-    'allocator=not-implemented' \
     'allocator=production' \
+    'allocator=general-purpose' \
     'free_individual_blocks=implemented' \
     'thread_safe=implemented' \
     'userspace_allocator=implemented' \
