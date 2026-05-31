@@ -1,6 +1,7 @@
 const log = @import("../log.zig");
 const uart = @import("../console/uart.zig");
 const board = @import("../board/board.zig");
+const heap = @import("heap.zig");
 
 pub const ram_base: usize = board.ram_base;
 pub const ram_size_bytes: usize = board.ram_size_bytes;
@@ -10,7 +11,8 @@ extern var __kernel_start: u8;
 extern var __kernel_end: u8;
 
 pub fn init() void {
-    log.info("MEMORY", "MEMORY000", "memory map scaffold present; allocator not implemented");
+    log.info("MEMORY", "MEMORY000", "memory map scaffold present; heap allocator implemented-v0; paging not implemented");
+    heap.init();
 }
 
 pub fn kernelStart() usize {
@@ -40,8 +42,20 @@ pub fn printMemory() void {
     uart.write("memory: ram_size_mib=");
     uart.writeDec(ram_size_mib);
     uart.write("\r\n");
-    uart.write("memory: heap=not-implemented\r\n");
-    uart.write("memory: allocator=not-implemented\r\n");
+    const hs = heap.stats();
+    uart.write("memory: heap=implemented-v0\r\n");
+    uart.write("memory: allocator=kernel-bump-reset-v0\r\n");
+    uart.write("memory: heap_total_bytes=");
+    uart.writeDec(hs.total_bytes);
+    uart.write("\r\n");
+    uart.write("memory: heap_used_bytes=");
+    uart.writeDec(hs.used_bytes);
+    uart.write("\r\n");
+    uart.write("memory: heap_free_bytes=");
+    uart.writeDec(hs.free_bytes);
+    uart.write("\r\n");
+    uart.write("memory: heap_reset_supported=yes\r\n");
+    uart.write("memory: heap_free_individual_blocks=not-implemented\r\n");
     uart.write("memory: paging=not-implemented\r\n");
     uart.write("memory: virtual_memory=not-implemented\r\n");
     uart.write("memory: userspace_memory=not-implemented\r\n");
@@ -56,6 +70,11 @@ pub fn printMemmap() void {
     uart.writeDec(ram_size_mib);
     uart.write(" source=qemu-virt-assumption\r\n");
     uart.write("memmap: source=board-profile\r\n");
+    uart.write("memmap: region=kernel-heap\r\n");
+    uart.write("memmap: heap_source=static-kernel-region\r\n");
+    uart.write("memmap: heap_total_bytes=");
+    uart.writeDec(heap.heap_total_bytes);
+    uart.write("\r\n");
     uart.write("memmap: live_discovery=not-implemented\r\n");
     uart.write("memmap: device_tree_parse=not-implemented\r\n");
 }
@@ -81,7 +100,9 @@ pub fn printStatusFields() void {
     uart.write("ram_size_mib=");
     uart.writeDec(ram_size_mib);
     uart.write("\r\n");
-    uart.write("heap=not-implemented\r\n");
-    uart.write("allocator=not-implemented\r\n");
+    heap.printStatusFields();
+    uart.write("allocator=kernel-bump-reset-v0\r\n");
     uart.write("paging=not-implemented\r\n");
+    uart.write("virtual_memory=not-implemented\r\n");
+    uart.write("userspace_memory=not-implemented\r\n");
 }

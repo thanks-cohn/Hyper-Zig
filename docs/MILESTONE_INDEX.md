@@ -111,3 +111,15 @@ This index records the current milestone ladder and intentionally missing featur
 - **Docs:** `docs/MILESTONE_VIRTIO_DISCOVERY_V0_USER_GUIDE.md`, `docs/VIRTIO_DISCOVERY_V0_SPEC.md`, `docs/VIRTIO_DISCOVERY_V0_AUDIT.md`.
 - **Intentionally missing features:** live MMIO probing, magic reads, driver negotiation, queue setup, interrupt setup, virtio-block, virtio-net, heap allocation, paging, filesystem, and userspace.
 - **Next dependency:** HEAP V0 should provide constrained allocator support before later virtio queue work.
+
+
+## HEAP V0
+
+- **Purpose:** add a real but constrained kernel heap allocator before later driver, file, runtime, or userspace work depends on allocation.
+- **Actual capability proven:** the kernel allocates 64 bytes from a fixed static heap region, tracks used/free/count stats, resets used bytes to zero, rejects overflow, preserves used bytes on failed overflow, and exposes these facts through shell-driven tests.
+- **Commands:** `heap`, `heap stats`, `heap alloc-test`, `heap reset-test`, `heap overflow-test`, plus flat aliases `heap-stats`, `heap-alloc-test`, `heap-reset-test`, and `heap-overflow-test`.
+- **Boot marker:** `[ZIGN01D][INFO][HEAP][HEAP000] kernel heap initialized; bump-reset allocator active`.
+- **Smoke test:** `smoke/smoke-heap-v0.sh`.
+- **Docs:** `docs/MILESTONE_HEAP_V0_USER_GUIDE.md`, `docs/HEAP_V0_SPEC.md`, `docs/HEAP_V0_AUDIT.md`.
+- **Intentionally missing features:** paging, virtual memory, userspace memory, user-program malloc, filesystem, process isolation, individual block free, free lists, general-purpose allocator maturity, thread safety, SMP safety, and production safety.
+- **Next dependency:** PMM V0 should add physical page tracking over the known qemu-virt RAM range before larger memory consumers are introduced.

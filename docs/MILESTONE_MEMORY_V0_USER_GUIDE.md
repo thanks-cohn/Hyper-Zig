@@ -60,8 +60,8 @@ memory: model=qemu-virt-fixed
 memory: ram_base=0x80000000
 memory: ram_size_bytes=134217728
 memory: ram_size_mib=128
-memory: heap=not-implemented
-memory: allocator=not-implemented
+memory: heap=implemented-v0
+memory: allocator=kernel-bump-reset-v0
 memory: paging=not-implemented
 memory: virtual_memory=not-implemented
 memory: userspace_memory=not-implemented
@@ -104,8 +104,8 @@ Look for these strings in the serial transcript or smoke output:
 - `memory_model=qemu-virt-fixed`
 - `ram_base=0x80000000`
 - `ram_size_mib=128`
-- `heap=not-implemented`
-- `allocator=not-implemented`
+- `heap=implemented-v0`
+- `allocator=kernel-bump-reset-v0`
 - `paging=not-implemented`
 - `memmap: region=ram`
 - `source=qemu-virt-assumption`
@@ -133,4 +133,4 @@ Look for these strings in the serial transcript or smoke output:
 
 ## Next milestone
 
-The next recommended milestone is **BOARD V0**, which should group fixed QEMU virt assumptions into a named board profile before HEAP V0 adds any allocation power.
+HEAP V0 now adds constrained allocation power after BOARD V0 and VIRTIO DISCOVERY V0. The next recommended milestone is **PMM V0** for physical page tracking.

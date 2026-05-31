@@ -21,5 +21,6 @@ run_step ./smoke/smoke-zbus-v0.sh
 run_step ./smoke/smoke-memory-v0.sh
 run_step ./smoke/smoke-board-v0.sh
 run_step ./smoke/smoke-virtio-discovery-v0.sh
+run_step ./smoke/smoke-heap-v0.sh
 
 echo "PASS ZIGN01D full smoke ladder"
