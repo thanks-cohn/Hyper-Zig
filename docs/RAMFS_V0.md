@@ -24,7 +24,7 @@ RAMFS V0 is intentionally honest about its limits:
 
 - `persistent_storage=not-implemented`
 - `block_device_fs=not-implemented`
-- `vfs=not-implemented`
+- `vfs_layer=implemented-mount-router-v0` (VFS now sits above RAMFS; RAMFS itself remains volatile memory)
 - `journaling=not-implemented`
 - `permissions=not-implemented`
 - `directories=limited-or-not-implemented`

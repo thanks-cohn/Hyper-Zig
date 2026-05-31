@@ -4,7 +4,7 @@ pub const kind = "tarfs-readonly-v0";
 const root = "/";
 const mount_count: usize = 1;
 
-const File = struct {
+pub const File = struct {
     path: []const u8,
     data: []const u8,
     checksum: u32,
@@ -25,7 +25,7 @@ const release_txt =
     \\filesystem=tarfs-readonly-v0
 ;
 
-const files = [_]File{
+pub const files = [_]File{
     .{ .path = "/hello.txt", .data = hello_txt, .checksum = checksum(hello_txt) },
     .{ .path = "/readme.txt", .data = readme_txt, .checksum = checksum(readme_txt) },
     .{ .path = "/apps/hello.app", .data = hello_app, .checksum = checksum(hello_app) },
@@ -59,7 +59,7 @@ pub fn printOverview() void {
     uart.write("fs_root=");
     uart.write(root);
     uart.write("\r\n");
-    uart.write("vfs=not-implemented\r\n");
+    uart.write("vfs_layer=implemented-mount-router-v0\r\n");
     uart.write("block_device_fs=not-implemented\r\n");
     uart.write("persistent_storage=not-implemented\r\n");
     uart.write("executable_apps=not-implemented\r\n");
@@ -170,18 +170,18 @@ fn missing(path: []const u8) void {
     uart.write("\r\n");
 }
 
-fn find(path: []const u8) ?File {
+pub fn find(path: []const u8) ?File {
     for (files) |file| {
         if (equals(path, file.path)) return file;
     }
     return null;
 }
 
-fn fileCount() usize {
+pub fn fileCount() usize {
     return files.len;
 }
 
-fn totalBytes() usize {
+pub fn totalBytes() usize {
     var total: usize = 0;
     for (files) |file| total += file.data.len;
     return total;

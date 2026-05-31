@@ -188,7 +188,7 @@ for marker in \
     'attempted_path=/missing.txt' \
     'fs_write_rejected=yes' \
     'fs_last_error=read-only' \
-    'vfs=not-implemented' \
+    'vfs_layer=implemented-mount-router-v0' \
     'block_device_fs=not-implemented' \
     'persistent_storage=not-implemented' \
     'executable_apps=not-implemented' \
@@ -263,7 +263,6 @@ set -e
 
 for marker in \
     'fs_write=implemented' \
-    'vfs=implemented' \
     'block_device_fs=implemented' \
     'persistent_storage=implemented' \
     'executable_apps=implemented' \

@@ -20,6 +20,7 @@ const board = @import("board/board.zig");
 const virtio_discovery = @import("virtio/discovery.zig");
 const tarfs = @import("fs/tarfs.zig");
 const ramfs = @import("fs/ramfs.zig");
+const vfs = @import("fs/vfs.zig");
 
 pub export fn kmain() noreturn {
     runtime_mem.force_link();
@@ -29,6 +30,7 @@ pub export fn kmain() noreturn {
     virtio_discovery.init();
     tarfs.init();
     ramfs.init();
+    vfs.init();
     memory.init();
     trap.init();
     plic.init();
