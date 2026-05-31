@@ -566,11 +566,11 @@ fn freeIndex() ?usize {
 }
 
 fn fileCount() usize {
-    var count: usize = 0;
+    var used_file_count: usize = 0;
     for (files) |file| {
-        if (file.used) count += 1;
+        if (file.used) used_file_count += 1;
     }
-    return count;
+    return used_file_count;
 }
 
 fn totalBytes() usize {
