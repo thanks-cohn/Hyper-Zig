@@ -1,7 +1,7 @@
 # ZIGN01D
 
 <p align="center">
-  <img src="da_zoid.png" alt="ZIGN01D 1980s banner" width="720">
+  <img src="da_zoid.png" alt="ZIGN01D 1980s banner" width="720"> 
 </p>
 
 A small operating-system laboratory for learning how a machine comes alive. 
