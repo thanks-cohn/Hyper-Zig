@@ -21,6 +21,7 @@ const heap = @import("../memory/heap.zig");
 const tarfs = @import("../fs/tarfs.zig");
 const ramfs = @import("../fs/ramfs.zig");
 const vfs = @import("../fs/vfs.zig");
+const hv = @import("../hypervisor/hv.zig");
 
 const RESET_BASE: usize = 0x0010_0000;
 const FINISHER_PASS: u32 = 0x5555;
@@ -159,6 +160,7 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "status")) return statusCommand();
     if (equals(cmd, "machine") or equals(cmd, "cpu")) return machineCommand();
     if (equals(cmd, "csr")) return csr.printStatus();
+    if (equals(cmd, "hv") or equals(cmd, "hv status") or equals(cmd, "hv-status")) return hv.printStatus();
     if (equals(cmd, "panic-test")) return panicTestCommand();
     if (equals(cmd, "trap-test")) return trapTestCommand();
     if (equals(cmd, "version")) return versionCommand();
@@ -196,7 +198,7 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem pmm pmm stats pmm alloc-test pmm free-test pmm invalid-free-test pmm double-free-test pmm exhaustion-test pmm-stats pmm-alloc-test pmm-free-test pmm-invalid-free-test pmm-double-free-test pmm-exhaustion-test memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots fs fs list fs stat fs cat fs checksum fs write-test ramfs ramfs stats ramfs list ramfs create ramfs write ramfs cat ramfs append ramfs stat ramfs checksum ramfs delete ramfs missing-test ramfs capacity-test ramfs overflow-test vfs vfs mounts vfs route vfs list vfs stat vfs cat vfs checksum vfs create vfs write vfs append vfs delete uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu csr tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status\r\n");
+    uart.write("commands: help mem pmm pmm stats pmm alloc-test pmm free-test pmm invalid-free-test pmm double-free-test pmm exhaustion-test pmm-stats pmm-alloc-test pmm-free-test pmm-invalid-free-test pmm-double-free-test pmm-exhaustion-test memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots fs fs list fs stat fs cat fs checksum fs write-test ramfs ramfs stats ramfs list ramfs create ramfs write ramfs cat ramfs append ramfs stat ramfs checksum ramfs delete ramfs missing-test ramfs capacity-test ramfs overflow-test vfs vfs mounts vfs route vfs list vfs stat vfs cat vfs checksum vfs create vfs write vfs append vfs delete uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu csr tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status hv hv status hv-status\r\n");
 }
 
 fn vfsWriteCommand(args: []const u8) void {
