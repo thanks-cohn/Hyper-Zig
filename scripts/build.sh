@@ -32,9 +32,12 @@ else
 fi
 if [[ -x "$ZIG_BIN" ]] || command -v "$ZIG_BIN" >/dev/null 2>&1; then
   log "zig_path=$ZIG_BIN"
+  if ! ZIG="$ZIG_BIN" "$ROOT/scripts/check-zig-version.sh" 2>&1 | tee -a "$LOG"; then
+    fail "wrong Zig version; ZIGN01D targets Zig 0.14.x"
+  fi
   log "zig_version=$($ZIG_BIN version)"
 else
-  fail "zig executable not found; tried PATH zig and /opt/zig/zig"
+  fail "zig executable not found; tried PATH zig and /opt/zig/zig; ZIGN01D targets Zig 0.14.x"
 fi
 log "host_uname=$(uname -a)"
 log "build_command=${BUILD_CMD[*]}"

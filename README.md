@@ -20,6 +20,13 @@ That matters here. A teaching kernel should not feel like a sealed box. It shoul
 
 Zig was chosen because it can make memory, layout, build steps, and bare-metal boundaries easier to inspect while still feeling modern enough to enjoy.
 
+
+## Zig version target
+
+ZIGN01D currently targets **Zig 0.14.x**. Zig 0.16 is not the project target. A successful build with Zig 0.16 must not be treated as project compatibility proof unless the same path is also validated with Zig 0.14.x.
+
+Any Zig 0.16-only code, build API, or generated command must be clearly labeled and backported for Zig 0.14.x instead of being accepted silently. Use `./scripts/check-zig-version.sh` or `ZIG=/path/to/zig-0.14.x ./scripts/build.sh` before treating build or smoke results as valid.
+
 ## Why RISC-V?
 
 RISC-V was chosen because it is open, clean, and teachable.

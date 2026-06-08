@@ -43,21 +43,15 @@ check_file() {
 }
 
 check_command git
-check_executable /opt/zig/zig
-
-if [[ -x /opt/zig/zig ]]; then
-  zig_version="$(/opt/zig/zig version 2>/dev/null || true)"
-  if [[ "$zig_version" == "0.14.1" ]]; then
-    pass "/opt/zig/zig version is 0.14.1"
-  else
-    fail "/opt/zig/zig version is '$zig_version', expected 0.14.1"
-  fi
+if ./scripts/check-zig-version.sh >/tmp/zign01d-zig-version-check.log 2>&1; then
+  pass "Zig version is accepted for target 0.14.x"
 else
-  fail "/opt/zig/zig version could not be checked"
+  fail "$(cat /tmp/zign01d-zig-version-check.log)"
 fi
 
 check_command qemu-system-riscv64
 check_file scripts/build.sh
+check_file scripts/check-zig-version.sh
 check_file smoke/smoke-v0.sh
 check_file smoke/smoke-v1.sh
 check_file smoke/smoke-v2.sh
