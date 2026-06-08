@@ -187,6 +187,23 @@ Health check and smoke commands:
 ./smoke/smoke-stability.sh
 ```
 
+## Current Verified Foundation
+
+The current kernel includes the V5 CSR V0 diagnostic milestone. Run:
+
+```sh
+./smoke/smoke-csr-v0.sh
+```
+
+At the shell, `csr` prints live supervisor CSR state including hart ID, `stvec`,
+`scause`, and `satp`. Machine-mode-only CSRs are deliberately not read because
+ZIGN01D currently runs in supervisor mode and does not yet have a recoverable
+illegal-instruction trap path. See `docs/V5_CSR_V0_AUDIT.md`.
+
+Current limits remain explicit: PMM allocation, heap allocation, virtual memory,
+timer interrupts, PLIC operation, executable tasks, userspace entry, syscall
+dispatch, filesystems, and virtio drivers are not implemented.
+
 Latest build, QEMU, smoke, and transcript evidence is stored under `logs/latest/`.
 
 ## Repository
