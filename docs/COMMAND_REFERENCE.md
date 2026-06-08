@@ -2,6 +2,13 @@
 
 This reference documents the current user-facing shell commands by inspecting `kernel/console/shell.zig`. Commands report the current educational kernel state; not-implemented output is intentional proof of a boundary.
 
+
+## Zig toolchain target
+
+ZIGN01D currently targets **Zig 0.14.x**. Zig 0.16 is not the target for build, smoke, or command-reference validation. Any Zig 0.16-only source, build API, script, or generated command must be labeled and backported to Zig 0.14.x instead of accepted silently.
+
+Run `./scripts/check-zig-version.sh` before using shell-command transcripts as compatibility evidence.
+
 | Command | Milestone where it appeared if known | What it does | Example usage | Expected honest output | What it does not imply |
 | --- | --- | --- | --- | --- | --- |
 | `help` | V1 diagnostic foundation | Lists shell commands. | `help` | `commands: help mem uptime...` | Does not prove every listed subsystem is implemented. |

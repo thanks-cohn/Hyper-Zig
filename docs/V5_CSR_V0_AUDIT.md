@@ -6,6 +6,11 @@ V5 CSR V0 adds a real supervisor-mode CSR introspection layer and a `csr` shell
 command. The values are read from the running QEMU CPU when the command executes;
 they are not canned constants or inferred metrics.
 
+
+## Zig version compatibility policy
+
+ZIGN01D currently targets **Zig 0.14.x**. Zig 0.16 is not the target for this CSR milestone or its smoke proof. Any Zig 0.16-only CSR code, inline assembly assumption, build API, or generated smoke command must be labeled and backported to Zig 0.14.x instead of accepted silently.
+
 ## Implementation evidence
 
 - `kernel/arch/riscv64/csr.zig::hartId` returns the firmware-provided hart ID
