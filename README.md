@@ -55,6 +55,13 @@ PMM V0 adds physical page accounting over the known QEMU `virt` RAM range. The k
 
 This is not production memory management yet. It does not add paging, virtual memory, userspace memory, process isolation, swap, real phone hardware, real internet, real SMS, or real modem support.
 
+
+## Hypervisor branch
+
+The `hypervisor-v0` branch explores future guest execution and Linux guest support. Current status: HV0 status scaffold only. Linux guest support: not supported yet.
+
+HV0 adds `hv status`/`hv` reporting and documentation only; it does not execute guests, provide VM/vCPU support, or boot Linux.
+
 ## Try it
 
 Build the kernel:

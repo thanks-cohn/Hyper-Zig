@@ -58,6 +58,8 @@ Run `./scripts/check-zig-version.sh` before using shell-command transcripts as c
 | `zbus status` / `zbus-status` | ZBUS scaffold present in current repo | Alias for ZBUS status. | `zbus status` | Same status fields as `zbus`. | Does not imply provider discovery. |
 | `zbus ping` / `zbus-ping` | ZBUS scaffold present in current repo | Reports ping not implemented because no transport is connected. | `zbus ping` | `zbus: ping=not-implemented`, `safety=no host request sent`. | Does not contact host services. |
 | `zbus providers` / `zbus-providers` | ZBUS scaffold present in current repo | Lists provider scaffold states. | `zbus providers` | Providers `none`; net/sms/modem/files/time not implemented. | Does not imply provider backends. |
+| `hv` | HV0 Hypervisor Status Scaffold | Reports hypervisor research scaffold status. Does not imply guest execution or Linux support. | `hv` | `hv: status=research-scaffold`, guest features marked `not-supported-yet` or `MISSING`. | Does not imply VM support, vCPU support, guest execution, second-stage translation, SBI emulation, virtual console, or Linux support. |
+| `hv status` / `hv-status` | HV0 Hypervisor Status Scaffold | Reports hypervisor research scaffold status. Does not imply guest execution or Linux support. | `hv status` | Same output as `hv`. | Does not imply guest execution or Linux support. |
 
 ## PMM V0 commands
 

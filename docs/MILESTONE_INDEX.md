@@ -133,3 +133,14 @@ This index records the current milestone ladder and intentionally missing featur
 - **Docs:** `docs/PMM_V0.md`.
 - **Intentionally missing features:** virtual memory, paging, userspace memory, swap, NUMA, production PMM policy, DMA zones, SMP safety.
 - **Next dependency:** Later paging, userspace, filesystems, fork, and program loading should build on PMM page ownership proof rather than hidden assumptions.
+
+## HV0 Hypervisor Status Scaffold
+
+- **Purpose:** Create the first honest visible boundary between the current kernel and the future hypervisor track.
+- **Status:** IMPLEMENTED only for status reporting. Guest execution and Linux are MISSING.
+- **Key commands added:** `hv`, `hv status`, plus flat alias `hv-status`.
+- **Smoke test file:** `smoke/smoke-hv-status-v0.sh`.
+- **Docs:** `docs/hypervisor/HYPERVISOR_BRANCH_CHARTER.md`, `docs/hypervisor/LINUX_GUEST_FAST_PATH.md`, `docs/hypervisor/HV_MILESTONE_LADDER.md`, `docs/hypervisor/RUST_ON_ZIGN01D_PLAN.md`, `docs/hypervisor/HV0_STATUS_AUDIT.md`.
+- **Intentionally missing features:** Linux guest support, guest execution, VM object, vCPU object, guest memory, guest entry, guest trap return, second-stage translation, virtual timer, virtual console, SBI layer, and virtio for Linux.
+- **Next dependency:** HV1: hypervisor capability detection and VM/vCPU data model design.
+
