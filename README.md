@@ -95,7 +95,7 @@ Proven when validation passes:
 | HV3 | Done | vCPU lifecycle states: created, initialized, runnable, halted, reset. |
 | HV4 | Done | PMM-backed guest-memory ownership object for VM 0. |
 | HV5 | Done | Guest physical address metadata lookup for configured guest pages. |
-| HV6 | Done | Tiny `tiny-flat-v0` guest image load and readback verification. |
+| HV6 | NEXT | Tiny `tiny-flat-v0` guest image load and readback verification. |
 | HV7 | Next | Guest entry research. |
 
 ## What Hyper-Zig can do today
@@ -109,7 +109,6 @@ Hyper-Zig can:
 - Move a boot vCPU through lifecycle states.
 - Allocate, free, reset, and reject invalid guest-memory operations.
 - Map simple guest physical address metadata for two guest pages.
-- Load a tiny static guest payload into guest memory and verify it by reading the bytes back.
 - Produce logs and transcripts that prove the above behavior.
 
 ## What Hyper-Zig cannot do yet
@@ -141,6 +140,7 @@ The missing pieces are large and explicit:
 7. **Virtual devices**: timer, console, block, network, and interrupt paths that Linux can use.
 8. **Repeatable Linux smoke test**: one command that boots Linux far enough to prove the claim.
 
+
 Until those are implemented and smoke-proven, this project should be described as **hypervisor groundwork**, not a Linux host.
 
 ## Project goal
@@ -153,7 +153,7 @@ The goal is to build a readable, verifiable hypervisor path in Zig:
 4. State exactly what works and what does not.
 5. Move to the next milestone.
 
-The next target is **HV7 guest entry research**.
+The next targets are **H6 and HV7 guest entry research**.
 
 ## Useful files
 
