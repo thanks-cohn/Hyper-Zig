@@ -39,7 +39,7 @@ pub fn start() noreturn {
     uart.write("ZIGN01D V1 interactive diagnostic shell\r\n");
     uart.write("ZIGN01D V3 timer and trap recovery readiness\r\n");
     uart.write("ZIGN01D V4 guarded MMIO probe foundation\r\n");
-    uart.write("Type 'help' for commands. Placeholders report missing drivers honestly.\r\n");
+    uart.write("Type 'help' for commands. Missing drivers report honestly.\r\n");
 
     var line: [128]u8 = undefined;
     while (true) {
@@ -176,6 +176,11 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "hv address-space lookup-page")) return hv.lookupPageAddressSpace();
     if (equals(cmd, "hv address-space bounds-test")) return hv.boundsTestAddressSpace();
     if (equals(cmd, "hv address-space alignment-test")) return hv.alignmentTestAddressSpace();
+    if (equals(cmd, "hv guest-image") or equals(cmd, "hv-image")) return hv.printGuestImage();
+    if (equals(cmd, "hv guest-image load-tiny")) return hv.loadTinyGuestImage();
+    if (equals(cmd, "hv guest-image verify")) return hv.verifyGuestImage();
+    if (equals(cmd, "hv guest-image reset")) return hv.resetGuestImage();
+    if (equals(cmd, "hv guest-image bounds-test")) return hv.boundsTestGuestImage();
     if (equals(cmd, "hv vm") or equals(cmd, "hv-vm")) return hv.printVm();
     if (equals(cmd, "hv vcpu") or equals(cmd, "hv-vcpu")) return hv.printVcpu();
     if (equals(cmd, "hv vcpu lifecycle") or equals(cmd, "hv-vcpu-lifecycle")) return hv.printVcpuLifecycle();
@@ -222,7 +227,7 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem pmm pmm stats pmm alloc-test pmm free-test pmm invalid-free-test pmm double-free-test pmm exhaustion-test pmm-stats pmm-alloc-test pmm-free-test pmm-invalid-free-test pmm-double-free-test pmm-exhaustion-test memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots fs fs list fs stat fs cat fs checksum fs write-test ramfs ramfs stats ramfs list ramfs create ramfs write ramfs cat ramfs append ramfs stat ramfs checksum ramfs delete ramfs missing-test ramfs capacity-test ramfs overflow-test vfs vfs mounts vfs route vfs list vfs stat vfs cat vfs checksum vfs create vfs write vfs append vfs delete uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu csr tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status hv hv status hv-status hv capability hv-capability hv guest-memory hv guest memory hv-guest-memory hv guest-memory alloc hv guest-memory free hv guest-memory reset hv guest-memory bounds-test hv guest-memory double-free-test hv guest-memory overflow-test hv vm hv-vm hv vcpu hv-vcpu hv vcpu lifecycle hv-vcpu-lifecycle hv vcpu init hv-vcpu-init hv vcpu prepare hv-vcpu-prepare hv vcpu halt hv-vcpu-halt hv vcpu reset hv-vcpu-reset hv inspect hv-inspect hv-objects\r\n");
+    uart.write("commands: help mem pmm pmm stats pmm alloc-test pmm free-test pmm invalid-free-test pmm double-free-test pmm exhaustion-test pmm-stats pmm-alloc-test pmm-free-test pmm-invalid-free-test pmm-double-free-test pmm-exhaustion-test memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots fs fs list fs stat fs cat fs checksum fs write-test ramfs ramfs stats ramfs list ramfs create ramfs write ramfs cat ramfs append ramfs stat ramfs checksum ramfs delete ramfs missing-test ramfs capacity-test ramfs overflow-test vfs vfs mounts vfs route vfs list vfs stat vfs cat vfs checksum vfs create vfs write vfs append vfs delete uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu csr tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status hv hv status hv-status hv capability hv-capability hv guest-memory hv guest memory hv-guest-memory hv guest-memory alloc hv guest-memory free hv guest-memory reset hv guest-memory bounds-test hv guest-memory double-free-test hv guest-memory overflow-test hv vm hv-vm hv vcpu hv-vcpu hv vcpu lifecycle hv-vcpu-lifecycle hv vcpu init hv-vcpu-init hv vcpu prepare hv-vcpu-prepare hv vcpu halt hv-vcpu-halt hv vcpu reset hv-vcpu-reset hv guest-image hv-image hv guest-image load-tiny hv guest-image verify hv guest-image reset hv guest-image bounds-test hv inspect hv-inspect hv-objects\r\n");
 }
 
 fn vfsWriteCommand(args: []const u8) void {

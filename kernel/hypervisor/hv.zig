@@ -4,12 +4,14 @@ const vm = @import("vm.zig");
 const vcpu = @import("vcpu.zig");
 const guest_memory = @import("guest_memory.zig");
 const guest_address_space = @import("guest_address_space.zig");
+const guest_image = @import("guest_image.zig");
 
 pub fn init() void {
     vm.init();
     vcpu.init(vm.object().id);
     guest_memory.init(vm.object().id);
     guest_address_space.init(vm.object().id);
+    guest_image.init(vm.object().id);
 }
 
 pub fn printStatus() void {
@@ -25,13 +27,15 @@ pub fn printStatus() void {
     vcpu.printImplementedMarker();
     guest_memory.printState();
     guest_address_space.printState();
+    guest_image.printState();
+    uart.write("hv: guest_entry=MISSING\r\n");
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
     uart.write("hv: virtual_timer=MISSING\r\n");
     uart.write("hv: virtual_console=MISSING\r\n");
     uart.write("hv: sbi_layer=MISSING\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV6 guest loader research\r\n");
+    uart.write("hv: next=HV7 guest entry research\r\n");
 }
 
 pub fn printCapability() void {
@@ -82,6 +86,7 @@ pub fn printInspect() void {
     vcpu.printObject();
     guest_memory.printState();
     guest_address_space.printState();
+    guest_image.printState();
 }
 
 pub fn printObjects() void {
@@ -144,6 +149,26 @@ pub fn boundsTestAddressSpace() void {
 
 pub fn alignmentTestAddressSpace() void {
     guest_address_space.printAlignmentTestCommand();
+}
+
+pub fn printGuestImage() void {
+    guest_image.printState();
+}
+
+pub fn loadTinyGuestImage() void {
+    guest_image.printLoadTinyCommand();
+}
+
+pub fn verifyGuestImage() void {
+    guest_image.printVerifyCommand();
+}
+
+pub fn resetGuestImage() void {
+    guest_image.printResetCommand();
+}
+
+pub fn boundsTestGuestImage() void {
+    guest_image.printBoundsTestCommand();
 }
 
 fn printNonClaims() void {
