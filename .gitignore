@@ -5,3 +5,5 @@ logs/latest/
 
 # Generated smoke transcripts
 smoke/transcripts/latest-*.txt
+
+logs/validation/

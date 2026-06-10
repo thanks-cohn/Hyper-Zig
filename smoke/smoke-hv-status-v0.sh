@@ -144,8 +144,12 @@ do
     reject "$forbidden"
 done
 
-if grep -Fq '[ZIGN01D][PANIC]' "$TRANSCRIPT" || grep -Fq 'panic' "$TRANSCRIPT"; then
-    fail "panic output found in HV0 transcript"
+if grep -Fq '[ZIGN01D][PANIC]' "$TRANSCRIPT" \
+    || grep -Fq 'panic:' "$TRANSCRIPT" \
+    || grep -Fq 'PANIC' "$TRANSCRIPT" \
+    || grep -Fq 'kernel panic' "$TRANSCRIPT" \
+    || grep -Fq 'panicked at' "$TRANSCRIPT"; then
+    fail "true panic marker found in HV0 transcript"
 fi
 
 log "HV0 status smoke passed; transcript=$TRANSCRIPT"

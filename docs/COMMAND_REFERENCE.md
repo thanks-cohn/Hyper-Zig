@@ -1,7 +1,39 @@
-# ZIGN01D Command Reference
+# Hyper-Zig Command Reference
 
 This reference documents the current user-facing shell commands by inspecting `kernel/console/shell.zig`. Commands report the current educational kernel state; not-implemented output is intentional proof of a boundary.
 
+
+
+## Hyper-Zig validation commands
+
+Hyper-Zig is the hypervisor-first repository; this repository is the active target for hypervisor validation. Use **Zig 0.14.x only** when producing compatibility, build, or smoke evidence. Do not treat Zig 0.15, Zig 0.16, or newer builds as project proof.
+
+Canonical validator:
+
+```sh
+./scripts/validate-hyperzig.sh
+```
+
+Build-system validation entry point:
+
+```sh
+zig build validate-hyperzig
+```
+
+Normal build path, which must continue to build without running the full validator:
+
+```sh
+zig build
+```
+
+The validator runs the Zig version check, the build script, required HV0/HV1 smoke tests, discovered smoke tests under `smoke/`, and ends with a Minimus-Log summary. To inspect the project state from the bottom of the latest validation output, run:
+
+```sh
+tail -n 200 logs/latest/validate-hyperzig.log
+tail -n 500 logs/latest/validate-hyperzig.log
+```
+
+The summary must report branch, commit, Zig path/version, build status, smoke statuses, transcript paths, log paths, completed and missing milestones, blockers, next milestone, readiness, and the PASS/FAIL/BLOCKED reason. Hyper-Zig does not claim Linux guest support or guest execution yet.
 
 ## Zig toolchain target
 

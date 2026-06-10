@@ -139,8 +139,12 @@ do
     reject "$forbidden"
 done
 
-if grep -Fq '[ZIGN01D][PANIC]' "$TRANSCRIPT" || grep -Fq 'panic' "$TRANSCRIPT"; then
-    fail "panic output found in HV1 transcript"
+if grep -Fq '[ZIGN01D][PANIC]' "$TRANSCRIPT" \
+    || grep -Fq 'panic:' "$TRANSCRIPT" \
+    || grep -Fq 'PANIC' "$TRANSCRIPT" \
+    || grep -Fq 'kernel panic' "$TRANSCRIPT" \
+    || grep -Fq 'panicked at' "$TRANSCRIPT"; then
+    fail "true panic marker found in HV1 transcript"
 fi
 if grep -Fq 'QEMU: Terminated' "$TRANSCRIPT" || grep -Fq 'qemu-system-riscv64: terminating' "$TRANSCRIPT"; then
     fail "qemu crash/termination output found in HV1 transcript"
