@@ -36,17 +36,17 @@ Repository State:
 * HV1 Capability Reporting: PASS
 * HV2 VM/vCPU Object Model: PASS
 * HV3 vCPU Lifecycle: PASS when validation passes
+* HV4 Guest Memory Object: PASS when validation passes
 
 Not Yet Implemented:
 
-* Guest Memory Management
 * Guest Execution
 * Linux Guests
 * Hardware Virtualization Support
 
 Current Development Target:
 
-HV4 Guest Memory Object
+HV5 Guest Execution Research
 
 ---
 
@@ -93,7 +93,7 @@ Implements typed boot vCPU lifecycle state management: created, initialized, run
 HV4
 Guest Memory Object
 
-Will define and validate guest memory ownership and mapping structures.
+Defines and validates a PMM-backed guest-memory ownership object for VM 0. This is metadata and ownership only: no guest payload, no guest entry, and no second-stage translation.
 
 HV5
 Guest Execution
@@ -116,7 +116,7 @@ Future milestones including isolation, device virtualization, and higher-level g
 
 Hyper-Zig is not yet a complete hypervisor.
 
-Current scope is intentionally narrow: Hyper-Zig can report HV0 status, HV1 capability information, HV2 VM/vCPU objects, and HV3 vCPU lifecycle state if validation passes. Guest memory is still missing. Guest execution is still missing. Linux guests are still missing. The next milestone is HV4 guest memory object.
+Current scope is intentionally narrow: Hyper-Zig can report HV0 status, HV1 capability information, HV2 VM/vCPU objects, HV3 vCPU lifecycle state, and HV4 guest-memory ownership metadata if validation passes. Guest memory exists only as a PMM-backed metadata/ownership object. Guest execution is still missing. Linux guests are still missing. The next milestone is HV5 guest execution research.
 
 
 What is proven:
@@ -127,10 +127,10 @@ What is proven:
 * VM object creation
 * vCPU object creation
 * vCPU lifecycle state transitions when HV3 validation passes
+* Guest-memory ownership allocation/free/reset and rejection behavior when HV4 validation passes
 
 What is not yet proven:
 
-* Guest memory
 * Guest execution
 * Linux boot
 * Hardware-assisted virtualization
@@ -157,13 +157,16 @@ zig build
 Validate:
 
 ```bash
-zig build validate-hyperzig
-```
-
-Run validation script:
-
-```bash
+export ZIG=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1/zig
+./scripts/check-zig-version.sh
+zig build
+./smoke/smoke-hv-status-v0.sh
+./smoke/smoke-hv-capability-v0.sh
+./smoke/smoke-hv-vm-vcpu-v0.sh
+./smoke/smoke-hv-vcpu-lifecycle-v0.sh
+./smoke/smoke-hv-guest-memory-v0.sh
 ./scripts/validate-hyperzig.sh
+zig build validate-hyperzig
 ```
 
 If validation passes, the repository is considered healthy.
@@ -181,12 +184,14 @@ target=zig-0.14.x
 hv0=PASS
 hv1=PASS
 hv2=PASS
+hv3=PASS
+hv4=PASS
 
-guest_memory=not-supported-yet
+guest_memory=implemented
 guest_execution=not-supported-yet
 linux_guest=not-supported-yet
 
-next=HV4
+next=HV5
 ```
 
 ---

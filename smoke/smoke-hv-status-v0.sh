@@ -121,7 +121,7 @@ for marker in \
     'hv: guest_execution=not-supported-yet' \
     'hv: vm_object=implemented' \
     'hv: vcpu_object=implemented' \
-    'hv: guest_memory=MISSING' \
+    'hv: guest_memory=implemented' \
     'hv: guest_entry=MISSING' \
     'hv: guest_trap_return=MISSING' \
     'hv: second_stage_translation=MISSING' \

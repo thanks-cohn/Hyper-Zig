@@ -2,14 +2,15 @@
 
 Hyper-Zig is the hypervisor-first line of the ZIGN01D RISC-V teaching kernel. It is a proof-driven Zig 0.14.x repository for growing from an observable kernel toward real hypervisor subsystems without pretending that future work already exists.
 
-Current proven hypervisor milestones are **HV0**, **HV1**, **HV2**, and **HV3** when validation passes:
+Current proven hypervisor milestones are **HV0**, **HV1**, **HV2**, **HV3**, and **HV4** when validation passes:
 
 - **HV0** proves the honest hypervisor status surface.
 - **HV1** proves safe capability reporting and keeps the RISC-V H-extension status `unknown` because there is no smoke-proven safe detection yet.
 - **HV2** proves initialized VM/vCPU data-model objects.
 - **HV3** proves boot vCPU lifecycle state transitions without guest execution.
+- **HV4** proves a real PMM-backed guest-memory ownership object for VM 0 without guest execution.
 
-The next milestone is **HV4: guest memory object**. HV4 should add real guest-memory ownership metadata only after HV3 lifecycle proof. HV4 must not claim guest execution, Linux guest support, guest entry, trap return, or second-stage translation.
+The next milestone is **HV5: guest execution research**. HV5 must remain separate from HV4 and must not claim Linux guest support until a later smoke-proven Linux milestone exists.
 
 ## 1. Clone and select Zig 0.14.x
 
@@ -76,6 +77,7 @@ Use transcript evidence as ground truth. The current validated facts include the
 - HV1 capability smoke passes.
 - HV2 VM/vCPU smoke passes.
 - HV3 vCPU lifecycle smoke passes.
+- HV4 guest-memory smoke passes.
 - Minimus-Log validation passes.
 
 Commands:
@@ -85,6 +87,7 @@ cat smoke/transcripts/latest-hv-status-v0.txt
 cat smoke/transcripts/latest-hv-capability-v0.txt
 cat smoke/transcripts/latest-hv-vm-vcpu-v0.txt
 cat smoke/transcripts/latest-hv-vcpu-lifecycle-v0.txt
+cat smoke/transcripts/latest-hv-guest-memory-v0.txt
 ```
 
 Do not treat OpenSBI presence as H-extension proof. Do not treat S-mode boot as hypervisor-mode proof.
@@ -93,31 +96,33 @@ Do not treat OpenSBI presence as H-extension proof. Do not treat S-mode boot as 
 
 Current hypervisor code is intentionally small:
 
-- `kernel/hypervisor/hv.zig` prints the HV0 status surface, delegates HV1 capability reporting, and exposes HV2/HV3 object and lifecycle commands.
+- `kernel/hypervisor/hv.zig` prints the HV0 status surface, delegates HV1 capability reporting, and exposes HV2/HV3/HV4 object, lifecycle, and guest-memory commands.
+- `kernel/hypervisor/guest_memory.zig` implements the HV4 PMM-backed guest-memory ownership object and metadata-only rejection tests.
 - `kernel/hypervisor/capability.zig` implements the HV1 safe capability status data and prints the current `unknown` H-extension result.
-- `kernel/console/shell.zig` wires shell commands such as `hv`, `hv status`, `hv-status`, `hv capability`, and `hv-capability`.
+- `kernel/console/shell.zig` wires shell commands such as `hv`, `hv status`, `hv-status`, `hv capability`, `hv-capability`, and the `hv guest-memory` family.
 - `smoke/smoke-hv-status-v0.sh` proves the HV0 status command transcript.
 - `smoke/smoke-hv-capability-v0.sh` proves the HV1 capability command transcript.
-- `docs/hypervisor/HV2_IMPLEMENTATION_MAP.md` is the implementation map for the next real hypervisor subsystem.
+- `smoke/smoke-hv-guest-memory-v0.sh` proves the HV4 guest-memory command transcript.
+- `docs/hypervisor/HV2_IMPLEMENTATION_MAP.md` remains historical design context for the VM/vCPU model.
 
-## 6. What HV0 through HV3 prove
+## 6. What HV0 through HV4 prove
 
 HV0 proves that the repository can boot the kernel under QEMU and report an honest hypervisor status boundary. Its markers keep Linux guest support, guest execution, VM objects, vCPU objects, guest memory, guest entry, trap return, second-stage translation, virtual devices, and SBI mediation missing or not supported.
 
 HV1 proves a safe capability-reporting surface. It reports `capability_detection=implemented` and `h_extension=unknown reason=no-safe-detection-yet`. That is deliberate: the current kernel does not have a smoke-proven safe H-extension detection path.
 
-HV2 proves initialized VM/vCPU objects. HV3 proves typed vCPU lifecycle transitions: created, initialized, runnable, halted, and reset back to created. Neither milestone proves guest memory, guest execution, Linux support, or H-extension support.
+HV2 proves initialized VM/vCPU objects. HV3 proves typed vCPU lifecycle transitions: created, initialized, runnable, halted, and reset back to created. HV4 proves a PMM-backed guest-memory ownership object with metadata-only bounds, double-free, and overflow rejection. None of these milestones proves guest execution, Linux support, or H-extension support.
 
-## 7. What HV4 should implement next
+## 7. What HV4 implements
 
-HV4 should implement a real guest memory object and inspection surface after the HV3 lifecycle smoke passes:
+HV4 implements a real PMM-backed guest memory object and inspection surface after the HV3 lifecycle proof:
 
-- create guest-memory metadata code without claiming execution
-- add shell commands for guest-memory inspection
-- add an HV4 guest-memory smoke test
-- document that guest execution and Linux support remain missing
+- `GuestMemory` metadata for VM 0 ownership, state, base, page count, byte size, backing, counters, and last error
+- shell commands for allocation, free, reset, bounds rejection, double-free rejection, and overflow rejection
+- `smoke/smoke-hv-guest-memory-v0.sh` to prove state movement and rejection behavior through QEMU shell command blocks
+- explicit non-claims that guest execution, Linux support, guest entry, and second-stage translation remain missing
 
-Real HV4 code should mean deterministic guest-memory ownership metadata that a smoke test can inspect. It must not mean guest execution, Linux support, guest entry, or second-stage translation.
+HV4 guest memory is an ownership object only. It must not be treated as guest execution, Linux support, guest entry, or second-stage translation.
 
 ## 8. How Minimus-Log works
 
@@ -131,6 +136,7 @@ Important paths:
 - `smoke/transcripts/latest-hv-capability-v0.txt` is the current HV1 transcript.
 - `smoke/transcripts/latest-hv-vm-vcpu-v0.txt` is the current HV2 transcript.
 - `smoke/transcripts/latest-hv-vcpu-lifecycle-v0.txt` is the current HV3 transcript.
+- `smoke/transcripts/latest-hv-guest-memory-v0.txt` is the current HV4 transcript.
 
 ## 9. How not to lie about progress
 
@@ -146,6 +152,6 @@ Forbidden shortcuts:
 - Do not replace `guest_execution=not-supported-yet` until a real guest-entry milestone exists and is smoke-proven.
 - Do not mark VM/vCPU objects implemented until real initialized data-model objects are inspected by smoke.
 - Do not mark vCPU lifecycle implemented until transition behavior and failed-transition counters are smoke-proven.
-- Do not claim guest memory before HV4 creates a real guest memory object.
+- Do not treat HV4 guest memory metadata as executable guest memory.
 
-The honest next edit for hypervisor developers is the HV4 guest memory object, after reviewing the current HV3 lifecycle implementation and validation transcript.
+The honest next edit for hypervisor developers is HV5 guest execution research, after reviewing the HV4 guest-memory implementation and validation transcript.

@@ -8,6 +8,7 @@ pub const State = enum {
 
 pub const GuestMemory = enum {
     not_configured,
+    configured,
 };
 
 pub const Vm = struct {
@@ -42,7 +43,13 @@ pub fn stateName(state: State) []const u8 {
 pub fn guestMemoryName(memory: GuestMemory) []const u8 {
     return switch (memory) {
         .not_configured => "not-configured",
+        .configured => "configured",
     };
+}
+
+pub fn setGuestMemoryConfigured(configured: bool) void {
+    if (!initialized) init();
+    boot_vm.guest_memory = if (configured) .configured else .not_configured;
 }
 
 pub fn printImplementedMarker() void {

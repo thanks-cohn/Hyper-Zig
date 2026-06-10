@@ -175,3 +175,14 @@ This index records the current milestone ladder and intentionally missing featur
 - **Transcript:** `smoke/transcripts/latest-hv-vcpu-lifecycle-v0.txt`.
 - **Intentionally missing features:** guest memory object, guest execution, Linux guest support, H-extension presence proof, guest entry, guest trap return, second-stage translation, virtual console, SBI layer, and virtio for Linux.
 - **Next dependency:** HV4 guest memory object.
+
+## HV4 Guest Memory Object
+
+- **Purpose:** Add real guest-memory ownership and inspection metadata for VM 0 without attempting guest execution.
+- **Actual capability proven:** `GuestMemory` owns PMM pages while configured, tracks owner VM id, state, base, page count, byte size, allocation/free/reset/rejection counters, rejects out-of-bounds metadata checks, rejects double-free, and rejects oversized requests.
+- **Backing:** `pmm-bitmap-v0`.
+- **Key commands added:** `hv guest-memory`, `hv guest memory`, `hv-guest-memory`, `hv guest-memory alloc`, `hv guest-memory free`, `hv guest-memory reset`, `hv guest-memory bounds-test`, `hv guest-memory double-free-test`, `hv guest-memory overflow-test`.
+- **Smoke test file:** `smoke/smoke-hv-guest-memory-v0.sh`.
+- **Transcript:** `smoke/transcripts/latest-hv-guest-memory-v0.txt`.
+- **Intentionally missing features:** guest execution, Linux guest support, H-extension presence proof, guest entry, guest trap return, second-stage translation, guest payload loading, virtual console, SBI layer, and virtio for Linux.
+- **Next dependency:** HV5 guest execution research, still requiring a separate smoke-proven guest-entry milestone before any execution claim.

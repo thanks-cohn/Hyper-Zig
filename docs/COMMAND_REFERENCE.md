@@ -214,4 +214,18 @@ HV3 adds real typed lifecycle state for the boot vCPU only. These commands mutat
   hv: guest_execution=not-supported-yet
   hv: linux_guest=not-supported-yet
   ```
-- **What it does not imply:** reset does not reset or create guest memory because guest memory is still missing.
+- **What it does not imply:** reset does not enter a guest or execute code; HV4 guest memory is managed separately by `hv guest-memory reset`.
+
+## HV4 Guest Memory Object commands
+
+HV4 introduces a real `GuestMemory` object for VM 0. The backing is `pmm-bitmap-v0`: pages are acquired from and returned to the existing physical page manager. The object is ownership and inspection metadata only. It is not mapped for guest execution, does not install second-stage translation, does not contain a guest payload, and does not boot Linux.
+
+| Command | Milestone | What it does | Expected proof markers | Non-claims |
+| --- | --- | --- | --- | --- |
+| `hv guest-memory` / `hv guest memory` / `hv-guest-memory` | HV4 Guest Memory Object | Prints the guest-memory object state and counters. | `hv: guest_memory=implemented`, `hv: guest_memory.owner_vm_id=0`, `hv: guest_memory.state=not-configured` or `configured`, `hv: guest_memory.backing=pmm-bitmap-v0`, `hv: guest_memory.last_error=...` | No guest execution, Linux support, guest entry, or second-stage translation. |
+| `hv guest-memory alloc` | HV4 Guest Memory Object | Configures VM 0 with a small bounded PMM-backed reservation. | `hv: guest_memory.alloc_result=ok`, `hv: guest_memory.state=configured`, `hv: guest_memory.page_count=2`, `hv: guest_memory.size_bytes=8192` | Does not load a payload or enter a guest. |
+| `hv guest-memory free` | HV4 Guest Memory Object | Returns configured guest pages to the PMM and clears metadata. | `hv: guest_memory.free_result=ok`, `hv: guest_memory.state=not-configured`, incremented `free_count` | Does not destroy a running guest because no guest execution exists. |
+| `hv guest-memory reset` | HV4 Guest Memory Object | Clears guest-memory metadata and resettable counters after freeing any configured pages. | `hv: guest_memory.reset_result=ok`, `hv: guest_memory.reset_count=...` | Does not reset a guest CPU. |
+| `hv guest-memory bounds-test` | HV4 Guest Memory Object | Performs a metadata-only out-of-bounds check and proves it is rejected. | `hv: guest_memory.bounds_test=rejected`, `hv: guest_memory.last_error=out-of-bounds` | Does not read/write a guest payload. |
+| `hv guest-memory double-free-test` | HV4 Guest Memory Object | Frees once, attempts a second free, and proves rejection. | `hv: guest_memory.double_free_test=rejected`, incremented `double_free_count` or `invalid_free_count` | Does not rely on static text. |
+| `hv guest-memory overflow-test` | HV4 Guest Memory Object | Requests more pages than the bounded HV4 object allows and proves rejection. | `hv: guest_memory.overflow_test=rejected`, incremented `overflow_reject_count` | Does not create fake counters. |
