@@ -244,3 +244,16 @@ HV4 introduces a real `GuestMemory` object for VM 0. The backing is `pmm-bitmap-
 | `hv address-space reset` | Clears HV5 metadata without claiming guest execution or guest unmapping. |
 
 HV5 output includes `hv: address_space=implemented`, owner/state/region/page/size/base/counter fields, `hv: address_space.lookup_result=ok` for successful metadata lookup, and `hv: address_space.lookup_result=rejected` for bounds or alignment rejection. Guest execution, Linux guest support, guest entry, and second-stage translation remain explicitly missing.
+
+
+## HV6 Guest Image Loader Commands
+
+These commands are behavior commands, not static status claims. They load and verify the tiny `tiny-flat-v0` byte payload through HV4 guest memory and HV5 guest address-space metadata. They do not execute the guest, do not load Linux, do not implement guest entry, and do not implement second-stage translation.
+
+- `hv guest-image` / `hv-image`: print the current `GuestImage` loader state, format, load base, entry point, byte counts, checksum, counters, and last error.
+- `hv guest-image load-tiny`: configure default guest memory and address-space metadata if needed, then copy the static `tiny-flat-v0` payload bytes into GPA `0x0` and record entry point metadata at GPA `0x0`.
+- `hv guest-image verify`: read the loaded bytes back through GPA lookup, compare them with the static payload, and prove the loaded byte count and checksum are stable.
+- `hv guest-image bounds-test`: attempt a metadata-checked oversized load span and require rejection before any oversized image write.
+- `hv guest-image reset`: clear guest-image loader metadata back to `not-loaded`.
+
+Expected non-claims remain visible in command output: `hv: guest_execution=not-supported-yet`, `hv: linux_guest=not-supported-yet`, `hv: guest_entry=MISSING`, and `hv: second_stage_translation=MISSING`.

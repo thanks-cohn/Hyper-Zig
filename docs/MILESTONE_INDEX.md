@@ -197,3 +197,13 @@ This index records the current milestone ladder and intentionally missing featur
 - **Transcript:** `smoke/transcripts/latest-hv-address-space-v0.txt`.
 - **Intentionally missing features:** guest execution, Linux guest support, H-extension presence proof, guest entry, guest trap return, second-stage translation, guest payload loading, virtual console, SBI layer, and virtio for Linux.
 - **Next dependency:** HV6 guest image loader research without claiming guest entry or Linux boot.
+
+## HV6 Guest Image Loader
+
+- **Purpose:** Load a tiny static flat guest payload into HV4 guest memory using HV5 guest physical address-space metadata, then verify it by reading the bytes back.
+- **Actual capability proven:** `GuestImage` tracks owner VM id, state, `tiny-flat-v0` format, GPA load base, GPA entry point metadata, image size, loaded byte count, deterministic checksum, load/verify/failure/bounds counters, and last error. `hv guest-image load-tiny` writes real payload bytes to GPA `0x0`; `hv guest-image verify` reads them back and checks byte count and checksum; `hv guest-image bounds-test` rejects an oversized metadata-checked load span.
+- **Key commands added:** `hv guest-image`, `hv-image`, `hv guest-image load-tiny`, `hv guest-image verify`, `hv guest-image reset`, `hv guest-image bounds-test`.
+- **Smoke test file:** `smoke/smoke-hv-guest-image-v0.sh`.
+- **Transcript:** `smoke/transcripts/latest-hv-guest-image-v0.txt`.
+- **Intentionally missing features:** guest execution, Linux guest support, H-extension presence proof, guest entry, guest trap return, second-stage translation, ELF loading, Linux image loading, virtual console, SBI layer, and virtio for Linux.
+- **Next dependency:** HV7 guest entry research, still without claiming Linux boot or second-stage translation until separately implemented and smoke-proven.

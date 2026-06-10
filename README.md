@@ -38,6 +38,7 @@ Repository State:
 * HV3 vCPU Lifecycle: PASS when validation passes
 * HV4 Guest Memory Object: PASS when validation passes
 * HV5 Guest Address Space: PASS when validation passes
+* HV6 Guest Image Loader: PASS when validation passes
 
 Not Yet Implemented:
 
@@ -47,7 +48,7 @@ Not Yet Implemented:
 
 Current Development Target:
 
-HV6 Guest Image Loader Research
+HV7 Guest Entry Research
 
 ---
 
@@ -104,12 +105,17 @@ Defines and validates metadata-only guest physical address space lookup for VM 0
 HV6
 Guest Image Loader Research
 
-Future research toward loading guest images without yet claiming Linux boot or guest entry.
+Loads a tiny static `tiny-flat-v0` payload into PMM-backed HV4 guest memory through HV5 guest physical address-space metadata, then verifies the bytes by reading them back and comparing byte count plus checksum. This is not guest execution, not Linux loading, not guest entry, and not second-stage translation.
 
 HV7
+Guest Entry Research
+
+Future research toward guest entry mechanics without claiming Linux boot until Linux-specific loading and boot are separately implemented and smoke-proven.
+
+HV8
 Linux Guest Research
 
-Investigation and implementation of Linux guest boot support.
+Future investigation and implementation of Linux guest boot support.
 
 HV8+
 Advanced Virtualization
@@ -122,7 +128,7 @@ Future milestones including isolation, device virtualization, and higher-level g
 
 Hyper-Zig is not yet a complete hypervisor.
 
-Current scope is intentionally narrow: Hyper-Zig can report HV0 status, HV1 capability information, HV2 VM/vCPU objects, HV3 vCPU lifecycle state, HV4 guest-memory ownership metadata, and HV5 guest physical address-space metadata if validation passes. Guest memory exists only as a PMM-backed metadata/ownership object. HV5 address-space lookup is metadata only: it validates guest physical addresses and returns the backing PMM page metadata for configured pages. Guest execution is still missing. Linux guests are still missing. Second-stage translation is still missing. The next milestone is HV6 guest image loader research.
+Current scope is intentionally narrow: Hyper-Zig can report HV0 status, HV1 capability information, HV2 VM/vCPU objects, HV3 vCPU lifecycle state, HV4 guest-memory ownership metadata, HV5 guest physical address-space metadata, and HV6 tiny flat guest-image loading if validation passes. Guest memory exists as PMM-backed pages owned by VM 0. HV5 address-space lookup validates guest physical addresses and returns backing PMM page metadata for configured pages. HV6 writes a small static `tiny-flat-v0` byte payload into GPA `0x0` and verifies it by readback; it does not execute that payload. Guest execution is still missing. Linux guests are still missing. Guest entry is still missing. Second-stage translation is still missing. The next milestone is HV7 guest entry research.
 
 
 What is proven:
@@ -135,11 +141,13 @@ What is proven:
 * vCPU lifecycle state transitions when HV3 validation passes
 * Guest-memory ownership allocation/free/reset and rejection behavior when HV4 validation passes
 * Guest physical address metadata lookup and rejection behavior when HV5 validation passes
+* Tiny `tiny-flat-v0` guest payload loading and readback verification when HV6 validation passes
 
 What is not yet proven:
 
 * Guest execution
 * Linux boot
+* Guest entry
 * Second-stage translation
 * Hardware-assisted virtualization
 
@@ -179,6 +187,7 @@ zig build hyperzig-status
 ./smoke/smoke-hv-vcpu-lifecycle-v0.sh
 ./smoke/smoke-hv-guest-memory-v0.sh
 ./smoke/smoke-hv-address-space-v0.sh
+./smoke/smoke-hv-guest-image-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 tail -n 240 logs/latest/validate-hyperzig.log
@@ -202,13 +211,15 @@ hv2=PASS
 hv3=PASS
 hv4=PASS
 hv5=PASS
+hv6=PASS
 
 guest_memory=implemented
 address_space=implemented
+guest_image=implemented format=tiny-flat-v0 loaded-bytes=32 entry-point=0x0
 guest_execution=not-supported-yet
 linux_guest=not-supported-yet
 
-next=HV6
+next=HV7
 ```
 
 ---
