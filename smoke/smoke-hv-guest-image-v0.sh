@@ -247,8 +247,11 @@ for forbidden in [
     "h_extension=present",
     "second_stage_translation=implemented",
     "guest_entry=implemented",
+    "guest_image placeholder",
+    "guest_image=placeholder",
     "guest_image fake",
-    "placeholder",
+    "hv: guest_image=fake",
+    "hv: guest_image=placeholder",
     "elf=implemented",
     "linux_image=implemented",
     "PANIC",
@@ -270,8 +273,11 @@ reject "booted linux"
 reject "h_extension=present"
 reject "second_stage_translation=implemented"
 reject "guest_entry=implemented"
+reject "guest_image placeholder"
+reject "guest_image=placeholder"
 reject "guest_image fake"
-reject "placeholder"
+reject "hv: guest_image=fake"
+reject "hv: guest_image=placeholder"
 reject "elf=implemented"
 reject "linux_image=implemented"
 reject "PANIC"
