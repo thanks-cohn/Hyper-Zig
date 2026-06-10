@@ -37,6 +37,7 @@ Repository State:
 * HV2 VM/vCPU Object Model: PASS
 * HV3 vCPU Lifecycle: PASS when validation passes
 * HV4 Guest Memory Object: PASS when validation passes
+* HV5 Guest Address Space: PASS when validation passes
 
 Not Yet Implemented:
 
@@ -46,7 +47,7 @@ Not Yet Implemented:
 
 Current Development Target:
 
-HV5 Guest Execution Research
+HV6 Guest Image Loader Research
 
 ---
 
@@ -96,16 +97,21 @@ Guest Memory Object
 Defines and validates a PMM-backed guest-memory ownership object for VM 0. This is metadata and ownership only: no guest payload, no guest entry, and no second-stage translation.
 
 HV5
-Guest Execution
+Guest Address Space
 
-First successful execution of guest code.
+Defines and validates metadata-only guest physical address space lookup for VM 0. GPA `0x0` maps to the first configured HV4 guest-memory page and GPA `0x1000` maps to the second configured page. Out-of-range and misaligned page lookups are rejected. This is not guest execution, not second-stage translation, and not a guest payload loader.
 
 HV6
+Guest Image Loader Research
+
+Future research toward loading guest images without yet claiming Linux boot or guest entry.
+
+HV7
 Linux Guest Research
 
 Investigation and implementation of Linux guest boot support.
 
-HV7+
+HV8+
 Advanced Virtualization
 
 Future milestones including isolation, device virtualization, and higher-level guest support.
@@ -116,7 +122,7 @@ Future milestones including isolation, device virtualization, and higher-level g
 
 Hyper-Zig is not yet a complete hypervisor.
 
-Current scope is intentionally narrow: Hyper-Zig can report HV0 status, HV1 capability information, HV2 VM/vCPU objects, HV3 vCPU lifecycle state, and HV4 guest-memory ownership metadata if validation passes. Guest memory exists only as a PMM-backed metadata/ownership object. Guest execution is still missing. Linux guests are still missing. The next milestone is HV5 guest execution research.
+Current scope is intentionally narrow: Hyper-Zig can report HV0 status, HV1 capability information, HV2 VM/vCPU objects, HV3 vCPU lifecycle state, HV4 guest-memory ownership metadata, and HV5 guest physical address-space metadata if validation passes. Guest memory exists only as a PMM-backed metadata/ownership object. HV5 address-space lookup is metadata only: it validates guest physical addresses and returns the backing PMM page metadata for configured pages. Guest execution is still missing. Linux guests are still missing. Second-stage translation is still missing. The next milestone is HV6 guest image loader research.
 
 
 What is proven:
@@ -128,11 +134,13 @@ What is proven:
 * vCPU object creation
 * vCPU lifecycle state transitions when HV3 validation passes
 * Guest-memory ownership allocation/free/reset and rejection behavior when HV4 validation passes
+* Guest physical address metadata lookup and rejection behavior when HV5 validation passes
 
 What is not yet proven:
 
 * Guest execution
 * Linux boot
+* Second-stage translation
 * Hardware-assisted virtualization
 
 This repository intentionally distinguishes between completed work and future goals.
@@ -158,15 +166,22 @@ Validate:
 
 ```bash
 export ZIG=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1/zig
+export PATH=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1:$PATH
+git status
+git branch --show-current
+zig version
 ./scripts/check-zig-version.sh
 zig build
+zig build hyperzig-status
 ./smoke/smoke-hv-status-v0.sh
 ./smoke/smoke-hv-capability-v0.sh
 ./smoke/smoke-hv-vm-vcpu-v0.sh
 ./smoke/smoke-hv-vcpu-lifecycle-v0.sh
 ./smoke/smoke-hv-guest-memory-v0.sh
+./smoke/smoke-hv-address-space-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
+tail -n 240 logs/latest/validate-hyperzig.log
 ```
 
 If validation passes, the repository is considered healthy.
@@ -186,12 +201,14 @@ hv1=PASS
 hv2=PASS
 hv3=PASS
 hv4=PASS
+hv5=PASS
 
 guest_memory=implemented
+address_space=implemented
 guest_execution=not-supported-yet
 linux_guest=not-supported-yet
 
-next=HV5
+next=HV6
 ```
 
 ---

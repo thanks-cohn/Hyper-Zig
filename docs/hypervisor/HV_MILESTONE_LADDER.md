@@ -47,23 +47,23 @@ Every milestone keeps missing features honest. `not implemented yet` means the m
 - **Smoke test name:** `smoke-hv-loader-v0`.
 - **Acceptance markers:** payload bytes loaded, entry address recorded, guest execution not attempted.
 
-## HV5: Guest Entry Attempt
+## HV5: Guest Address Space
 
-- **Goal:** Attempt a controlled non-Linux guest entry only when architecture support is proven.
-- **Not implemented yet:** Linux boot, virtual console, SBI mediation.
-- **Likely files:** `kernel/hypervisor/entry.zig`, architecture-specific trap/entry files as needed.
-- **Proof command:** `./smoke/smoke-hv-entry-v0.sh`.
-- **Smoke test name:** `smoke-hv-entry-v0`.
-- **Acceptance markers:** guest entry attempted, result explicit, no Linux claim.
+- **Goal:** Add metadata-only guest physical address lookup for HV4 PMM-backed guest memory.
+- **Not implemented yet:** Guest entry, guest execution, second-stage translation, Linux boot, virtual console, SBI mediation.
+- **Likely files:** `kernel/hypervisor/guest_address_space.zig`, `kernel/hypervisor/hv.zig`, `kernel/console/shell.zig`.
+- **Proof command:** `./smoke/smoke-hv-address-space-v0.sh`.
+- **Smoke test name:** `smoke-hv-address-space-v0`.
+- **Acceptance markers:** address-space metadata configured, GPA 0 and GPA 4096 lookup succeeds, bounds and alignment rejection proven, no guest execution claim.
 
-## HV6: Trap Return
+## HV6: Guest Image Loader Research
 
-- **Goal:** Handle a guest trap and return or stop with an explicit reason.
-- **Not implemented yet:** Linux boot, virtual devices, SBI layer.
-- **Likely files:** `kernel/hypervisor/trap.zig`, architecture trap integration.
-- **Proof command:** `./smoke/smoke-hv-trap-return-v0.sh`.
-- **Smoke test name:** `smoke-hv-trap-return-v0`.
-- **Acceptance markers:** guest trap observed, cause printed, return path proven or not-supported reason printed.
+- **Goal:** Place a tiny payload into guest memory metadata without executing it.
+- **Not implemented yet:** Guest entry, trap return, Linux boot, virtual devices, SBI layer.
+- **Likely files:** future loader code plus `kernel/hypervisor/guest_memory.zig`.
+- **Proof command:** future smoke loader test.
+- **Smoke test name:** future loader smoke.
+- **Acceptance markers:** payload bytes loaded, entry address recorded, guest execution not attempted.
 
 ## HV7: Virtual Console
 

@@ -185,4 +185,15 @@ This index records the current milestone ladder and intentionally missing featur
 - **Smoke test file:** `smoke/smoke-hv-guest-memory-v0.sh`.
 - **Transcript:** `smoke/transcripts/latest-hv-guest-memory-v0.txt`.
 - **Intentionally missing features:** guest execution, Linux guest support, H-extension presence proof, guest entry, guest trap return, second-stage translation, guest payload loading, virtual console, SBI layer, and virtio for Linux.
-- **Next dependency:** HV5 guest execution research, still requiring a separate smoke-proven guest-entry milestone before any execution claim.
+- **Next dependency:** HV5 guest address space metadata, still requiring separate smoke-proven loader and guest-entry milestones before any execution claim.
+
+## HV5 Guest Address Space
+
+- **Purpose:** Add real guest physical address metadata and lookup behavior backed by the HV4 PMM-owned guest pages.
+- **Actual capability proven:** `GuestAddressSpace` tracks VM ownership, region count, page size, guest base, guest size, host base, translated page count, lookup counters, rejection counters, and last error. GPA `0x0` resolves to the first configured guest page; GPA `0x1000` resolves to the second configured guest page; out-of-range and misaligned page lookups are rejected.
+- **Backing:** HV4 `pmm-bitmap-v0` guest memory pages; metadata-only translation.
+- **Key commands added:** `hv address-space`, `hv-address-space`, `hv address-space create`, `hv address-space reset`, `hv address-space lookup-zero`, `hv address-space lookup-page`, `hv address-space bounds-test`, `hv address-space alignment-test`.
+- **Smoke test file:** `smoke/smoke-hv-address-space-v0.sh`.
+- **Transcript:** `smoke/transcripts/latest-hv-address-space-v0.txt`.
+- **Intentionally missing features:** guest execution, Linux guest support, H-extension presence proof, guest entry, guest trap return, second-stage translation, guest payload loading, virtual console, SBI layer, and virtio for Linux.
+- **Next dependency:** HV6 guest image loader research without claiming guest entry or Linux boot.

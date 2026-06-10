@@ -229,3 +229,18 @@ HV4 introduces a real `GuestMemory` object for VM 0. The backing is `pmm-bitmap-
 | `hv guest-memory bounds-test` | HV4 Guest Memory Object | Performs a metadata-only out-of-bounds check and proves it is rejected. | `hv: guest_memory.bounds_test=rejected`, `hv: guest_memory.last_error=out-of-bounds` | Does not read/write a guest payload. |
 | `hv guest-memory double-free-test` | HV4 Guest Memory Object | Frees once, attempts a second free, and proves rejection. | `hv: guest_memory.double_free_test=rejected`, incremented `double_free_count` or `invalid_free_count` | Does not rely on static text. |
 | `hv guest-memory overflow-test` | HV4 Guest Memory Object | Requests more pages than the bounded HV4 object allows and proves rejection. | `hv: guest_memory.overflow_test=rejected`, incremented `overflow_reject_count` | Does not create fake counters. |
+
+## HV5 Guest Address Space
+
+| Command | Behavior |
+| --- | --- |
+| `hv address-space` | Print the current `GuestAddressSpace` metadata object and non-claims. |
+| `hv-address-space` | Flat alias for `hv address-space`. |
+| `hv address-space create` | Configure HV4 guest memory if needed, then create VM 0 GPA metadata from the PMM-backed guest pages. |
+| `hv address-space lookup-zero` | Page-aligned lookup for GPA `0x0`; succeeds only when metadata is configured. |
+| `hv address-space lookup-page` | Page-aligned lookup for GPA `0x1000`; succeeds against the second default guest page. |
+| `hv address-space bounds-test` | Looks up the first byte past the configured guest range and requires rejection. |
+| `hv address-space alignment-test` | Attempts a page lookup at misaligned GPA `0x1` and requires rejection. |
+| `hv address-space reset` | Clears HV5 metadata without claiming guest execution or guest unmapping. |
+
+HV5 output includes `hv: address_space=implemented`, owner/state/region/page/size/base/counter fields, `hv: address_space.lookup_result=ok` for successful metadata lookup, and `hv: address_space.lookup_result=rejected` for bounds or alignment rejection. Guest execution, Linux guest support, guest entry, and second-stage translation remain explicitly missing.
