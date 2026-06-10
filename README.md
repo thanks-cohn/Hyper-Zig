@@ -4,277 +4,222 @@
   <img src="da_zoid.png" alt="ZIGN01D 1980s banner" width="720"> 
 </p>
 
-A small operating-system laboratory for learning how a machine comes alive. 
 
-ZIGN01D boots on RISC-V under QEMU, speaks through a serial shell, and grows one proven step at a time. It is simple on purpose. Each milestone should make the machine a little more real, while keeping the reader curious instead of buried.
+A proof-driven hypervisor project written in Zig 0.14.x.
 
-This project is not trying to impress you with a wall of complexity. It is trying to let you see the hidden parts of a kernel clearly enough that they become exciting.
+Hyper-Zig exists to explore virtualization from first principles while remaining understandable, inspectable, and educational. Every milestone must build successfully, pass validation, and demonstrate a real capability before the next layer is added.
+
+The goal is not to produce impressive claims.
+
+The goal is to produce verifiable progress.
 
 
-## Start here for Hyper-Zig
 
-New hypervisor developers should read [docs/hypervisor/DEVELOPER_START_HERE.md](docs/hypervisor/DEVELOPER_START_HERE.md) first. The current proven hypervisor milestones are HV0, HV1, and HV2. HV2 adds smoke-proven VM/vCPU data-model objects documented in [docs/hypervisor/HV2_VM_VCPU_MODEL.md](docs/hypervisor/HV2_VM_VCPU_MODEL.md); the next target is HV3 guest memory object. Hyper-Zig still does not claim Linux guest support or guest execution.
+---
 
-## Hyper-Zig validation doctrine
+## Current Status
 
-Hyper-Zig is the hypervisor-first repository and `main` is allowed to be the hypervisor mainline. This repo targets **Zig 0.14.x only** for build, smoke, and validation evidence; Zig 0.15, Zig 0.16, or newer syntax/API success is not compatibility proof here.
+Repository State:
 
-The canonical validation command is:
+* HV0 Status Layer: PASS
+* HV1 Capability Reporting: PASS
+* HV2 VM/vCPU Object Model: PASS
 
-```sh
-./scripts/validate-hyperzig.sh
+Not Yet Implemented:
+
+* Guest Memory Management
+* Guest Execution
+* Linux Guests
+* Hardware Virtualization Support
+
+Current Development Target:
+
+HV3 Guest Memory Objects
+
+---
+
+## What Hyper-Zig Is
+
+Hyper-Zig is a hypervisor research project focused on:
+
+* Zig 0.14.x
+* Explicit architecture
+* Validation-first development
+* Educational clarity
+* Incremental virtualization milestones
+
+Every completed milestone must be observable and testable.
+
+No milestone is considered complete because code exists.
+
+A milestone is complete only when it can be demonstrated.
+
+---
+
+## Development Ladder
+
+HV0
+Status Layer
+
+Produces accurate hypervisor status information and validation output.
+
+HV1
+Capability Discovery
+
+Reports host capabilities and exposes hypervisor feature visibility.
+
+HV2
+VM/vCPU Objects
+
+Introduces the foundational structures required for virtual machines and virtual CPUs.
+
+HV3
+Guest Memory Objects
+
+Defines and validates guest memory ownership and mapping structures.
+
+HV4
+Virtual CPU Lifecycle
+
+Creation, initialization, execution preparation, and teardown of virtual CPUs.
+
+HV5
+Guest Execution
+
+First successful execution of guest code.
+
+HV6
+Linux Guest Research
+
+Investigation and implementation of Linux guest boot support.
+
+HV7+
+Advanced Virtualization
+
+Future milestones including isolation, device virtualization, and higher-level guest support.
+
+---
+
+## Current Reality
+
+Hyper-Zig is not yet a complete hypervisor.
+
+What is proven:
+
+* Status reporting
+* Validation infrastructure
+* Capability reporting
+* VM object creation
+* vCPU object creation
+
+What is not yet proven:
+
+* Guest memory
+* Guest execution
+* Linux boot
+* Hardware-assisted virtualization
+
+This repository intentionally distinguishes between completed work and future goals.
+
+---
+
+## Quick Start
+
+Clone the repository:
+
+```bash
+git clone git@github.com:thanks-cohn/Hyper-Zig.git
+cd Hyper-Zig
 ```
 
-The Zig build graph also exposes the same validation path:
+Build:
 
-```sh
+```bash
+zig build
+```
+
+Validate:
+
+```bash
 zig build validate-hyperzig
 ```
 
-Plain `zig build` must continue to build the kernel normally. Use `ZIG=/path/to/zig-0.14.x/zig` when your default `zig` is not a 0.14.x compiler.
+Run validation script:
 
-Hyper-Zig currently does **not** claim Linux guest support or guest execution. HV0/HV1 validation proves status and capability-reporting boundaries; HV2 validation proves initialized VM/vCPU data-model objects only.
-
-### Minimus-Log principle
-
-Every major validation run should end with a dense final summary that fits in the last 200 to 500 lines. The tail must show branch, commit, Zig path/version, build status, smoke statuses, transcript paths, log paths, completed and missing milestones, blockers, next milestone, readiness, and the concrete PASS/FAIL/BLOCKED reason. Inspect it with:
-
-```sh
-tail -n 200 logs/latest/validate-hyperzig.log
-tail -n 500 logs/latest/validate-hyperzig.log
-```
-
-See [docs/hypervisor/MINIMUS_LOG.md](docs/hypervisor/MINIMUS_LOG.md) for the required fields and rationale.
-
-## Why Zig?
-
-ZIGn01d is written in Zig because Zig gives low-level systems code a rare mix of control and readability.
-
-Zig lets the project work close to memory without hiding what is happening. Allocation is explicit. Pointers are visible. Compile-time code can help build simple tables and constants without turning the kernel into magic. There is no required garbage collector, no required runtime, and no large framework sitting between the reader and the machine.
-
-That matters here. A teaching kernel should not feel like a sealed box. It should feel like a workbench.
-
-Zig was chosen because it can make memory, layout, build steps, and bare-metal boundaries easier to inspect while still feeling modern enough to enjoy.
-
-
-## Zig version target
-
-ZIGN01D currently targets **Zig 0.14.x**. Zig 0.16 is not the project target. A successful build with Zig 0.16 must not be treated as project compatibility proof unless the same path is also validated with Zig 0.14.x.
-
-Any Zig 0.16-only code, build API, or generated command must be clearly labeled and backported for Zig 0.14.x instead of being accepted silently. Use `./scripts/check-zig-version.sh` or `ZIG=/path/to/zig-0.14.x ./scripts/build.sh` before treating build or smoke results as valid.
-
-## Why RISC-V?
-
-RISC-V was chosen because it is open, clean, and teachable.
-
-The instruction set is not owned by one vendor. The architecture is easier to discuss than many older platforms. QEMU can emulate a RISC-V `virt` machine well enough for repeatable experiments. That gives ZIGN01D a stable place to begin: a small machine, a clear boot path, and enough room to grow.
-
-RISC-V makes the project feel like a doorway. You are not just learning old PC habits. You are looking at a machine shape that could matter for phones, boards, labs, workstations, and future hardware.
-
-## What ZIGN01D is today
-
-ZIGN01D is a proof-driven RISC-V Zig teaching kernel.
-
-Today it can:
-
-- boot under QEMU RISC-V
-- initialize UART output
-- expose an interactive shell
-- report machine, memory, board, heap, and PMM state
-- compute expected virtio-mmio slots from the board profile
-- run milestone smoke tests
-- explain what is not implemented yet
-
-The current milestone is **PMM V0**.
-
-PMM V0 adds physical page accounting over the known QEMU `virt` RAM range. The kernel reserves kernel-owned pages, tracks total/free/used/reserved pages, allocates and frees single physical pages, rejects invalid frees and double frees, and proves allocation exhaustion rejection through shell commands and smoke tests.
-
-This is not production memory management yet. It does not add paging, virtual memory, userspace memory, process isolation, swap, real phone hardware, real internet, real SMS, or real modem support.
-
-
-## Hypervisor mainline
-
-Hyper-Zig is now the dedicated hypervisor-first fork/lineage. The active project target is this repository, and `main` may be treated as the hypervisor mainline.
-
-Current status: HV0 status reporting, HV1 safe capability reporting, and HV2 VM/vCPU data-model objects are smoke-proven. Hyper-Zig does not execute guests and does not boot Linux.
-
-## Try it
-
-Build the kernel:
-
-```sh
-./scripts/build.sh
-```
-
-Run the canonical Hyper-Zig validator:
-
-```sh
+```bash
 ./scripts/validate-hyperzig.sh
-zig build validate-hyperzig
 ```
 
-Run the legacy proof ladder directly when you need individual smoke detail:
+If validation passes, the repository is considered healthy.
 
-```sh
-./scripts/doctor.sh
-./smoke/smoke-all.sh
-./smoke/smoke-stability.sh
-```
+---
 
-Run the current milestone proof:
-
-```sh
-./smoke/smoke-pmm-v0.sh
-./smoke/smoke-hv-vm-vcpu-v0.sh
-```
-
-A good run ends with lines like:
+## Example
 
 ```text
-PASS ZIGN01D doctor
-PASS ZIGN01D full smoke ladder
-PASS ZIGN01D stability smoke
-PASS ZIGN01D PMM V0 smoke
+$ hv status
+
+branch=main
+target=zig-0.14.x
+
+hv0=PASS
+hv1=PASS
+hv2=PASS
+
+guest_memory=not-supported-yet
+guest_execution=not-supported-yet
+linux_guest=not-supported-yet
+
+next=HV3
 ```
 
-## How the project grows
+---
 
-ZIGN01D grows by proof, not by pretending.
+## Philosophy
 
-Every serious milestone should add:
+Hyper-Zig follows a simple rule:
 
-- one visible kernel capability
-- one shell surface for inspecting it
-- one smoke test that proves it
-- one short guide for humans
-- one audit of what changed
-- clear limits on what is still missing
+Build the smallest thing that can be proven.
 
-The goal is not to fake a finished operating system. The goal is to make each layer understandable, testable, and alive.
+Validate it.
 
-## Current capability ladder
+Document it.
 
-- V0: bootable RISC-V QEMU kernel
-- V1: diagnostic shell foundation
-- V2: machine and CPU boundary reporting
-- V3: timer and trap readiness
-- V4: guarded MMIO foundation
-- COMM V0: honest communication placeholders
-- ZBUS V0: host capability bus scaffold
-- MEMORY V0: fixed QEMU memory visibility
-- BOARD V0: explicit QEMU `virt` board profile
-- VIRTIO DISCOVERY V0: computed virtio-mmio slot table
-- HEAP V0: constrained kernel heap proof
-- PMM V0: physical page accounting and page allocation proof
+Then move forward.
 
-See [docs/MILESTONE_INDEX.md](docs/MILESTONE_INDEX.md) for the full ladder.
+The project values clarity over cleverness, evidence over assumptions, and demonstrated capability over marketing claims.
 
-## Important documents
+Every milestone should teach something useful about how virtualization actually works.
 
-Start here:
+---
 
-- [What is ZIGN01D?](docs/WHAT_IS_ZIGN01D.md)
-- [Professor Quickstart](docs/PROFESSOR_QUICKSTART.md)
-- [Student Quickstart](docs/STUDENT_QUICKSTART.md)
-- [Lab Manual](docs/LAB_MANUAL.md)
-- [Proof Contract](docs/PROOF_CONTRACT.md)
-- [Milestone Index](docs/MILESTONE_INDEX.md)
-- [Roadmap](ROADMAP.md)
+## Long-Term Vision
 
-Current memory and machine docs:
+The long-term objective is a fully documented hypervisor stack written in Zig.
 
-- [PMM V0](docs/PMM_V0.md)
-- [HEAP V0 User Guide](docs/MILESTONE_HEAP_V0_USER_GUIDE.md)
-- [HEAP V0 Spec](docs/HEAP_V0_SPEC.md)
-- [HEAP V0 Audit](docs/HEAP_V0_AUDIT.md)
-- [BOARD V0 User Guide](docs/MILESTONE_BOARD_V0_USER_GUIDE.md)
-- [VIRTIO DISCOVERY V0 User Guide](docs/MILESTONE_VIRTIO_DISCOVERY_V0_USER_GUIDE.md)
-- [MEMORY V0 User Guide](docs/MILESTONE_MEMORY_V0_USER_GUIDE.md)
-- [Stability Contract](docs/STABILITY_CONTRACT.md)
+Future research areas include:
 
-## What ZIGN01D is not yet
+* Linux guest support
+* Rust workloads on guests
+* WASM guest environments
+* Educational virtualization tooling
+* Security and isolation research
+* Multi-guest execution
 
-ZIGN01D is not a phone yet.
+These remain goals rather than claims.
 
-It does not yet have:
+The repository advances only when each capability is proven.
 
-- filesystem support
-- real networking
-- real internet access
-- modem support
-- SMS support
-- calls
-- GUI
-- touchscreen
-- audio
-- applications
-- userspace isolation
-- production paging
-- broad real-hardware support
+---
 
-Those are future goals. They must be earned by proof.
+## Zig Version Policy
 
-## The larger dream
+Hyper-Zig targets Zig 0.14.x exclusively.
 
-A phone should be a machine you can understand.
+New contributions should maintain compatibility with Zig 0.14.x unless the repository policy changes.
 
-A computer should not become mysterious just because it fits in your hand. ZIGN01D begins with a tiny kernel because tiny things can be understood. Once something can be understood, it can be loved, repaired, taught, changed, and carried forward.
+---
 
-The long-term dream is a durable foundation for personal computing: a system that can grow from a teaching kernel into a clear, inspectable, user-owned machine.
+## License
 
-Maybe that machine begins in QEMU. Maybe one day it reaches boards, phones, workstations, and stranger hardware.
-
-For now, the mission is simple:
-
-```text
-Make the machine visible.
-Make each step real.
-Make the proof repeatable.
-Keep the wonder alive.
-```
-
-## Stability
-
-Known-good local Zig version: `0.14.1` at `/opt/zig/zig`.
-
-Health check and smoke commands:
-
-```sh
-./scripts/doctor.sh
-./smoke/smoke-all.sh
-./smoke/smoke-stability.sh
-```
-
-## Current Verified Foundation
-
-The current kernel includes the V5 CSR V0 diagnostic milestone. Run:
-
-```sh
-./smoke/smoke-csr-v0.sh
-```
-
-At the shell, `csr` prints live supervisor CSR state including hart ID, `stvec`,
-`scause`, and `satp`. Machine-mode-only CSRs are deliberately not read because
-ZIGN01D currently runs in supervisor mode and does not yet have a recoverable
-illegal-instruction trap path. See `docs/V5_CSR_V0_AUDIT.md`.
-
-Current limits remain explicit: PMM allocation, heap allocation, virtual memory,
-timer interrupts, PLIC operation, executable tasks, userspace entry, syscall
-dispatch, filesystems, and virtio drivers are not implemented.
-
-Latest build, QEMU, smoke, and transcript evidence is stored under `logs/latest/`.
-
-## Repository
-
-```text
-zign01d/
-├── build.zig
-├── kernel/
-├── scripts/
-├── smoke/
-├── docs/
-├── ROADMAP.md
-└── README.md
-```
-
-If something breaks, the project should leave tracks: logs, smoke transcripts, proof markers, and clear next places to inspect.
+See LICENSE.
