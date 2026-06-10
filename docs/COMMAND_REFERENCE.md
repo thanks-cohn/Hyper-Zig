@@ -20,6 +20,14 @@ Build-system validation entry point:
 zig build validate-hyperzig
 ```
 
+Build-system status guide:
+
+```sh
+zig build hyperzig-status
+```
+
+`zig build hyperzig-status` prints the current project, Zig target, proven hypervisor milestones, next milestone, canonical validator, and the explicit non-claims: no Linux guest support, no guest execution, and no smoke-proven VM/vCPU object yet.
+
 Normal build path, which must continue to build without running the full validator:
 
 ```sh

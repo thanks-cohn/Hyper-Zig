@@ -198,7 +198,8 @@ elif [[ $FAIL_COUNT -ne 0 ]]; then
     REASON="One or more required checks or discovered smoke tests failed; inspect blockers and logs."
 fi
 
-NEXT_MILESTONE="Keep HV0/HV1 honest, then implement the next documented hypervisor milestone only after smoke evidence exists; do not claim Linux guest or guest execution support yet."
+CURRENT_MILESTONE="HV0/HV1 proven; HV2 VM/vCPU data model is next"
+NEXT_MILESTONE="HV2 VM/vCPU model: add real initialized VM/vCPU objects, inspection commands, docs, and smoke transcript proof without guest execution or Linux claims."
 
 {
 cat <<SUMMARY
@@ -217,6 +218,36 @@ HV0 smoke: $HV0_STATUS
 HV1 smoke: $HV1_STATUS
 Overall readiness: $OVERALL
 Reason: $REASON
+
+First-run developer guidance:
+  - git clone git@github.com:thanks-cohn/Hyper-Zig.git
+  - cd Hyper-Zig
+  - export ZIG=/path/to/zig-0.14.x/zig
+  - zig build
+  - zig build validate-hyperzig
+  - ./scripts/validate-hyperzig.sh
+  - tail -n 200 logs/latest/validate-hyperzig.log
+
+Current milestone: $CURRENT_MILESTONE
+Next coding target: HV2 VM/vCPU data model
+Exact file map for next target:
+  - create kernel/hypervisor/vm.zig
+  - create kernel/hypervisor/vcpu.zig
+  - create smoke/smoke-hv-vm-vcpu-v0.sh
+  - create docs/hypervisor/HV2_VM_VCPU_MODEL.md
+  - update kernel/hypervisor/hv.zig
+  - update kernel/console/shell.zig
+  - update scripts/validate-hyperzig.sh after smoke proof exists
+Exact command to rerun validation:
+  - ./scripts/validate-hyperzig.sh
+Developer map:
+  - docs/hypervisor/DEVELOPER_START_HERE.md
+HV2 implementation map:
+  - docs/hypervisor/HV2_IMPLEMENTATION_MAP.md
+Non-claims:
+  - no Linux guest support yet
+  - no guest execution yet
+  - no smoke-proven VM/vCPU object yet
 
 Command log: $COMMAND_LOG
 Summary log: $SUMMARY_LOG

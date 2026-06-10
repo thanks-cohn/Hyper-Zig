@@ -11,6 +11,10 @@ ZIGN01D boots on RISC-V under QEMU, speaks through a serial shell, and grows one
 This project is not trying to impress you with a wall of complexity. It is trying to let you see the hidden parts of a kernel clearly enough that they become exciting.
 
 
+## Start here for Hyper-Zig
+
+New hypervisor developers should read [docs/hypervisor/DEVELOPER_START_HERE.md](docs/hypervisor/DEVELOPER_START_HERE.md) first. The current proven hypervisor milestones are HV0 and HV1; the next target is HV2 VM/vCPU data-model work, mapped in [docs/hypervisor/HV2_IMPLEMENTATION_MAP.md](docs/hypervisor/HV2_IMPLEMENTATION_MAP.md). Hyper-Zig still does not claim Linux guest support, guest execution, or smoke-proven VM/vCPU support.
+
 ## Hyper-Zig validation doctrine
 
 Hyper-Zig is the hypervisor-first repository and `main` is allowed to be the hypervisor mainline. This repo targets **Zig 0.14.x only** for build, smoke, and validation evidence; Zig 0.15, Zig 0.16, or newer syntax/API success is not compatibility proof here.
