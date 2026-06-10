@@ -211,6 +211,24 @@ pub fn validateAccess(offset: usize, length: usize) AccessResult {
     return .ok;
 }
 
+
+pub fn pageAtIndex(index: usize) ?usize {
+    const gm = mutableObject();
+    if (gm.state != .configured or index >= gm.page_count) {
+        gm.bounds_reject_count += 1;
+        gm.last_error = .out_of_bounds;
+        return null;
+    }
+    const page = gm.pages[index];
+    if (page == 0) {
+        gm.bounds_reject_count += 1;
+        gm.last_error = .out_of_bounds;
+        return null;
+    }
+    gm.last_error = .none;
+    return page;
+}
+
 pub fn printState() void {
     printImplementedMarker();
     printFields();

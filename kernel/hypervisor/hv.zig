@@ -3,11 +3,13 @@ const capability = @import("capability.zig");
 const vm = @import("vm.zig");
 const vcpu = @import("vcpu.zig");
 const guest_memory = @import("guest_memory.zig");
+const guest_address_space = @import("guest_address_space.zig");
 
 pub fn init() void {
     vm.init();
     vcpu.init(vm.object().id);
     guest_memory.init(vm.object().id);
+    guest_address_space.init(vm.object().id);
 }
 
 pub fn printStatus() void {
@@ -22,13 +24,14 @@ pub fn printStatus() void {
     vm.printImplementedMarker();
     vcpu.printImplementedMarker();
     guest_memory.printState();
+    guest_address_space.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
     uart.write("hv: virtual_timer=MISSING\r\n");
     uart.write("hv: virtual_console=MISSING\r\n");
     uart.write("hv: sbi_layer=MISSING\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV5 guest execution research\r\n");
+    uart.write("hv: next=HV6 guest loader research\r\n");
 }
 
 pub fn printCapability() void {
@@ -78,6 +81,7 @@ pub fn printInspect() void {
     vm.printObject();
     vcpu.printObject();
     guest_memory.printState();
+    guest_address_space.printState();
 }
 
 pub fn printObjects() void {
@@ -86,6 +90,7 @@ pub fn printObjects() void {
 
 pub fn printGuestMemory() void {
     guest_memory.printState();
+    guest_address_space.printState();
 }
 
 pub fn allocGuestMemory() void {
@@ -110,6 +115,35 @@ pub fn doubleFreeTestGuestMemory() void {
 
 pub fn overflowTestGuestMemory() void {
     guest_memory.printOverflowTest();
+}
+
+
+pub fn printAddressSpace() void {
+    guest_address_space.printState();
+}
+
+pub fn createAddressSpace() void {
+    guest_address_space.printCreateCommand();
+}
+
+pub fn resetAddressSpace() void {
+    guest_address_space.printResetCommand();
+}
+
+pub fn lookupZeroAddressSpace() void {
+    guest_address_space.printLookupZeroCommand();
+}
+
+pub fn lookupPageAddressSpace() void {
+    guest_address_space.printLookupPageCommand();
+}
+
+pub fn boundsTestAddressSpace() void {
+    guest_address_space.printBoundsTestCommand();
+}
+
+pub fn alignmentTestAddressSpace() void {
+    guest_address_space.printAlignmentTestCommand();
 }
 
 fn printNonClaims() void {

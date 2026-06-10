@@ -107,3 +107,17 @@ HV4 adds a real PMM-backed guest-memory ownership object for VM 0. The object tr
 
 ### `hv guest-memory overflow-test`
 - **What it does:** proves an oversized guest-memory request is rejected and increments overflow rejection accounting.
+
+## HV5 Guest Address Space commands
+
+HV5 adds real guest-physical-address metadata and lookup behavior on top of HV4 guest memory. It does not execute a guest, load Linux, create second-stage page tables, or implement a guest entry path.
+
+* `hv address-space` / `hv-address-space` prints the current address-space object state.
+* `hv address-space create` configures HV4 guest memory if needed, then creates metadata for VM 0 where GPA `0x0` maps to the first configured guest page and GPA `0x1000` maps to the second configured guest page.
+* `hv address-space lookup-zero` performs an aligned metadata lookup for GPA `0x0` and reports the first backing host physical page.
+* `hv address-space lookup-page` performs an aligned metadata lookup for GPA `0x1000` and reports the second backing host physical page.
+* `hv address-space bounds-test` proves an out-of-range GPA is rejected and increments rejection counters.
+* `hv address-space alignment-test` proves a misaligned page lookup is rejected and increments alignment rejection counters.
+* `hv address-space reset` clears address-space metadata only; it does not execute or unmap a guest.
+
+Smoke proof: `smoke/smoke-hv-address-space-v0.sh` writes `smoke/transcripts/latest-hv-address-space-v0.txt` and verifies command-block state movement rather than grepping static claims.

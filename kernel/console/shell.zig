@@ -169,6 +169,13 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "hv guest-memory bounds-test")) return hv.boundsTestGuestMemory();
     if (equals(cmd, "hv guest-memory double-free-test")) return hv.doubleFreeTestGuestMemory();
     if (equals(cmd, "hv guest-memory overflow-test")) return hv.overflowTestGuestMemory();
+    if (equals(cmd, "hv address-space") or equals(cmd, "hv-address-space")) return hv.printAddressSpace();
+    if (equals(cmd, "hv address-space create")) return hv.createAddressSpace();
+    if (equals(cmd, "hv address-space reset")) return hv.resetAddressSpace();
+    if (equals(cmd, "hv address-space lookup-zero")) return hv.lookupZeroAddressSpace();
+    if (equals(cmd, "hv address-space lookup-page")) return hv.lookupPageAddressSpace();
+    if (equals(cmd, "hv address-space bounds-test")) return hv.boundsTestAddressSpace();
+    if (equals(cmd, "hv address-space alignment-test")) return hv.alignmentTestAddressSpace();
     if (equals(cmd, "hv vm") or equals(cmd, "hv-vm")) return hv.printVm();
     if (equals(cmd, "hv vcpu") or equals(cmd, "hv-vcpu")) return hv.printVcpu();
     if (equals(cmd, "hv vcpu lifecycle") or equals(cmd, "hv-vcpu-lifecycle")) return hv.printVcpuLifecycle();
