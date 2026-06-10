@@ -13,7 +13,7 @@ This project is not trying to impress you with a wall of complexity. It is tryin
 
 ## Start here for Hyper-Zig
 
-New hypervisor developers should read [docs/hypervisor/DEVELOPER_START_HERE.md](docs/hypervisor/DEVELOPER_START_HERE.md) first. The current proven hypervisor milestones are HV0 and HV1; the next target is HV2 VM/vCPU data-model work, mapped in [docs/hypervisor/HV2_IMPLEMENTATION_MAP.md](docs/hypervisor/HV2_IMPLEMENTATION_MAP.md). Hyper-Zig still does not claim Linux guest support, guest execution, or smoke-proven VM/vCPU support.
+New hypervisor developers should read [docs/hypervisor/DEVELOPER_START_HERE.md](docs/hypervisor/DEVELOPER_START_HERE.md) first. The current proven hypervisor milestones are HV0, HV1, and HV2. HV2 adds smoke-proven VM/vCPU data-model objects documented in [docs/hypervisor/HV2_VM_VCPU_MODEL.md](docs/hypervisor/HV2_VM_VCPU_MODEL.md); the next target is HV3 guest memory object. Hyper-Zig still does not claim Linux guest support or guest execution.
 
 ## Hyper-Zig validation doctrine
 
@@ -33,7 +33,7 @@ zig build validate-hyperzig
 
 Plain `zig build` must continue to build the kernel normally. Use `ZIG=/path/to/zig-0.14.x/zig` when your default `zig` is not a 0.14.x compiler.
 
-Hyper-Zig currently does **not** claim Linux guest support, guest execution, or smoke-proven VM/vCPU support. HV0/HV1 validation proves status and capability-reporting boundaries only.
+Hyper-Zig currently does **not** claim Linux guest support or guest execution. HV0/HV1 validation proves status and capability-reporting boundaries; HV2 validation proves initialized VM/vCPU data-model objects only.
 
 ### Minimus-Log principle
 
@@ -96,7 +96,7 @@ This is not production memory management yet. It does not add paging, virtual me
 
 Hyper-Zig is now the dedicated hypervisor-first fork/lineage. The active project target is this repository, and `main` may be treated as the hypervisor mainline.
 
-Current status: HV0 status reporting and HV1 safe capability reporting are research scaffolds. Hyper-Zig does not execute guests, does not provide smoke-proven VM/vCPU support, and does not boot Linux.
+Current status: HV0 status reporting, HV1 safe capability reporting, and HV2 VM/vCPU data-model objects are smoke-proven. Hyper-Zig does not execute guests and does not boot Linux.
 
 ## Try it
 
@@ -125,6 +125,7 @@ Run the current milestone proof:
 
 ```sh
 ./smoke/smoke-pmm-v0.sh
+./smoke/smoke-hv-vm-vcpu-v0.sh
 ```
 
 A good run ends with lines like:

@@ -21,6 +21,7 @@ const virtio_discovery = @import("virtio/discovery.zig");
 const tarfs = @import("fs/tarfs.zig");
 const ramfs = @import("fs/ramfs.zig");
 const vfs = @import("fs/vfs.zig");
+const hv = @import("hypervisor/hv.zig");
 
 pub export fn kmain() noreturn {
     runtime_mem.force_link();
@@ -31,6 +32,7 @@ pub export fn kmain() noreturn {
     tarfs.init();
     ramfs.init();
     vfs.init();
+    hv.init();
     memory.init();
     trap.init();
     plic.init();
