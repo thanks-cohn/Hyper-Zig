@@ -21,7 +21,7 @@ hv: vm.state=defined
 hv: vm.guest_memory=not-configured
 ```
 
-`guest_memory=not-configured` is intentional. HV2 does not create guest RAM, guest physical mappings, page tables, or second-stage translation. The next milestone is HV3 guest memory object.
+`guest_memory=not-configured` is intentional. HV2 does not create guest RAM, guest physical mappings, page tables, or second-stage translation. The next milestone is HV3 vCPU lifecycle, followed by HV4 guest memory object.
 
 ## vCPU object
 

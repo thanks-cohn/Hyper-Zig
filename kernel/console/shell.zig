@@ -164,6 +164,11 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "hv capability") or equals(cmd, "hv-capability")) return hv.printCapability();
     if (equals(cmd, "hv vm") or equals(cmd, "hv-vm")) return hv.printVm();
     if (equals(cmd, "hv vcpu") or equals(cmd, "hv-vcpu")) return hv.printVcpu();
+    if (equals(cmd, "hv vcpu lifecycle") or equals(cmd, "hv-vcpu-lifecycle")) return hv.printVcpuLifecycle();
+    if (equals(cmd, "hv vcpu init") or equals(cmd, "hv-vcpu-init")) return hv.initializeVcpu();
+    if (equals(cmd, "hv vcpu prepare") or equals(cmd, "hv-vcpu-prepare")) return hv.prepareVcpu();
+    if (equals(cmd, "hv vcpu halt") or equals(cmd, "hv-vcpu-halt")) return hv.haltVcpu();
+    if (equals(cmd, "hv vcpu reset") or equals(cmd, "hv-vcpu-reset")) return hv.resetVcpu();
     if (equals(cmd, "hv inspect") or equals(cmd, "hv-inspect")) return hv.printInspect();
     if (equals(cmd, "hv-objects")) return hv.printObjects();
     if (equals(cmd, "panic-test")) return panicTestCommand();
@@ -203,7 +208,7 @@ fn handle(cmd: []const u8) void {
 }
 
 fn help() void {
-    uart.write("commands: help mem pmm pmm stats pmm alloc-test pmm free-test pmm invalid-free-test pmm double-free-test pmm exhaustion-test pmm-stats pmm-alloc-test pmm-free-test pmm-invalid-free-test pmm-double-free-test pmm-exhaustion-test memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots fs fs list fs stat fs cat fs checksum fs write-test ramfs ramfs stats ramfs list ramfs create ramfs write ramfs cat ramfs append ramfs stat ramfs checksum ramfs delete ramfs missing-test ramfs capacity-test ramfs overflow-test vfs vfs mounts vfs route vfs list vfs stat vfs cat vfs checksum vfs create vfs write vfs append vfs delete uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu csr tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status hv hv status hv-status hv capability hv-capability hv vm hv-vm hv vcpu hv-vcpu hv inspect hv-inspect hv-objects\r\n");
+    uart.write("commands: help mem pmm pmm stats pmm alloc-test pmm free-test pmm invalid-free-test pmm double-free-test pmm exhaustion-test pmm-stats pmm-alloc-test pmm-free-test pmm-invalid-free-test pmm-double-free-test pmm-exhaustion-test memory memmap kernel-bounds heap heap stats heap alloc-test heap reset-test heap overflow-test heap-stats heap-alloc-test heap-reset-test heap-overflow-test board board profile board devices board-profile board-devices virtio virtio summary virtio slots virtio-summary virtio-slots fs fs list fs stat fs cat fs checksum fs write-test ramfs ramfs stats ramfs list ramfs create ramfs write ramfs cat ramfs append ramfs stat ramfs checksum ramfs delete ramfs missing-test ramfs capacity-test ramfs overflow-test vfs vfs mounts vfs route vfs list vfs stat vfs cat vfs checksum vfs create vfs write vfs append vfs delete uptime time ticks heartbeat reboot shutdown log status version build breadcrumbs logs machine cpu csr tasks devices mmio syscalls net ping phone call sms panic-test trap-test comm zbus zbus status zbus ping zbus providers bridge status net status net get sms inbox sms send sms wait modem status hv hv status hv-status hv capability hv-capability hv vm hv-vm hv vcpu hv-vcpu hv vcpu lifecycle hv-vcpu-lifecycle hv vcpu init hv-vcpu-init hv vcpu prepare hv-vcpu-prepare hv vcpu halt hv-vcpu-halt hv vcpu reset hv-vcpu-reset hv inspect hv-inspect hv-objects\r\n");
 }
 
 fn vfsWriteCommand(args: []const u8) void {

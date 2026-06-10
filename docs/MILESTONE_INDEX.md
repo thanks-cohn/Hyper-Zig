@@ -162,5 +162,16 @@ This index records the current milestone ladder and intentionally missing featur
 - **Smoke test file:** `smoke/smoke-hv-vm-vcpu-v0.sh`.
 - **Docs:** `docs/hypervisor/HV2_VM_VCPU_MODEL.md`.
 - **Intentionally missing features:** guest memory object, guest execution, Linux guest support, H-extension presence proof, guest entry, guest trap return, second-stage translation, virtual console, SBI layer, and virtio for Linux.
-- **Next dependency:** HV3: guest memory object.
+- **Next dependency:** HV3: vCPU lifecycle state management.
 
+
+
+## HV3 vCPU Lifecycle
+
+- **Purpose:** Add real typed lifecycle state management for the boot vCPU after the HV2 VM/vCPU object model.
+- **Status:** IMPLEMENTED only when `smoke/smoke-hv-vcpu-lifecycle-v0.sh` passes; this is lifecycle bookkeeping, not guest execution.
+- **Key commands added:** `hv vcpu lifecycle`, `hv-vcpu-lifecycle`, `hv vcpu init`, `hv-vcpu-init`, `hv vcpu prepare`, `hv-vcpu-prepare`, `hv vcpu halt`, `hv-vcpu-halt`, `hv vcpu reset`, and `hv-vcpu-reset`.
+- **Smoke test file:** `smoke/smoke-hv-vcpu-lifecycle-v0.sh`.
+- **Transcript:** `smoke/transcripts/latest-hv-vcpu-lifecycle-v0.txt`.
+- **Intentionally missing features:** guest memory object, guest execution, Linux guest support, H-extension presence proof, guest entry, guest trap return, second-stage translation, virtual console, SBI layer, and virtio for Linux.
+- **Next dependency:** HV4 guest memory object.

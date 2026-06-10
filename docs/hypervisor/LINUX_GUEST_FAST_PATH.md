@@ -7,8 +7,8 @@ Linux guest support is not present yet. The fastest honest route is a proof ladd
 1. **HV0 status scaffold**: expose `hv status`; print research state and missing guest pieces.
 2. **HV1 capability detection**: safely detect whether hypervisor capability is available, without unsafe supervisor-mode CSR reads.
 3. **HV2 VM/vCPU structs**: define honest VM and vCPU data models without entering a guest.
-4. **HV3 guest memory allocation**: allocate and track guest memory ranges.
-5. **HV4 tiny guest payload loader**: load a minimal non-Linux payload into guest memory.
+4. **HV3 vCPU lifecycle**: prove created, initialized, runnable, halted, and reset state management without guest execution.
+5. **HV4 guest memory object**: allocate and track guest memory ranges before any payload loader.
 6. **HV5 guest entry attempt**: attempt controlled guest entry only after data structures and memory are real.
 7. **HV6 trap return**: handle a guest trap and return or fail honestly.
 8. **HV7 virtual console**: define a guest-visible console path.
