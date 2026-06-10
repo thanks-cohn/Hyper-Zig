@@ -12,175 +12,53 @@
 </div>
 
 <p align="center">
-  <img src="da_zoid.png" alt="ZIGN01D 1980s banner" width="720"> 
+  <img src="da_zoid.png" alt="ZIGN01D 1980s banner" width="720">
 </p>
 
+# Hyper-Zig
 
-Hyper-Zig is a hypervisor-first Zig 0.14.x RISC-V kernel.
+Hyper-Zig is a small Zig 0.14.x RISC-V kernel being grown into a hypervisor one proven milestone at a time.
 
-Hyper-Zig exists to explore virtualization from first principles while remaining understandable, inspectable, and educational. Every milestone must build successfully, pass validation, and demonstrate a real capability before the next layer is added.
+It is a research and teaching project. It is not a Linux host yet.
 
-The goal is not to produce impressive claims.
+## Copy-paste quickstart
 
-The goal is to produce verifiable progress.
-
-
-
----
-
-## Current Status
-
-Repository State:
-
-* HV0 Status Layer: PASS
-* HV1 Capability Reporting: PASS
-* HV2 VM/vCPU Object Model: PASS
-* HV3 vCPU Lifecycle: PASS when validation passes
-* HV4 Guest Memory Object: PASS when validation passes
-* HV5 Guest Address Space: PASS when validation passes
-* HV6 Guest Image Loader: PASS when validation passes
-
-Not Yet Implemented:
-
-* Guest Execution
-* Linux Guests
-* Hardware Virtualization Support
-
-Current Development Target:
-
-HV7 Guest Entry Research
-
----
-
-## What Hyper-Zig Is
-
-Hyper-Zig is a hypervisor research project focused on:
-
-* Zig 0.14.x
-* Explicit architecture
-* Validation-first development
-* Educational clarity
-* Incremental virtualization milestones
-
-Every completed milestone must be observable and testable.
-
-No milestone is considered complete because code exists.
-
-A milestone is complete only when it can be demonstrated.
-
----
-
-## Development Ladder
-
-HV0
-Status Layer
-
-Produces accurate hypervisor status information and validation output.
-
-HV1
-Capability Discovery
-
-Reports host capabilities and exposes hypervisor feature visibility.
-
-HV2
-VM/vCPU Objects
-
-Introduces the foundational structures required for virtual machines and virtual CPUs.
-
-HV3
-vCPU Lifecycle
-
-Implements typed boot vCPU lifecycle state management: created, initialized, runnable, halted, and reset back to created.
-
-HV4
-Guest Memory Object
-
-Defines and validates a PMM-backed guest-memory ownership object for VM 0. This is metadata and ownership only: no guest payload, no guest entry, and no second-stage translation.
-
-HV5
-Guest Address Space
-
-Defines and validates metadata-only guest physical address space lookup for VM 0. GPA `0x0` maps to the first configured HV4 guest-memory page and GPA `0x1000` maps to the second configured page. Out-of-range and misaligned page lookups are rejected. This is not guest execution, not second-stage translation, and not a guest payload loader.
-
-HV6
-Guest Image Loader Research
-
-Loads a tiny static `tiny-flat-v0` payload into PMM-backed HV4 guest memory through HV5 guest physical address-space metadata, then verifies the bytes by reading them back and comparing byte count plus checksum. This is not guest execution, not Linux loading, not guest entry, and not second-stage translation.
-
-HV7
-Guest Entry Research
-
-Future research toward guest entry mechanics without claiming Linux boot until Linux-specific loading and boot are separately implemented and smoke-proven.
-
-HV8
-Linux Guest Research
-
-Future investigation and implementation of Linux guest boot support.
-
-HV8+
-Advanced Virtualization
-
-Future milestones including isolation, device virtualization, and higher-level guest support.
-
----
-
-## Current Reality
-
-Hyper-Zig is not yet a complete hypervisor.
-
-Current scope is intentionally narrow: Hyper-Zig can report HV0 status, HV1 capability information, HV2 VM/vCPU objects, HV3 vCPU lifecycle state, HV4 guest-memory ownership metadata, HV5 guest physical address-space metadata, and HV6 tiny flat guest-image loading if validation passes. Guest memory exists as PMM-backed pages owned by VM 0. HV5 address-space lookup validates guest physical addresses and returns backing PMM page metadata for configured pages. HV6 writes a small static `tiny-flat-v0` byte payload into GPA `0x0` and verifies it by readback; it does not execute that payload. Guest execution is still missing. Linux guests are still missing. Guest entry is still missing. Second-stage translation is still missing. The next milestone is HV7 guest entry research.
-
-
-What is proven:
-
-* Status reporting
-* Validation infrastructure
-* Capability reporting
-* VM object creation
-* vCPU object creation
-* vCPU lifecycle state transitions when HV3 validation passes
-* Guest-memory ownership allocation/free/reset and rejection behavior when HV4 validation passes
-* Guest physical address metadata lookup and rejection behavior when HV5 validation passes
-* Tiny `tiny-flat-v0` guest payload loading and readback verification when HV6 validation passes
-
-What is not yet proven:
-
-* Guest execution
-* Linux boot
-* Guest entry
-* Second-stage translation
-* Hardware-assisted virtualization
-
-This repository intentionally distinguishes between completed work and future goals.
-
----
-
-## Quick Start
-
-Clone the repository:
+This downloads the current repo, checks the toolchain, builds the kernel, runs the hypervisor proof ladder, and shows the latest validation log.
 
 ```bash
-git clone git@github.com:thanks-cohn/Hyper-Zig.git
+git clone https://github.com/thanks-cohn/Hyper-Zig.git
 cd Hyper-Zig
-```
 
-Build:
-
-```bash
-zig build
-```
-
-Validate:
-
-```bash
-export ZIG=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1/zig
-export PATH=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1:$PATH
-git status
-git branch --show-current
 zig version
 ./scripts/check-zig-version.sh
 zig build
 zig build hyperzig-status
+./scripts/validate-hyperzig.sh
+
+tail -n 240 logs/latest/validate-hyperzig.log
+```
+
+Need to use a specific Zig 0.14.x binary?
+
+```bash
+export ZIG=/path/to/zig-0.14.x/zig
+export PATH="$(dirname "$ZIG"):$PATH"
+./scripts/check-zig-version.sh
+zig build
+./scripts/validate-hyperzig.sh
+```
+
+## What the commands prove
+
+Run everything:
+
+```bash
+./scripts/validate-hyperzig.sh
+```
+
+Run one proof at a time:
+
+```bash
 ./smoke/smoke-hv-status-v0.sh
 ./smoke/smoke-hv-capability-v0.sh
 ./smoke/smoke-hv-vm-vcpu-v0.sh
@@ -188,87 +66,99 @@ zig build hyperzig-status
 ./smoke/smoke-hv-guest-memory-v0.sh
 ./smoke/smoke-hv-address-space-v0.sh
 ./smoke/smoke-hv-guest-image-v0.sh
-./scripts/validate-hyperzig.sh
-zig build validate-hyperzig
+```
+
+Read the latest evidence:
+
+```bash
+cat smoke/transcripts/latest-hv-status-v0.txt
+cat smoke/transcripts/latest-hv-capability-v0.txt
+cat smoke/transcripts/latest-hv-vm-vcpu-v0.txt
+cat smoke/transcripts/latest-hv-vcpu-lifecycle-v0.txt
+cat smoke/transcripts/latest-hv-guest-memory-v0.txt
+cat smoke/transcripts/latest-hv-address-space-v0.txt
+cat smoke/transcripts/latest-hv-guest-image-v0.txt
 tail -n 240 logs/latest/validate-hyperzig.log
 ```
 
-If validation passes, the repository is considered healthy.
+If the validation script passes, the current hypervisor ladder is healthy.
 
----
+## Current state
 
-## Example
+Proven when validation passes:
 
-```text
-$ hv status
+| Milestone | Status | Meaning |
+| --- | --- | --- |
+| HV0 | Done | Honest hypervisor status output. |
+| HV1 | Done | Capability reporting. H-extension status stays `unknown` until safely proven. |
+| HV2 | Done | VM and vCPU object model. |
+| HV3 | Done | vCPU lifecycle states: created, initialized, runnable, halted, reset. |
+| HV4 | Done | PMM-backed guest-memory ownership object for VM 0. |
+| HV5 | Done | Guest physical address metadata lookup for configured guest pages. |
+| HV6 | Done | Tiny `tiny-flat-v0` guest image load and readback verification. |
+| HV7 | Next | Guest entry research. |
 
-branch=main
-target=zig-0.14.x
+## What Hyper-Zig can do today
 
-hv0=PASS
-hv1=PASS
-hv2=PASS
-hv3=PASS
-hv4=PASS
-hv5=PASS
-hv6=PASS
+Hyper-Zig can:
 
-guest_memory=implemented
-address_space=implemented
-guest_image=implemented format=tiny-flat-v0 loaded-bytes=32 entry-point=0x0
-guest_execution=not-supported-yet
-linux_guest=not-supported-yet
+- Build a small freestanding RISC-V kernel.
+- Boot under QEMU through the smoke scripts.
+- Print hypervisor status and capability information.
+- Create and inspect VM/vCPU data objects.
+- Move a boot vCPU through lifecycle states.
+- Allocate, free, reset, and reject invalid guest-memory operations.
+- Map simple guest physical address metadata for two guest pages.
+- Load a tiny static guest payload into guest memory and verify it by reading the bytes back.
+- Produce logs and transcripts that prove the above behavior.
 
-next=HV7
-```
+## What Hyper-Zig cannot do yet
 
----
+Hyper-Zig cannot yet:
 
-## Philosophy
+- Enter a guest.
+- Execute guest code.
+- Boot Linux as a guest.
+- Host Linux.
+- Provide second-stage address translation.
+- Safely claim RISC-V H-extension support.
+- Virtualize guest devices.
+- Mediate guest SBI calls.
+- Provide production isolation or security.
 
-Hyper-Zig follows a simple rule:
+## How far from hosting Linux?
 
-Build the smallest thing that can be proven.
+Not close yet. Hyper-Zig is still before guest entry.
 
-Validate it.
+The missing pieces are large and explicit:
 
-Document it.
+1. **HV7 guest entry**: enter guest context and return safely.
+2. **Trap and exit handling**: handle guest exits, faults, interrupts, and lifecycle transitions.
+3. **Second-stage translation**: isolate guest physical memory with real hardware-backed mappings.
+4. **H-extension proof**: safely detect and use the RISC-V hypervisor extension, or clearly document any non-H path.
+5. **Linux image loading**: load a real Linux kernel image, device tree, initramfs, and boot parameters.
+6. **SBI mediation**: provide or forward the calls Linux expects during boot.
+7. **Virtual devices**: timer, console, block, network, and interrupt paths that Linux can use.
+8. **Repeatable Linux smoke test**: one command that boots Linux far enough to prove the claim.
 
-Then move forward.
+Until those are implemented and smoke-proven, this project should be described as **hypervisor groundwork**, not a Linux host.
 
-The project values clarity over cleverness, evidence over assumptions, and demonstrated capability over marketing claims.
+## Project goal
 
-Every milestone should teach something useful about how virtualization actually works.
+The goal is to build a readable, verifiable hypervisor path in Zig:
 
----
+1. Build the smallest useful piece.
+2. Prove it with a command.
+3. Save the transcript.
+4. State exactly what works and what does not.
+5. Move to the next milestone.
 
-## Long-Term Vision
+The next target is **HV7 guest entry research**.
 
-The long-term objective is a fully documented hypervisor stack written in Zig.
+## Useful files
 
-Future research areas include:
-
-* Linux guest support
-* Rust workloads on guests
-* WASM guest environments
-* Educational virtualization tooling
-* Security and isolation research
-* Multi-guest execution
-
-These remain goals rather than claims.
-
-The repository advances only when each capability is proven.
-
----
-
-## Zig Version Policy
-
-Hyper-Zig targets Zig 0.14.x exclusively.
-
-New contributions should maintain compatibility with Zig 0.14.x unless the repository policy changes.
-
----
-
-## License
-
-See LICENSE.
+- `docs/hypervisor/DEVELOPER_START_HERE.md` — guided developer walkthrough.
+- `COMMANDS.md` — shell and proof command reference.
+- `docs/hypervisor/HV_MILESTONE_LADDER.md` — hypervisor milestone ladder.
+- `logs/latest/validate-hyperzig.log` — latest validation output after running validation.
+- `smoke/transcripts/` — latest smoke-test transcripts.
