@@ -16,7 +16,7 @@
 </p>
 
 
-A proof-driven hypervisor project written in Zig 0.14.x.
+Hyper-Zig is a hypervisor-first Zig 0.14.x RISC-V kernel.
 
 Hyper-Zig exists to explore virtualization from first principles while remaining understandable, inspectable, and educational. Every milestone must build successfully, pass validation, and demonstrate a real capability before the next layer is added.
 
@@ -35,6 +35,7 @@ Repository State:
 * HV0 Status Layer: PASS
 * HV1 Capability Reporting: PASS
 * HV2 VM/vCPU Object Model: PASS
+* HV3 vCPU Lifecycle: PASS when validation passes
 
 Not Yet Implemented:
 
@@ -45,7 +46,7 @@ Not Yet Implemented:
 
 Current Development Target:
 
-HV3 Guest Memory Objects
+HV4 Guest Memory Object
 
 ---
 
@@ -85,14 +86,14 @@ VM/vCPU Objects
 Introduces the foundational structures required for virtual machines and virtual CPUs.
 
 HV3
-Guest Memory Objects
+vCPU Lifecycle
 
-Defines and validates guest memory ownership and mapping structures.
+Implements typed boot vCPU lifecycle state management: created, initialized, runnable, halted, and reset back to created.
 
 HV4
-Virtual CPU Lifecycle
+Guest Memory Object
 
-Creation, initialization, execution preparation, and teardown of virtual CPUs.
+Will define and validate guest memory ownership and mapping structures.
 
 HV5
 Guest Execution
@@ -115,6 +116,9 @@ Future milestones including isolation, device virtualization, and higher-level g
 
 Hyper-Zig is not yet a complete hypervisor.
 
+Current scope is intentionally narrow: Hyper-Zig can report HV0 status, HV1 capability information, HV2 VM/vCPU objects, and HV3 vCPU lifecycle state if validation passes. Guest memory is still missing. Guest execution is still missing. Linux guests are still missing. The next milestone is HV4 guest memory object.
+
+
 What is proven:
 
 * Status reporting
@@ -122,6 +126,7 @@ What is proven:
 * Capability reporting
 * VM object creation
 * vCPU object creation
+* vCPU lifecycle state transitions when HV3 validation passes
 
 What is not yet proven:
 
@@ -181,7 +186,7 @@ guest_memory=not-supported-yet
 guest_execution=not-supported-yet
 linux_guest=not-supported-yet
 
-next=HV3
+next=HV4
 ```
 
 ---

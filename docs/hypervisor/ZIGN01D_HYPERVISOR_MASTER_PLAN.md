@@ -169,33 +169,33 @@ Every milestone from HV0 through HV13 must carry source proof, documentation pro
 - **Required negative markers / forbidden claims:** `guest_memory=IMPLEMENTED`, `guest_execution=supported`, `guest entered`, `linux_guest=supported`, fake nonzero guest runtime counters.
 - **Exit criteria:** The inspection command creates or reports initialized VM/vCPU state from real structs, with bounded IDs and deterministic default fields.
 - **What it still does NOT imply:** No guest memory allocation, no payload loading, no entry, no trap return, no Linux.
-- **Dependency for next milestone:** HV3 may attach owned guest-memory ranges to the real VM object.
+- **Dependency for next milestone:** HV3 adds boot vCPU lifecycle state management; HV4 may attach owned guest-memory ranges to the real VM object.
 
-### HV3: Guest memory object
+### HV3: vCPU lifecycle
 
 - **Goal:** Allocate and account guest memory through real PMM-backed ownership. No guest entry.
 - **Required Zig files likely touched:** `kernel/hypervisor/guest_memory.zig`, `kernel/hypervisor/vm.zig`, PMM integration files such as `kernel/memory/pmm.zig` if ownership hooks are required, `kernel/hypervisor/hv.zig`.
-- **Required docs:** `docs/hypervisor/HV3_GUEST_MEMORY.md`.
+- **Required docs:** command reference and milestone index entries for HV3 vCPU lifecycle.
 - **Required shell commands:** `git branch --show-current`, `git status`, `./scripts/check-zig-version.sh`, `./scripts/build.sh`, `./smoke/smoke-hv-guest-memory-v0.sh`.
 - **Required smoke test file:** `smoke/smoke-hv-guest-memory-v0.sh`.
 - **Required transcript markers:** `hv: guest_memory=IMPLEMENTED`, guest-memory base, size, page count, owner VM ID, allocation success marker, accounting marker, `hv: guest_entry=MISSING`.
 - **Required negative markers / forbidden claims:** `guest_entry=IMPLEMENTED`, `guest_execution=supported`, `linux_guest=supported`, out-of-bounds accepted markers, overlapping ownership accepted markers.
 - **Exit criteria:** Transcript proves allocation, accounting, bounds rejection, and cleanup or stable ownership; PMM state remains consistent after the test.
 - **What it still does NOT imply:** No payload loader, no guest execution, no second-stage translation, no Linux.
-- **Dependency for next milestone:** HV4 may place bytes only into a proven guest-memory object.
+- **Dependency for next milestone:** HV4 may introduce a guest memory object after the lifecycle model is proven.
 
-### HV4: Guest payload loader
+### HV4: Guest memory object
 
 - **Goal:** Place a tiny non-Linux payload into guest memory and report its entry address. No execution.
 - **Required Zig files likely touched:** `kernel/hypervisor/loader.zig`, `kernel/hypervisor/guest_memory.zig`, `kernel/hypervisor/vm.zig`, `kernel/hypervisor/hv.zig`.
-- **Required docs:** `docs/hypervisor/HV4_TINY_PAYLOAD_LOADER.md`.
+- **Required docs:** `docs/hypervisor/HV4_GUEST_MEMORY.md`.
 - **Required shell commands:** `git branch --show-current`, `git status`, `./scripts/check-zig-version.sh`, `./scripts/build.sh`, `./smoke/smoke-hv-loader-v0.sh`.
 - **Required smoke test file:** `smoke/smoke-hv-loader-v0.sh`.
 - **Required transcript markers:** `hv: guest_payload_loader=IMPLEMENTED`, payload name or ID, payload byte count, payload checksum, guest physical load address, guest entry address, `hv: guest_execution=not-supported-yet`.
 - **Required negative markers / forbidden claims:** `guest entered`, `guest_execution=supported`, `linux_guest=supported`, `Linux Image loaded`, writes outside guest-memory bounds.
 - **Exit criteria:** Smoke transcript proves a tiny payload is copied into owned guest memory, validated by length/checksum, and not executed.
 - **What it still does NOT imply:** No guest entry, no guest trap return, no Linux loading, no Linux boot.
-- **Dependency for next milestone:** HV5 may attempt entry only into a loaded non-Linux payload after HV1-HV4 are real.
+- **Dependency for next milestone:** A later payload-loader milestone may place bytes only into a proven guest-memory object.
 
 ### HV5: Controlled tiny guest entry attempt
 

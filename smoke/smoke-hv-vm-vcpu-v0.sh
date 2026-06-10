@@ -121,8 +121,8 @@ for marker in \
     'hv: vm.guest_memory=not-configured' \
     'hv: vcpu.id=0' \
     'hv: vcpu.vm_id=0' \
-    'hv: vcpu.state=defined' \
-    'hv: vcpu.hart_binding=unbound' \
+    'hv: vcpu.state=created' \
+    'hv: vcpu.hart_binding=boot-hart' \
     'hv: vcpu.run_count=0' \
     'hv: guest_execution=not-supported-yet' \
     'hv: linux_guest=not-supported-yet'

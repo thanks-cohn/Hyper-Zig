@@ -29,7 +29,7 @@ Every milestone keeps missing features honest. `not implemented yet` means the m
 - **Smoke test name:** `smoke-hv-vm-vcpu-v0`.
 - **Acceptance markers:** VM object present, vCPU object present, guest execution still not supported.
 
-## HV3: Guest Memory Allocation
+## HV3: vCPU Lifecycle
 
 - **Goal:** Allocate and report guest memory ranges backed by real kernel memory ownership.
 - **Not implemented yet:** Guest entry, second-stage translation, Linux loading.
@@ -38,7 +38,7 @@ Every milestone keeps missing features honest. `not implemented yet` means the m
 - **Smoke test name:** `smoke-hv-guest-memory-v0`.
 - **Acceptance markers:** guest memory allocated, bounds printed, overflow/rejection cases proven.
 
-## HV4: Tiny Guest Payload Loader
+## HV4: Guest Memory Object
 
 - **Goal:** Place a tiny test payload into guest memory without executing it.
 - **Not implemented yet:** Guest entry, trap return, Linux Image loading.

@@ -27,7 +27,7 @@ pub fn printStatus() void {
     uart.write("hv: virtual_console=MISSING\r\n");
     uart.write("hv: sbi_layer=MISSING\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV3 guest memory object\r\n");
+    uart.write("hv: next=HV4 guest memory object\r\n");
 }
 
 pub fn printCapability() void {
@@ -41,6 +41,35 @@ pub fn printVm() void {
 
 pub fn printVcpu() void {
     vcpu.printObject();
+    printNonClaims();
+}
+
+pub fn printVcpuLifecycle() void {
+    vcpu.printLifecycle();
+    printNonClaims();
+}
+
+pub fn initializeVcpu() void {
+    const result = vcpu.initializeLifecycle();
+    vcpu.printTransition("initialize", result);
+    printNonClaims();
+}
+
+pub fn prepareVcpu() void {
+    const result = vcpu.prepareRunnable();
+    vcpu.printTransition("prepare-runnable", result);
+    printNonClaims();
+}
+
+pub fn haltVcpu() void {
+    const result = vcpu.halt();
+    vcpu.printTransition("halt", result);
+    printNonClaims();
+}
+
+pub fn resetVcpu() void {
+    const result = vcpu.reset();
+    vcpu.printTransition("reset", result);
     printNonClaims();
 }
 
