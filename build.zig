@@ -1,5 +1,19 @@
 const std = @import("std");
 
+const hyperzig_status_text =
+    \\Hyper-Zig developer status
+    \\  current project: Hyper-Zig
+    \\  Zig target: 0.14.x
+    \\  current proven milestones: HV0, HV1
+    \\  next milestone: HV2 VM/vCPU model
+    \\  canonical validation command: ./scripts/validate-hyperzig.sh
+    \\  no Linux guest support yet
+    \\  no guest execution yet
+    \\  no smoke-proven VM/vCPU object yet
+    \\  next: read docs/hypervisor/DEVELOPER_START_HERE.md
+    \\
+;
+
 pub fn build(b: *std.Build) void {
     const target = b.resolveTargetQuery(.{
         .cpu_arch = .riscv64,
@@ -25,6 +39,14 @@ pub fn build(b: *std.Build) void {
     exe.bundle_compiler_rt = false;
 
     b.installArtifact(exe);
+
+    const default_status_cmd = b.addSystemCommand(&.{ "sh", "-c", "printf '%s\n' \"$1\"", "hyperzig-status", hyperzig_status_text });
+    default_status_cmd.step.dependOn(&exe.step);
+    b.getInstallStep().dependOn(&default_status_cmd.step);
+
+    const hyperzig_status_cmd = b.addSystemCommand(&.{ "sh", "-c", "printf '%s\n' \"$1\"", "hyperzig-status", hyperzig_status_text });
+    const hyperzig_status_step = b.step("hyperzig-status", "Print the current Hyper-Zig developer activation status");
+    hyperzig_status_step.dependOn(&hyperzig_status_cmd.step);
 
     const validate_hyperzig_cmd = b.addSystemCommand(&.{ "sh", "-c", "./scripts/validate-hyperzig.sh" });
     validate_hyperzig_cmd.step.dependOn(b.getInstallStep());
