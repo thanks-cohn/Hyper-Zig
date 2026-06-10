@@ -263,8 +263,13 @@ for forbidden in \
     'guest running' \
     'booted linux' \
     'Linux guest booted' \
-    'guest_memory fake' \
-    'placeholder'
+    'guest_memory placeholder' \
+    'guest_memory=placeholder' \
+    'guest_memory=fake' \
+    'hv: guest_memory=fake' \
+    'hv: guest_memory=placeholder' \
+    'fake guest memory' \
+    'placeholder guest memory'
 do
     reject "$forbidden"
 done

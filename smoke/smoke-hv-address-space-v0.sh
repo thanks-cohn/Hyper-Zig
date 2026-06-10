@@ -276,8 +276,13 @@ for forbidden in \
     'guest running' \
     'booted linux' \
     'Linux guest booted' \
-    'address_space fake' \
-    'placeholder'
+    'address_space placeholder' \
+    'address_space=placeholder' \
+    'address_space=fake' \
+    'hv: address_space=fake' \
+    'hv: address_space=placeholder' \
+    'fake address space' \
+    'placeholder address space'
 do
     reject "$forbidden"
 done
