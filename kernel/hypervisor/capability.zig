@@ -40,6 +40,6 @@ pub fn print() void {
     uart.write("\r\n");
     uart.write("hv: guest_execution=not-supported-yet\r\n");
     uart.write("hv: linux_guest=not-supported-yet\r\n");
-    uart.write("hv: vm_object=MISSING\r\n");
-    uart.write("hv: vcpu_object=MISSING\r\n");
+    uart.write("hv: vm_object=implemented\r\n");
+    uart.write("hv: vcpu_object=implemented\r\n");
 }

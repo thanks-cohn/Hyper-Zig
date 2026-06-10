@@ -26,7 +26,7 @@ Build-system status guide:
 zig build hyperzig-status
 ```
 
-`zig build hyperzig-status` prints the current project, Zig target, proven hypervisor milestones, next milestone, canonical validator, and the explicit non-claims: no Linux guest support, no guest execution, and no smoke-proven VM/vCPU object yet.
+`zig build hyperzig-status` prints the current project, Zig target, proven hypervisor milestones, next milestone, canonical validator, and the explicit non-claims: no Linux guest support, no guest execution, and HV2 smoke-proven VM/vCPU objects.
 
 Normal build path, which must continue to build without running the full validator:
 
@@ -34,7 +34,7 @@ Normal build path, which must continue to build without running the full validat
 zig build
 ```
 
-The validator runs the Zig version check, the build script, required HV0/HV1 smoke tests, discovered smoke tests under `smoke/`, and ends with a Minimus-Log summary. To inspect the project state from the bottom of the latest validation output, run:
+The validator runs the Zig version check, the build script, required HV0/HV1/HV2 smoke tests, discovered smoke tests under `smoke/`, and ends with a Minimus-Log summary. To inspect the project state from the bottom of the latest validation output, run:
 
 ```sh
 tail -n 200 logs/latest/validate-hyperzig.log
@@ -98,9 +98,13 @@ Run `./scripts/check-zig-version.sh` before using shell-command transcripts as c
 | `zbus status` / `zbus-status` | ZBUS scaffold present in current repo | Alias for ZBUS status. | `zbus status` | Same status fields as `zbus`. | Does not imply provider discovery. |
 | `zbus ping` / `zbus-ping` | ZBUS scaffold present in current repo | Reports ping not implemented because no transport is connected. | `zbus ping` | `zbus: ping=not-implemented`, `safety=no host request sent`. | Does not contact host services. |
 | `zbus providers` / `zbus-providers` | ZBUS scaffold present in current repo | Lists provider scaffold states. | `zbus providers` | Providers `none`; net/sms/modem/files/time not implemented. | Does not imply provider backends. |
-| `hv` | HV0 Hypervisor Status Scaffold | Reports hypervisor research scaffold status. Does not imply guest execution or Linux support. | `hv` | `hv: status=research-scaffold`, guest features marked `not-supported-yet` or `MISSING`. | Does not imply VM support, vCPU support, guest execution, second-stage translation, SBI emulation, virtual console, or Linux support. |
-| `hv status` / `hv-status` | HV0 Hypervisor Status Scaffold | Reports hypervisor research scaffold status. Does not imply guest execution or Linux support. | `hv status` | Same output as `hv`. | Does not imply guest execution or Linux support. |
-| `hv capability` / `hv-capability` | HV1 Capability Detection | Reports the HV1 safe capability surface and the current H-extension status without unsafe probing. | `hv capability` | `hv: capability_detection=implemented`, `hv: capability_source=supervisor-mode-safe-static-policy`, `hv: h_extension=unknown reason=no-safe-detection-yet`, and guest/Linux/VM/vCPU non-claim markers. | Does not imply H-extension presence, VM support, vCPU support, guest memory, guest entry, guest execution, second-stage translation, SBI emulation, virtual console, virtio for Linux, or Linux support. |
+| `hv` | HV0/HV2 | Reports hypervisor status and HV2 object implementation markers. Does not imply guest execution or Linux support. | `hv` | `hv: status=experimental-hypervisor-candidate`, `hv: vm_object=implemented`, `hv: vcpu_object=implemented`, and guest features marked `not-supported-yet` or `MISSING`. | Does not imply guest execution, second-stage translation, SBI emulation, virtual console, or Linux support. |
+| `hv status` / `hv-status` | HV0/HV2 | Alias for `hv`. | `hv status` | Same output as `hv`. | Does not imply guest execution or Linux support. |
+| `hv capability` / `hv-capability` | HV1 Capability Detection | Reports the HV1 safe capability surface and the current H-extension status without unsafe probing. | `hv capability` | `hv: capability_detection=implemented`, `hv: capability_source=supervisor-mode-safe-static-policy`, `hv: h_extension=unknown reason=no-safe-detection-yet`, and guest/Linux non-claim markers. | Does not imply H-extension presence, guest memory, guest entry, guest execution, second-stage translation, SBI emulation, virtual console, virtio for Linux, or Linux support. |
+| `hv vm` / `hv-vm` | HV2 VM/vCPU Data Model | Prints the initialized VM object. | `hv vm` | `hv: vm_object=implemented`, `hv: vm.id=0`, `hv: vm.state=defined`, `hv: vm.guest_memory=not-configured`, and non-claim markers. | Does not imply guest memory allocation or second-stage translation. |
+| `hv vcpu` / `hv-vcpu` | HV2 VM/vCPU Data Model | Prints the initialized vCPU object. | `hv vcpu` | `hv: vcpu_object=implemented`, `hv: vcpu.id=0`, `hv: vcpu.vm_id=0`, `hv: vcpu.state=defined`, `hv: vcpu.hart_binding=unbound`, `hv: vcpu.run_count=0`, and non-claim markers. | Does not imply hart binding, guest entry, or guest execution. |
+| `hv inspect` / `hv-inspect` | HV2 VM/vCPU Data Model | Prints VM and vCPU objects together. | `hv inspect` | All HV2 VM and vCPU fields plus `guest_execution=not-supported-yet` and `linux_guest=not-supported-yet`. | Does not imply Linux or guest execution support. |
+| `hv-objects` | HV2 VM/vCPU Data Model | Flat alias for `hv inspect`. | `hv-objects` | Same object fields as `hv inspect`. | Does not imply guest entry. |
 
 ## PMM V0 commands
 
@@ -132,4 +136,4 @@ Run `./scripts/check-zig-version.sh` before using shell-command transcripts as c
 
 ## Hypervisor command details
 
-HV0 and HV1 hypervisor commands are grouped in `docs/hypervisor/HV1_commands.md` so the status-only commands and capability-only commands remain easy to audit together.
+HV0 and HV1 hypervisor commands remain grouped in `docs/hypervisor/HV1_commands.md`; HV2 object commands are documented in `docs/hypervisor/HV2_VM_VCPU_MODEL.md`.

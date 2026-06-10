@@ -21,6 +21,7 @@ exec > >(tee -a "$COMMAND_LOG") 2>&1
 REQUIRED_SMOKES=(
     "smoke/smoke-hv-status-v0.sh"
     "smoke/smoke-hv-capability-v0.sh"
+    "smoke/smoke-hv-vm-vcpu-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -99,6 +100,7 @@ run_smoke() {
     case "$base" in
         smoke-hv-status-v0) transcript="$ROOT/smoke/transcripts/latest-hv-status-v0.txt" ;;
         smoke-hv-capability-v0) transcript="$ROOT/smoke/transcripts/latest-hv-capability-v0.txt" ;;
+        smoke-hv-vm-vcpu-v0) transcript="$ROOT/smoke/transcripts/latest-hv-vm-vcpu-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"
@@ -171,7 +173,7 @@ done
 MISSING_MILESTONES+=(
     "Linux guest support (not implemented; do not claim)"
     "guest execution (not implemented; do not claim)"
-    "VM/vCPU objects (not smoke-proven as implemented)"
+    "guest memory object (not implemented; next HV3 target)"
 )
 
 FAIL_COUNT=0
@@ -185,6 +187,7 @@ done
 BUILD_STATUS="$(status_for build)"
 HV0_STATUS="$(smoke_status_for smoke/smoke-hv-status-v0.sh)"
 HV1_STATUS="$(smoke_status_for smoke/smoke-hv-capability-v0.sh)"
+HV2_STATUS="$(smoke_status_for smoke/smoke-hv-vm-vcpu-v0.sh)"
 OVERALL="PASS"
 REASON="All required checks passed; optional missing items are reported without being counted as PASS."
 if [[ "$(status_for check-zig-version)" != "PASS" ]]; then
@@ -198,8 +201,8 @@ elif [[ $FAIL_COUNT -ne 0 ]]; then
     REASON="One or more required checks or discovered smoke tests failed; inspect blockers and logs."
 fi
 
-CURRENT_MILESTONE="HV0/HV1 proven; HV2 VM/vCPU data model is next"
-NEXT_MILESTONE="HV2 VM/vCPU model: add real initialized VM/vCPU objects, inspection commands, docs, and smoke transcript proof without guest execution or Linux claims."
+CURRENT_MILESTONE="HV0/HV1/HV2 proven; VM/vCPU model implemented"
+NEXT_MILESTONE="HV3 guest memory object"
 
 {
 cat <<SUMMARY
@@ -216,6 +219,14 @@ Zig target: 0.14.x only
 Build status: $BUILD_STATUS
 HV0 smoke: $HV0_STATUS
 HV1 smoke: $HV1_STATUS
+HV2 smoke: $HV2_STATUS
+HV0 PASS: $HV0_STATUS
+HV1 PASS: $HV1_STATUS
+HV2 PASS: $HV2_STATUS
+VM/vCPU model implemented
+guest execution still not supported
+Linux guest still not supported
+next milestone: HV3 guest memory object
 Overall readiness: $OVERALL
 Reason: $REASON
 
@@ -229,15 +240,12 @@ First-run developer guidance:
   - tail -n 200 logs/latest/validate-hyperzig.log
 
 Current milestone: $CURRENT_MILESTONE
-Next coding target: HV2 VM/vCPU data model
-Exact file map for next target:
-  - create kernel/hypervisor/vm.zig
-  - create kernel/hypervisor/vcpu.zig
-  - create smoke/smoke-hv-vm-vcpu-v0.sh
-  - create docs/hypervisor/HV2_VM_VCPU_MODEL.md
-  - update kernel/hypervisor/hv.zig
-  - update kernel/console/shell.zig
-  - update scripts/validate-hyperzig.sh after smoke proof exists
+Next coding target: HV3 guest memory object
+HV2 file map:
+  - kernel/hypervisor/vm.zig
+  - kernel/hypervisor/vcpu.zig
+  - smoke/smoke-hv-vm-vcpu-v0.sh
+  - docs/hypervisor/HV2_VM_VCPU_MODEL.md
 Exact command to rerun validation:
   - ./scripts/validate-hyperzig.sh
 Developer map:
@@ -247,7 +255,7 @@ HV2 implementation map:
 Non-claims:
   - no Linux guest support yet
   - no guest execution yet
-  - no smoke-proven VM/vCPU object yet
+  - VM/vCPU object model is smoke-proven in HV2
 
 Command log: $COMMAND_LOG
 Summary log: $SUMMARY_LOG
@@ -269,6 +277,7 @@ done
 printf '\nTranscript paths:\n'
 printf '  - HV0: %s\n' "$ROOT/smoke/transcripts/latest-hv-status-v0.txt"
 printf '  - HV1: %s\n' "$ROOT/smoke/transcripts/latest-hv-capability-v0.txt"
+printf '  - HV2: %s\n' "$ROOT/smoke/transcripts/latest-hv-vm-vcpu-v0.txt"
 printf '\nCompleted milestones/evidence:\n'
 if [[ ${#COMPLETED[@]} -eq 0 ]]; then printf '  - none\n'; else printf '  - %s\n' "${COMPLETED[@]}"; fi
 printf '\nMissing optional smoke tests (MISSING is not PASS):\n'

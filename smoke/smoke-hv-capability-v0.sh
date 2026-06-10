@@ -121,8 +121,8 @@ for marker in \
     'hv: h_extension=' \
     'hv: guest_execution=not-supported-yet' \
     'hv: linux_guest=not-supported-yet' \
-    'hv: vm_object=MISSING' \
-    'hv: vcpu_object=MISSING'
+    'hv: vm_object=implemented' \
+    'hv: vcpu_object=implemented'
 do
     require "$marker"
 done

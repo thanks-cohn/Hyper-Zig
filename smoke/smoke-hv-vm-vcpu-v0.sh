@@ -3,10 +3,10 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="$ROOT/logs/latest"
-SMOKE_LOG="$LOG_DIR/smoke-hv-status-v0.log"
-QEMU_LOG="$LOG_DIR/qemu-hv-status-v0.log"
-TRANSCRIPT="$ROOT/smoke/transcripts/latest-hv-status-v0.txt"
-TRANSCRIPT_COPY="$LOG_DIR/qemu-smoke-hv-status-v0-transcript.txt"
+SMOKE_LOG="$LOG_DIR/smoke-hv-vm-vcpu-v0.log"
+QEMU_LOG="$LOG_DIR/qemu-hv-vm-vcpu-v0.log"
+TRANSCRIPT="$ROOT/smoke/transcripts/latest-hv-vm-vcpu-v0.txt"
+TRANSCRIPT_COPY="$LOG_DIR/qemu-smoke-hv-vm-vcpu-v0-transcript.txt"
 ELF="$ROOT/zig-out/bin/zign01d-v0"
 
 mkdir -p "$LOG_DIR" "$ROOT/smoke/transcripts"
@@ -15,7 +15,7 @@ mkdir -p "$LOG_DIR" "$ROOT/smoke/transcripts"
 : > "$TRANSCRIPT"
 
 stamp() { date -u '+%Y-%m-%dT%H:%M:%SZ'; }
-log() { printf '[%s][ZIGN01D][INFO][SMOKE][SMOKEHV0] %s\n' "$(stamp)" "$*" | tee -a "$SMOKE_LOG"; }
+log() { printf '[%s][ZIGN01D][INFO][SMOKE][SMOKEHV2] %s\n' "$(stamp)" "$*" | tee -a "$SMOKE_LOG"; }
 fail() {
     printf 'FAIL %s\n' "$*" | tee -a "$SMOKE_LOG" >&2
     printf 'inspect: %s %s %s\n' "$SMOKE_LOG" "$QEMU_LOG" "$TRANSCRIPT" | tee -a "$SMOKE_LOG" >&2
@@ -34,13 +34,16 @@ reject() {
     printf 'PASS forbidden absent: %s\n' "$marker" | tee -a "$SMOKE_LOG"
 }
 
+log "checking Zig 0.14.x"
+"$ROOT/scripts/check-zig-version.sh" >>"$SMOKE_LOG" 2>&1 || fail "Zig 0.14.x validation failed or is blocked"
+
 log "running build"
 "$ROOT/scripts/build.sh" >>"$SMOKE_LOG" 2>&1 || fail "build failed"
 [[ -f "$ELF" ]] || fail "missing kernel ELF: $ELF"
 command -v qemu-system-riscv64 >/dev/null 2>&1 || fail "qemu-system-riscv64 not found"
 
 QEMU_CMD=(qemu-system-riscv64 -machine virt -cpu rv64 -smp 1 -m 128M -nographic -monitor none -serial stdio -kernel "$ELF")
-printf '[%s][ZIGN01D][INFO][QEMU][QEMUHV0] command:' "$(stamp)" | tee -a "$QEMU_LOG" "$SMOKE_LOG"
+printf '[%s][ZIGN01D][INFO][QEMU][QEMUHV2] command:' "$(stamp)" | tee -a "$QEMU_LOG" "$SMOKE_LOG"
 printf ' %q' "${QEMU_CMD[@]}" | tee -a "$QEMU_LOG" "$SMOKE_LOG"
 printf '\n' | tee -a "$QEMU_LOG" "$SMOKE_LOG"
 
@@ -77,7 +80,7 @@ with open(transcript, "wb") as out:
                     seen.extend(chunk)
             if not ready and b"zign01d> " in seen:
                 ready = True
-                for command in ("hv status", "shutdown"):
+                for command in ("hv vm", "hv vcpu", "hv inspect", "hv-objects", "shutdown"):
                     proc.stdin.write((command + "\n").encode())
                     proc.stdin.flush()
                     time.sleep(0.1)
@@ -111,36 +114,30 @@ cp "$TRANSCRIPT" "$TRANSCRIPT_COPY"
 [[ -s "$TRANSCRIPT" ]] || fail "boot transcript missing or empty"
 
 for marker in \
-    '[ZIGN01D][INFO][SHELL][SHELL001]' \
-    'zign01d>' \
-    'hv: branch=hypervisor-v0' \
-    'hv: target=zig-0.14.x' \
-    'hv: status=experimental-hypervisor-candidate' \
-    'hv: linux_guest=not-supported-yet' \
-    'hv: rust_guest_toolchain=not-supported-yet' \
-    'hv: guest_execution=not-supported-yet' \
     'hv: vm_object=implemented' \
     'hv: vcpu_object=implemented' \
-    'hv: guest_memory=MISSING' \
-    'hv: guest_entry=MISSING' \
-    'hv: guest_trap_return=MISSING' \
-    'hv: second_stage_translation=MISSING' \
-    'hv: virtual_timer=MISSING' \
-    'hv: virtual_console=MISSING' \
-    'hv: sbi_layer=MISSING' \
-    'hv: virtio_for_linux=MISSING'
+    'hv: vm.id=0' \
+    'hv: vm.state=defined' \
+    'hv: vm.guest_memory=not-configured' \
+    'hv: vcpu.id=0' \
+    'hv: vcpu.vm_id=0' \
+    'hv: vcpu.state=defined' \
+    'hv: vcpu.hart_binding=unbound' \
+    'hv: vcpu.run_count=0' \
+    'hv: guest_execution=not-supported-yet' \
+    'hv: linux_guest=not-supported-yet'
 do
     require "$marker"
 done
 
 for forbidden in \
-    'linux_guest=supported' \
     'guest_execution=supported' \
-    'vm_object=IMPLEMENTED' \
-    'vcpu_object=IMPLEMENTED' \
+    'linux_guest=supported' \
+    'h_extension=present' \
     'booted linux' \
     'Linux guest booted' \
-    'guest entered'
+    'guest entered' \
+    'run_count=1'
 do
     reject "$forbidden"
 done
@@ -150,8 +147,11 @@ if grep -Fq '[ZIGN01D][PANIC]' "$TRANSCRIPT" \
     || grep -Fq 'PANIC' "$TRANSCRIPT" \
     || grep -Fq 'kernel panic' "$TRANSCRIPT" \
     || grep -Fq 'panicked at' "$TRANSCRIPT"; then
-    fail "true panic marker found in HV0 transcript"
+    fail "true panic marker found in HV2 transcript"
+fi
+if grep -Fq 'QEMU: Terminated' "$TRANSCRIPT" || grep -Fq 'qemu-system-riscv64: terminating' "$TRANSCRIPT"; then
+    fail "qemu crash/termination output found in HV2 transcript"
 fi
 
-log "HV0 status smoke passed; transcript=$TRANSCRIPT"
-echo "PASS ZIGN01D HV0 status smoke"
+log "HV2 VM/vCPU smoke passed; transcript=$TRANSCRIPT"
+echo "PASS ZIGN01D HV2 VM/vCPU smoke"

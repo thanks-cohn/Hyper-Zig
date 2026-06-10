@@ -141,7 +141,7 @@ This index records the current milestone ladder and intentionally missing featur
 - **Key commands added:** `hv`, `hv status`, plus flat alias `hv-status`.
 - **Smoke test file:** `smoke/smoke-hv-status-v0.sh`.
 - **Docs:** `docs/hypervisor/HYPERVISOR_BRANCH_CHARTER.md`, `docs/hypervisor/LINUX_GUEST_FAST_PATH.md`, `docs/hypervisor/HV_MILESTONE_LADDER.md`, `docs/hypervisor/RUST_ON_ZIGN01D_PLAN.md`, `docs/hypervisor/HV0_STATUS_AUDIT.md`.
-- **Intentionally missing features:** Linux guest support, guest execution, VM object, vCPU object, guest memory, guest entry, guest trap return, second-stage translation, virtual timer, virtual console, SBI layer, and virtio for Linux.
+- **Intentionally missing features:** Linux guest support, guest execution, guest memory, guest entry, guest trap return, second-stage translation, virtual timer, virtual console, SBI layer, and virtio for Linux.
 - **Next dependency:** HV1: hypervisor capability detection and VM/vCPU data model design.
 
 ## HV1 Capability Detection
@@ -151,6 +151,16 @@ This index records the current milestone ladder and intentionally missing featur
 - **Key commands added:** `hv capability`, plus flat alias `hv-capability`.
 - **Smoke test file:** `smoke/smoke-hv-capability-v0.sh`.
 - **Docs:** `docs/hypervisor/HV1_CAPABILITY_DETECTION.md`, `docs/hypervisor/HV1_commands.md`.
-- **Intentionally missing features:** H-extension presence proof, Linux guest support, guest execution, VM object, vCPU object, guest memory, guest entry, guest trap return, second-stage translation, virtual console, SBI layer, and virtio for Linux.
+- **Intentionally missing features:** H-extension presence proof, Linux guest support, guest execution, guest memory, guest entry, guest trap return, second-stage translation, virtual console, SBI layer, and virtio for Linux.
 - **Next dependency:** HV2: real VM/vCPU data model objects and inspection, still with no guest execution or Linux support claim.
+
+## HV2 VM/vCPU Data Model
+
+- **Purpose:** Add real initialized VM and vCPU objects that are inspectable from the shell and proven by smoke tests.
+- **Status:** IMPLEMENTED for VM/vCPU data-model objects only; guest execution and Linux remain not supported.
+- **Key commands added:** `hv vm`, `hv vcpu`, `hv inspect`, `hv-objects`, plus flat aliases `hv-vm` and `hv-vcpu`.
+- **Smoke test file:** `smoke/smoke-hv-vm-vcpu-v0.sh`.
+- **Docs:** `docs/hypervisor/HV2_VM_VCPU_MODEL.md`.
+- **Intentionally missing features:** guest memory object, guest execution, Linux guest support, H-extension presence proof, guest entry, guest trap return, second-stage translation, virtual console, SBI layer, and virtio for Linux.
+- **Next dependency:** HV3: guest memory object.
 
