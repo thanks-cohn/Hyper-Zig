@@ -144,3 +144,13 @@ This index records the current milestone ladder and intentionally missing featur
 - **Intentionally missing features:** Linux guest support, guest execution, VM object, vCPU object, guest memory, guest entry, guest trap return, second-stage translation, virtual timer, virtual console, SBI layer, and virtio for Linux.
 - **Next dependency:** HV1: hypervisor capability detection and VM/vCPU data model design.
 
+## HV1 Capability Detection
+
+- **Purpose:** Add a safe hypervisor capability status surface that reports capability detection as implemented while keeping the current RISC-V H-extension status honest.
+- **Status:** IMPLEMENTED for capability reporting only; current H-extension result is `unknown reason=no-safe-detection-yet`.
+- **Key commands added:** `hv capability`, plus flat alias `hv-capability`.
+- **Smoke test file:** `smoke/smoke-hv-capability-v0.sh`.
+- **Docs:** `docs/hypervisor/HV1_CAPABILITY_DETECTION.md`, `docs/hypervisor/HV1_commands.md`.
+- **Intentionally missing features:** H-extension presence proof, Linux guest support, guest execution, VM object, vCPU object, guest memory, guest entry, guest trap return, second-stage translation, virtual console, SBI layer, and virtio for Linux.
+- **Next dependency:** HV2: real VM/vCPU data model objects and inspection, still with no guest execution or Linux support claim.
+

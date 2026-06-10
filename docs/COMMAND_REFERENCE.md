@@ -60,6 +60,7 @@ Run `./scripts/check-zig-version.sh` before using shell-command transcripts as c
 | `zbus providers` / `zbus-providers` | ZBUS scaffold present in current repo | Lists provider scaffold states. | `zbus providers` | Providers `none`; net/sms/modem/files/time not implemented. | Does not imply provider backends. |
 | `hv` | HV0 Hypervisor Status Scaffold | Reports hypervisor research scaffold status. Does not imply guest execution or Linux support. | `hv` | `hv: status=research-scaffold`, guest features marked `not-supported-yet` or `MISSING`. | Does not imply VM support, vCPU support, guest execution, second-stage translation, SBI emulation, virtual console, or Linux support. |
 | `hv status` / `hv-status` | HV0 Hypervisor Status Scaffold | Reports hypervisor research scaffold status. Does not imply guest execution or Linux support. | `hv status` | Same output as `hv`. | Does not imply guest execution or Linux support. |
+| `hv capability` / `hv-capability` | HV1 Capability Detection | Reports the HV1 safe capability surface and the current H-extension status without unsafe probing. | `hv capability` | `hv: capability_detection=implemented`, `hv: capability_source=supervisor-mode-safe-static-policy`, `hv: h_extension=unknown reason=no-safe-detection-yet`, and guest/Linux/VM/vCPU non-claim markers. | Does not imply H-extension presence, VM support, vCPU support, guest memory, guest entry, guest execution, second-stage translation, SBI emulation, virtual console, virtio for Linux, or Linux support. |
 
 ## PMM V0 commands
 
@@ -88,3 +89,7 @@ Run `./scripts/check-zig-version.sh` before using shell-command transcripts as c
 | `memory` | MEMORY V0 / HEAP V0 / PMM V0 integration | Prints the fixed QEMU virt model plus current heap allocator stats, PMM presence, and missing memory powers. | `memory` | `memory: heap=implemented-v0`, `memory: pmm=implemented-v0`, `memory: allocator=kernel-bump-reset-v0`, heap counters, and `paging=not-implemented`. | Does not imply dynamic RAM discovery, paging, virtual memory, userspace memory, swap, NUMA, individual heap free, or production PMM behavior. |
 | `memmap` | MEMORY V0 | Prints the fixed QEMU virt RAM region and its source. | `memmap` | `memmap: region=ram base=0x80000000 size_bytes=134217728 size_mib=128 source=qemu-virt-assumption`, with live discovery and device-tree parsing marked `not-implemented`. | Does not imply device-tree parsing or live memory probing. |
 | `kernel-bounds` | MEMORY V0 | Prints linker-symbol kernel image start, end, and size. | `kernel-bounds` | `kernel-bounds: start=0x...`, `kernel-bounds: end=0x...`, `kernel-bounds: size_bytes=...`. | Does not imply relocation, modules, or userspace address spaces. |
+
+## Hypervisor command details
+
+HV0 and HV1 hypervisor commands are grouped in `docs/hypervisor/HV1_commands.md` so the status-only commands and capability-only commands remain easy to audit together.
