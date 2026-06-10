@@ -55,7 +55,7 @@ pub const GuestImageLoadResult = struct {
     image_size_bytes: usize,
     loaded_byte_count: usize,
     checksum: usize,
-    error: GuestImageError,
+    image_error: GuestImageError,
 };
 
 pub const GuestImageVerifyResult = struct {
@@ -67,7 +67,7 @@ pub const GuestImageVerifyResult = struct {
     verified_byte_count: usize,
     expected_checksum: usize,
     actual_checksum: usize,
-    error: GuestImageError,
+    image_error: GuestImageError,
 };
 
 pub const GuestImage = struct {
@@ -182,7 +182,7 @@ fn loadStatic(format: GuestImageFormat, guest_load_base: usize, entry_point: Gue
         .image_size_bytes = payload.len,
         .loaded_byte_count = written,
         .checksum = final_checksum,
-        .error = .none,
+        .image_error = .none,
     };
 }
 
@@ -216,7 +216,7 @@ pub fn verifyLoaded() GuestImageVerifyResult {
         .verified_byte_count = verified,
         .expected_checksum = image.checksum,
         .actual_checksum = actual,
-        .error = .none,
+        .image_error = .none,
     };
 }
 
@@ -335,7 +335,7 @@ fn failLoad(err: GuestImageError, format: GuestImageFormat, guest_load_base: usi
         .image_size_bytes = image_size_bytes,
         .loaded_byte_count = loaded_byte_count,
         .checksum = checksum,
-        .error = err,
+        .image_error = err,
     };
 }
 
@@ -353,7 +353,7 @@ fn failVerify(err: GuestImageError, verified_byte_count: usize, actual_checksum:
         .verified_byte_count = verified_byte_count,
         .expected_checksum = image.checksum,
         .actual_checksum = actual_checksum,
-        .error = err,
+        .image_error = err,
     };
 }
 
@@ -386,7 +386,7 @@ pub fn printLoadTinyCommand() void {
     uart.write(resultName(result.result));
     uart.write("\r\n");
     uart.write("hv: guest_image.load_result.error=");
-    uart.write(errorName(result.error));
+    uart.write(errorName(result.image_error));
     uart.write("\r\n");
     printFields();
     printNonClaims();
@@ -410,7 +410,7 @@ pub fn printVerifyCommand() void {
     uart.writeHex(result.actual_checksum);
     uart.write("\r\n");
     uart.write("hv: guest_image.verify_result.error=");
-    uart.write(errorName(result.error));
+    uart.write(errorName(result.image_error));
     uart.write("\r\n");
     printFields();
     printNonClaims();
