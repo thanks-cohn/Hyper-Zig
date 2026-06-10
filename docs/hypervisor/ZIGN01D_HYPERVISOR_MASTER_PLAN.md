@@ -149,8 +149,8 @@ Every milestone from HV0 through HV13 must carry source proof, documentation pro
 
 - **Goal:** Safely report whether the RISC-V H-extension or another required hypervisor capability is present. No guest execution.
 - **Required Zig files likely touched:** `kernel/hypervisor/hv.zig`, `kernel/hypervisor/capability.zig`, `kernel/arch/riscv64/csr.zig` or existing safe CSR helpers.
-- **Required docs:** `docs/hypervisor/HV1_CAPABILITY_DETECTION.md`, update this master plan only if command names or marker contracts change.
-- **Required shell commands:** `git branch --show-current`, `git status`, `./scripts/check-zig-version.sh`, `./scripts/build.sh`, `./smoke/smoke-hv-capability-v0.sh`.
+- **Required docs:** `docs/hypervisor/HV1_CAPABILITY_DETECTION.md`, `docs/hypervisor/HV1_commands.md`, update this master plan only if command names or marker contracts change.
+- **Required shell commands:** `hv capability` and `hv-capability` for the capability surface, plus validation commands `git branch --show-current`, `git status`, `./scripts/check-zig-version.sh`, `./scripts/build.sh`, `./smoke/smoke-hv-capability-v0.sh`.
 - **Required smoke test file:** `smoke/smoke-hv-capability-v0.sh`.
 - **Required transcript markers:** `hv: capability_detection=implemented`, a source line such as `hv: capability_source=<safe-source>`, one of `hv: h_extension=present`, `hv: h_extension=absent`, or `hv: h_extension=unknown reason=<reason>`, and `hv: guest_execution=not-supported-yet`.
 - **Required negative markers / forbidden claims:** `guest_execution=supported`, `guest entered`, `linux_guest=supported`, unsafe trap/panic output from probing privileged CSRs.

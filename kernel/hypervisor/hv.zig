@@ -1,4 +1,5 @@
 const uart = @import("../console/uart.zig");
+const capability = @import("capability.zig");
 
 pub fn printStatus() void {
     uart.write("hv: branch=hypervisor-v0\r\n");
@@ -20,4 +21,8 @@ pub fn printStatus() void {
     uart.write("hv: sbi_layer=MISSING\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
     uart.write("hv: next=HV1 detect hypervisor capability and define VM/vCPU data model\r\n");
+}
+
+pub fn printCapability() void {
+    capability.print();
 }
