@@ -1,4 +1,4 @@
-# ZIGN01D
+# Hyper-Zig
 
 <p align="center">
   <img src="da_zoid.png" alt="ZIGN01D 1980s banner" width="720"> 
@@ -9,6 +9,38 @@ A small operating-system laboratory for learning how a machine comes alive.
 ZIGN01D boots on RISC-V under QEMU, speaks through a serial shell, and grows one proven step at a time. It is simple on purpose. Each milestone should make the machine a little more real, while keeping the reader curious instead of buried.
 
 This project is not trying to impress you with a wall of complexity. It is trying to let you see the hidden parts of a kernel clearly enough that they become exciting.
+
+
+## Hyper-Zig validation doctrine
+
+Hyper-Zig is the hypervisor-first repository and `main` is allowed to be the hypervisor mainline. This repo targets **Zig 0.14.x only** for build, smoke, and validation evidence; Zig 0.15, Zig 0.16, or newer syntax/API success is not compatibility proof here.
+
+The canonical validation command is:
+
+```sh
+./scripts/validate-hyperzig.sh
+```
+
+The Zig build graph also exposes the same validation path:
+
+```sh
+zig build validate-hyperzig
+```
+
+Plain `zig build` must continue to build the kernel normally. Use `ZIG=/path/to/zig-0.14.x/zig` when your default `zig` is not a 0.14.x compiler.
+
+Hyper-Zig currently does **not** claim Linux guest support, guest execution, or smoke-proven VM/vCPU support. HV0/HV1 validation proves status and capability-reporting boundaries only.
+
+### Minimus-Log principle
+
+Every major validation run should end with a dense final summary that fits in the last 200 to 500 lines. The tail must show branch, commit, Zig path/version, build status, smoke statuses, transcript paths, log paths, completed and missing milestones, blockers, next milestone, readiness, and the concrete PASS/FAIL/BLOCKED reason. Inspect it with:
+
+```sh
+tail -n 200 logs/latest/validate-hyperzig.log
+tail -n 500 logs/latest/validate-hyperzig.log
+```
+
+See [docs/hypervisor/MINIMUS_LOG.md](docs/hypervisor/MINIMUS_LOG.md) for the required fields and rationale.
 
 ## Why Zig?
 
@@ -56,11 +88,11 @@ PMM V0 adds physical page accounting over the known QEMU `virt` RAM range. The k
 This is not production memory management yet. It does not add paging, virtual memory, userspace memory, process isolation, swap, real phone hardware, real internet, real SMS, or real modem support.
 
 
-## Hypervisor branch
+## Hypervisor mainline
 
-The `hypervisor-v0` branch explores future guest execution and Linux guest support. Current status: HV0 status scaffold only. Linux guest support: not supported yet.
+Hyper-Zig is now the dedicated hypervisor-first fork/lineage. The active project target is this repository, and `main` may be treated as the hypervisor mainline.
 
-HV0 adds `hv status`/`hv` reporting and documentation only; it does not execute guests, provide VM/vCPU support, or boot Linux.
+Current status: HV0 status reporting and HV1 safe capability reporting are research scaffolds. Hyper-Zig does not execute guests, does not provide smoke-proven VM/vCPU support, and does not boot Linux.
 
 ## Try it
 
@@ -70,7 +102,14 @@ Build the kernel:
 ./scripts/build.sh
 ```
 
-Run the main proof ladder:
+Run the canonical Hyper-Zig validator:
+
+```sh
+./scripts/validate-hyperzig.sh
+zig build validate-hyperzig
+```
+
+Run the legacy proof ladder directly when you need individual smoke detail:
 
 ```sh
 ./scripts/doctor.sh

@@ -13,16 +13,21 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("kernel/main.zig"),
         .target = target,
         .optimize = optimize,
-.code_model = .medium,
+        .code_model = .medium,
     });
 
     exe.addAssemblyFile(b.path("boot/entry.S"));
     exe.setLinkerScript(b.path("boot/linker.ld"));
     exe.entry = .{ .symbol_name = "_start" };
 
-// Bare-metal V0: do not bundle Zig compiler_rt.
-// Pulling compiler_rt drags in math/runtime code and breaks this tiny RISC-V kernel link.
-exe.bundle_compiler_rt = false;
+    // Bare-metal V0: do not bundle Zig compiler_rt.
+    // Pulling compiler_rt drags in math/runtime code and breaks this tiny RISC-V kernel link.
+    exe.bundle_compiler_rt = false;
 
     b.installArtifact(exe);
+
+    const validate_hyperzig_cmd = b.addSystemCommand(&.{ "sh", "-c", "./scripts/validate-hyperzig.sh" });
+    validate_hyperzig_cmd.step.dependOn(b.getInstallStep());
+    const validate_hyperzig_step = b.step("validate-hyperzig", "Run the canonical Hyper-Zig validation script with Minimus-Log output");
+    validate_hyperzig_step.dependOn(&validate_hyperzig_cmd.step);
 }
