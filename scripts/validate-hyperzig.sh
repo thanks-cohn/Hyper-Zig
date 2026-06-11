@@ -4,6 +4,10 @@ set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT" || exit 2
 
+RUN_START_EPOCH="$(($(date -u +%s) - 1))"
+# shellcheck source=scripts/lib/final-report.sh
+source "$ROOT/scripts/lib/final-report.sh"
+
 STAMP="$(date -u '+%Y%m%dT%H%M%SZ')"
 LOG_ROOT="$ROOT/logs/validation"
 RUN_DIR="$LOG_ROOT/$STAMP"
@@ -220,9 +224,11 @@ NEXT_MILESTONE="HV7 guest entry research without Linux support claim"
 {
 cat <<SUMMARY
 
-==================================================
-HYPER-ZIG MINIMUS-LOG FINAL SUMMARY
-===================================
+SUMMARY
+hyperzig_print_link_for_everything "$ROOT" "$RUN_DIR" "$RUN_START_EPOCH"
+cat <<SUMMARY
+MINIMUS LOG
+===========
 Repository: Hyper-Zig
 Branch: $(branch_name)
 Commit: $(short_commit)
@@ -329,7 +335,7 @@ printf '  - %s\n' "${MISSING_MILESTONES[@]}"
 printf '\nCurrent blockers:\n'
 if [[ ${#BLOCKERS[@]} -eq 0 ]]; then printf '  - none\n'; else printf '  - %s\n' "${BLOCKERS[@]}"; fi
 printf '\nNext milestone:\n  - %s\n' "$NEXT_MILESTONE"
-printf '\nMinimus-Log inspection:\n'
+printf '\nMinimus Log inspection:\n'
 printf '  - tail -n 200 %q\n' "$COMMAND_LOG"
 printf '  - tail -n 500 %q\n' "$COMMAND_LOG"
 printf '===================================\n'

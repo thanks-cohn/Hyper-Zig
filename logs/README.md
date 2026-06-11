@@ -9,3 +9,5 @@ Important V0 files:
 - `logs/latest/qemu.log` — QEMU command and serial output when captured.
 - `logs/latest/smoke.log` — smoke-test PASS/FAIL evidence.
 - `logs/latest/qemu-smoke-transcript.txt` — serial transcript used for marker checks.
+
+Validation reports end with `A LINK FOR EVERYTHING` followed by `MINIMUS LOG`. The link section is generated after validation completes and lists produced artifacts with absolute addresses only.
