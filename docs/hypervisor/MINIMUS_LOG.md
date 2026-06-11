@@ -6,13 +6,24 @@ Hyper-Zig is the hypervisor-first repository. Validation evidence belongs to thi
 
 ## Why the tail matters
 
-Validation logs are long because they include build output, QEMU transcripts, and smoke-test evidence. Developers should not need to read the entire log to answer basic state questions. The bottom of the output must therefore preserve a dense, readable summary that explains what passed, what failed, what is missing, and what should happen next.
+Validation logs are long because they include build output, QEMU transcripts, and smoke-test evidence. Developers should not need to read the entire log to answer basic state questions. The bottom of the output must therefore preserve a compact artifact inventory followed by a dense, readable summary that explains what passed, what failed, what is missing, and what should happen next.
 
-This also prevents fake green checks: a PASS is only credible when the final summary points to the command output, smoke output, transcript markers, or build output that produced it.
+This also prevents fake green checks: a PASS is only credible when the final sections point to every produced artifact and the Minimus Log names the command output, smoke output, transcript markers, or build output that produced it.
 
-## Required fields
+## Required final section order
 
-Every major validation script must end with a Minimus-Log summary containing:
+Every major validation script must append final sections only after the run is complete, in this order:
+
+1. `A LINK FOR EVERYTHING`
+2. `MINIMUS LOG`
+
+`A LINK FOR EVERYTHING` is an artifact inventory, not an explanation. It lists each produced file with only the filename and a real absolute `Full Address`. It is generated from the final artifact set after builds, smoke tests, validations, evidence generation, and exports have finished.
+
+`MINIMUS LOG` remains the final major section and explains what happened.
+
+## Required Minimus Log fields
+
+Every major validation script must end with a Minimus Log summary containing:
 
 - repository name
 - branch

@@ -34,14 +34,14 @@ Normal build path, which must continue to build without running the full validat
 zig build
 ```
 
-The validator runs the Zig version check, the build script, required HV0/HV1/HV2 smoke tests, discovered smoke tests under `smoke/`, and ends with a Minimus-Log summary. To inspect the project state from the bottom of the latest validation output, run:
+The validator runs the Zig version check, the build script, required HV0/HV1/HV2 smoke tests, discovered smoke tests under `smoke/`, and ends with `A LINK FOR EVERYTHING` followed by `MINIMUS LOG`. To inspect the project state from the bottom of the latest validation output, run:
 
 ```sh
 tail -n 200 logs/latest/validate-hyperzig.log
 tail -n 500 logs/latest/validate-hyperzig.log
 ```
 
-The summary must report branch, commit, Zig path/version, build status, smoke statuses, transcript paths, log paths, completed and missing milestones, blockers, next milestone, readiness, and the PASS/FAIL/BLOCKED reason. Hyper-Zig does not claim Linux guest support or guest execution yet.
+`A LINK FOR EVERYTHING` must list produced artifacts by filename and absolute full address only. `MINIMUS LOG` must report branch, commit, Zig path/version, build status, smoke statuses, transcript paths, log paths, completed and missing milestones, blockers, next milestone, readiness, and the PASS/FAIL/BLOCKED reason. Hyper-Zig does not claim Linux guest support or guest execution yet.
 
 ## Zig toolchain target
 
