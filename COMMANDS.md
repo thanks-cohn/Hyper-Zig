@@ -123,7 +123,7 @@ HV5 adds real guest-physical-address metadata and lookup behavior on top of HV4 
 Smoke proof: `smoke/smoke-hv-address-space-v0.sh` writes `smoke/transcripts/latest-hv-address-space-v0.txt` and verifies command-block state movement rather than grepping static claims.
 
 
-## HV6 Guest Image Loader Commands
+## HV6 Guest Image Loader Commands( Coming Soon) 
 
 These commands are behavior commands, not static status claims. They load and verify the tiny `tiny-flat-v0` byte payload through HV4 guest memory and HV5 guest address-space metadata. They do not execute the guest, do not load Linux, do not implement guest entry, and do not implement second-stage translation.
 
