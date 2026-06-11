@@ -19,7 +19,7 @@ pub fn init() void {
         : [vector] "r" (vector_addr),
     );
     installed = true;
-    diag.info("TRAP", "TRAP001", "supervisor trap vector installed; trap dispatch panics honestly on unhandled traps; cause names available");
+    diag.info("TRAP", "TRAP001", "supervisor trap vector installed; unhandled traps halt honestly; cause names available");
 }
 
 pub fn isInstalled() bool {
