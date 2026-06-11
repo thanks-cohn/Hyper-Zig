@@ -16,15 +16,9 @@
 </p>
 
 
-Hyper-Zig is a Zig 0.14.x RISC-V kernel being evolved into a hypervisor one proven milestone at a time.
-
-The project is research-focused, educational, and evidence-driven. Every capability must be backed by commands, logs, transcripts, and repeatable proof.
-
-Hyper-Zig is **not** a Linux host yet.
-
 ## Quick Start (Fresh Machine)
 
-Hyper-Zig targets **Zig 0.14.x**.
+Hyper-Zig targets Zig 0.14.x.
 
 The commands below assume a Linux machine with no existing Zig installation.
 
@@ -38,10 +32,10 @@ wget https://ziglang.org/download/0.14.0/zig-linux-x86_64-0.14.0.tar.xz
 
 tar -xf zig-linux-x86_64-0.14.0.tar.xz
 
-export ZIG=$HOME/tools/zig-linux_x86_64-0.14.0/zig
+export ZIG=$HOME/tools/zig-linux-x86_64-0.14.0/zig
 ```
 
-Verify the installation:
+### Verify the installation
 
 ```bash
 echo $ZIG
@@ -54,6 +48,8 @@ Expected output:
 /home/<user>/tools/zig-linux-x86_64-0.14.0/zig
 0.14.0
 ```
+
+
 
 ### Clone Hyper-Zig
 
