@@ -49,7 +49,26 @@ Expected output:
 0.14.0
 ```
 
+### Install QEMU
 
+Ubuntu/Debian:
+
+```bash
+sudo apt update
+sudo apt install qemu-system-misc
+```
+
+Arch:
+
+```bash
+sudo pacman -S qemu-full
+```
+
+Verify:
+
+```bash
+qemu-system-riscv64 --version
+```
 
 ### Clone Hyper-Zig
 
