@@ -14,49 +14,99 @@
 <p align="center">
   <img src="da_zoid.png" alt="ZIGN01D 1980s banner" width="720">
 </p>
-
 # Hyper-Zig
 
-Hyper-Zig is a small Zig 0.14.x RISC-V kernel being grown into a hypervisor one proven milestone at a time.
+Hyper-Zig is a Zig 0.14.x RISC-V kernel being evolved into a hypervisor one proven milestone at a time.
 
-It is a research and teaching project. It is not a Linux host yet.
+The project is research-focused, educational, and evidence-driven. Every capability must be backed by commands, logs, transcripts, and repeatable proof.
 
-## Copy-paste quickstart
+Hyper-Zig is **not** a Linux host yet.
 
-This downloads the current repo, checks the toolchain, builds the kernel, runs the hypervisor proof ladder, and shows the latest validation log.
+## Quick Start (Fresh Machine)
+
+Hyper-Zig targets **Zig 0.14.x**.
+
+The commands below assume a Linux machine with no existing Zig installation.
+
+### Install Zig 0.14.0
+
+```bash
+mkdir -p ~/tools
+cd ~/tools
+
+wget https://ziglang.org/download/0.14.0/zig-linux-x86_64-0.14.0.tar.xz
+
+tar -xf zig-linux-x86_64-0.14.0.tar.xz
+
+export ZIG=$HOME/tools/zig-linux_x86_64-0.14.0/zig
+```
+
+Verify the installation:
+
+```bash
+echo $ZIG
+$ZIG version
+```
+
+Expected output:
+
+```text
+/home/<user>/tools/zig-linux-x86_64-0.14.0/zig
+0.14.0
+```
+
+### Clone Hyper-Zig
 
 ```bash
 git clone https://github.com/thanks-cohn/Hyper-Zig.git
 cd Hyper-Zig
+```
 
-zig version
+### Verify the toolchain
+
+```bash
 ./scripts/check-zig-version.sh
-zig build
-zig build hyperzig-status
-./scripts/validate-hyperzig.sh
+```
 
+### Build Hyper-Zig
+
+```bash
+./scripts/build.sh
+```
+
+### Run full validation
+
+```bash
+./scripts/validate-hyperzig.sh
+```
+
+### Inspect the latest validation log
+
+```bash
 tail -n 240 logs/latest/validate-hyperzig.log
 ```
 
-Need to use a specific Zig 0.14.x binary?
+> IMPORTANT
+>
+> The `ZIG` environment variable must point to a real Zig 0.14.x compiler.
+>
+> Do not use placeholder paths such as:
+>
+> ```bash
+> export ZIG=/path/to/zig-0.14.x/zig
+> ```
+>
+> Validation will fail if `ZIG` points to a nonexistent location.
+
+## Validation and Proof Commands
+
+Run the complete validation ladder:
 
 ```bash
-export ZIG=/path/to/zig-0.14.x/zig
-export PATH="$(dirname "$ZIG"):$PATH"
-./scripts/check-zig-version.sh
-zig build
 ./scripts/validate-hyperzig.sh
 ```
 
-## What the commands prove
-
-Run everything:
-
-```bash
-./scripts/validate-hyperzig.sh
-```
-
-Run one proof at a time:
+Run individual milestone proofs:
 
 ```bash
 ./smoke/smoke-hv-status-v0.sh
@@ -68,7 +118,7 @@ Run one proof at a time:
 ./smoke/smoke-hv-guest-image-v0.sh
 ```
 
-Read the latest evidence:
+Inspect proof transcripts:
 
 ```bash
 cat smoke/transcripts/latest-hv-status-v0.txt
@@ -78,10 +128,15 @@ cat smoke/transcripts/latest-hv-vcpu-lifecycle-v0.txt
 cat smoke/transcripts/latest-hv-guest-memory-v0.txt
 cat smoke/transcripts/latest-hv-address-space-v0.txt
 cat smoke/transcripts/latest-hv-guest-image-v0.txt
+```
+
+Inspect validation evidence:
+
+```bash
 tail -n 240 logs/latest/validate-hyperzig.log
 ```
 
-If the validation script passes, the current hypervisor ladder is healthy.
+When validation passes, the currently implemented hypervisor milestones have been proven by the project's evidence ladder.
 
 ## Current state
 
