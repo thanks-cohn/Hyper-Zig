@@ -710,204 +710,259 @@ HV20 proves Linux can live inside Hyper-Zig.
 ```
 
 
-```
-===============================================================================
-THE HYPER-ZIG EVIDENCE PLATFORM
-===============================
+Hyper-Zig is not merely a hypervisor.
 
-Hyper-Zig is not merely a hypervisor project.
+Hyper-Zig is an attempt to build the most understandable systems project ever created.
 
-Its long-term goal is to become a complete evidence-driven systems
-development platform where every capability is implemented, proven,
-documented, searchable, and explainable.
+The goal is not simply to create a machine that works.
 
-The vision is simple:
+The goal is to create a machine that explains itself.
 
-A developer should be able to type:
+Every capability should be visible.
+
+Every claim should be proven.
+
+Every failure should be understandable.
+
+Every milestone should leave behind evidence.
+
+---
+
+One day a developer should be able to type:
 
 ```
 zig build
 ```
 
-and receive not only a working system, but a complete map explaining
-exactly what works, what was validated, how it was validated, where the
-proof exists, and where to look if something fails.
+and receive:
 
-===============================================================================
-THE MINIMUS LOG
-===============
+```
+working system
+validation report
+minimus log
+proof index
+transcript archive
+diagnostic map
+```
 
-Every milestone, smoke test, subsystem, and capability produces a
-one-line result.
+The system should not merely report success.
+
+It should explain why success occurred.
+
+The system should not merely report failure.
+
+It should explain where failure occurred.
+
+---
+
+The minimus log is the heartbeat of Hyper-Zig.
+
+Every smoke test contributes a single sentence.
 
 Example:
 
 ```
-HV7.1 PASS  Guest entry succeeds
-HV7.2 PASS  Guest exit succeeds
-HV7.3 PASS  Guest PC tracking
-HV7.4 PASS  Guest register capture
+HV7.1 PASS Guest entry succeeds
+HV7.2 PASS Guest exit succeeds
+HV7.3 PASS Guest PC advances correctly
+HV7.4 PASS Guest register capture validated
 ```
 
-The minimus log becomes the executive summary of the entire system.
+Hundreds of tests may exist.
 
-A mature Hyper-Zig may eventually contain hundreds or thousands of
-validated checks.
+The minimus log remains readable.
 
-A developer should be able to understand the health of the entire
-hypervisor by reading a single file.
+A person should be able to understand the health of the entire system in minutes rather than hours.
 
-===============================================================================
-THE PROOF FILE SYSTEM
-=====================
+---
 
-Every smoke test generates a dedicated proof file.
+Every smoke test generates a proof file.
 
 Example:
 
 ```
-proofs/HV7.1-guest-entry.txt
-proofs/HV7.2-guest-exit.txt
-proofs/HV12.4-cpu-discovery.txt
-proofs/HV20.8-csharp-compile.txt
+HV7.1-guest-entry.txt
+HV12.4-cpu-discovery.txt
+HV20.8-csharp-compile.txt
 ```
 
-Each proof file contains:
+Every proof file contains:
 
 ```
-RESULT
-COMMAND EXECUTED
-EXPECTED OUTPUT
-OBSERVED OUTPUT
-IMPORTANT INTERNAL STATE
-TRANSCRIPT LOCATION
-FAILURE HINTS
-RELEVANT SOURCE FILES
+what was tested
+what was expected
+what was observed
+which command executed
+which transcript contains evidence
+which source files are involved
+where to begin debugging
 ```
 
-The goal is not verbosity.
+The objective is immediate understanding.
 
-The goal is instant diagnosis.
+The objective is immediate diagnosis.
 
-A failed test should immediately point a developer toward the most
-probable location of the problem.
+The objective is immediate trust.
 
-===============================================================================
-BENEFITS TO LEARNERS
-====================
+---
 
-Most operating systems and hypervisors appear as black boxes.
+Most operating systems are difficult to learn.
 
-A student may spend weeks attempting to understand what happened
-between boot and execution.
+Most hypervisors are difficult to learn.
 
-Hyper-Zig aims to make every milestone visible.
+Most educational resources stop where implementation begins.
 
-Instead of merely reading theory, a learner can observe:
+Hyper-Zig attempts to bridge that gap.
+
+Every major milestone should answer:
 
 ```
-What happened
-Why it happened
-How it was validated
-Where it lives in the source tree
+what happened
+why it matters
+how it was proven
 ```
 
-This transforms systems programming from archaeology into exploration.
-
-===============================================================================
-BENEFITS TO EDUCATORS
-=====================
-
-Hyper-Zig provides a structured path from:
+A student should be able to move from:
 
 ```
-Guest image loading
-→
-Guest execution
-→
+guest image loading
+```
+
+to:
+
+```
+guest execution
+```
+
+to:
+
+```
 Linux boot
-→
-Linux userspace
-→
-Development workstation
 ```
 
-Every milestone is independently demonstrable.
-
-Every concept is attached to evidence.
-
-Every claim is reproducible.
-
-The result is a teaching platform that can be used to explain modern
-operating systems, virtualization, memory management, scheduling,
-device interfaces, and Linux boot mechanics using working code and
-observable results.
-
-===============================================================================
-BENEFITS TO DEVELOPERS
-======================
-
-Most systems projects fail because debugging becomes expensive.
-
-Hyper-Zig seeks to reduce debugging cost through evidence.
-
-Rather than searching through thousands of lines of logs, developers
-receive:
+to:
 
 ```
-Exact failing milestone
-Exact failing smoke test
-Exact proof file
-Exact transcript
-Suggested inspection points
+Ubuntu development workstation
 ```
 
-This dramatically reduces the time required to locate faults.
+while observing evidence at every stage.
 
-The objective is to make failure localization nearly instantaneous.
+Learning should come from observation, not guesswork.
 
-===============================================================================
-BENEFITS TO THE FUTURE
-======================
+---
 
-Many important systems projects become difficult to understand after
-enough time passes.
+For educators, Hyper-Zig provides a complete progression from bare-metal execution to a modern Linux environment.
 
-The original authors disappear.
+Each step is independently demonstrable.
 
-The design rationale is lost.
+Each step is independently testable.
 
-The source code remains but the reasoning vanishes.
+Each step is independently explainable.
 
-Hyper-Zig seeks to preserve both implementation and explanation.
+Instead of teaching theory alone, educators can point directly to working implementations and validated proof chains.
 
-Future developers should be able to understand not only what the system
-does, but why each capability exists and how it was proven.
+Every lesson can be accompanied by evidence.
 
-The project becomes a living record of its own evolution.
+---
 
-===============================================================================
-THE NORTH STAR
-==============
+For developers, Hyper-Zig aims to make debugging radically cheaper.
 
-The objective is not merely to boot Linux.
+Most debugging consists of searching for information that should have been available from the beginning.
 
-The objective is not merely to host Ubuntu.
+A failure should reveal:
 
-The objective is not merely to build another hypervisor.
-
-The objective is to create a system where every capability is visible,
-every claim is provable, every milestone is reproducible, and every
-failure is diagnosable.
-
-A future developer should be able to begin at HV0 and follow a complete,
-evidence-backed path to a fully functioning Linux development
-workstation and beyond.
-
-The ideal outcome is a platform where understanding is treated as a
-first-class feature.
-
-Not just software that works.
-
-# Software that explains itself.
 ```
+what failed
+why it failed
+where it failed
+which files are involved
+which evidence was expected
+which evidence was missing
+```
+
+The objective is to reduce investigation time from hours to minutes.
+
+Eventually a developer should be able to locate most faults by reading a single proof file.
+
+---
+
+For future generations of engineers, Hyper-Zig seeks to preserve both implementation and explanation.
+
+Many projects survive.
+
+Their reasoning does not.
+
+Years later the source code remains while the original design decisions disappear.
+
+Future developers inherit complexity without context.
+
+Hyper-Zig seeks to preserve:
+
+```
+what was built
+why it was built
+when it was built
+how it was validated
+```
+
+The evidence should survive alongside the code.
+
+---
+
+Hyper-Zig does not seek distinction merely by booting Linux.
+
+Many projects boot Linux.
+
+Hyper-Zig seeks distinction through visibility.
+
+A mature Hyper-Zig system should eventually provide:
+
+```
+complete validation chains
+complete proof archives
+complete transcript archives
+complete diagnostic maps
+complete milestone histories
+```
+
+The system should be inspectable from top to bottom.
+
+Nothing should require faith.
+
+Everything should provide evidence.
+
+---
+
+Imagine if Microsoft had shipped the entire history of Windows with every subsystem explained, every milestone documented, every design decision preserved, every failure diagnosable, and every capability backed by proof.
+
+Imagine if x86 history had come with a map.
+
+Imagine if every layer taught the next layer.
+
+Imagine if every subsystem explained itself.
+
+Imagine if every failure immediately revealed its cause.
+
+Imagine if a newcomer could begin at the first milestone and follow a complete path all the way to a modern Ubuntu development workstation.
+
+That is the long-term objective.
+
+Not merely software that works.
+
+Software that teaches.
+
+Software that proves.
+
+Software that remembers.
+
+Software that explains itself.
+
+Hyper-Zig is not attempting to become another hypervisor.
+
+Hyper-Zig is attempting to become the most understandable hypervisor ever built.
+
+If successful, Hyper-Zig will not merely preserve code.
+
+It will preserve understanding.
+
