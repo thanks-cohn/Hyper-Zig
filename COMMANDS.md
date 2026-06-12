@@ -166,3 +166,21 @@ HV8 adds a real guest-exit metadata object for VM 0 / vCPU 0. These commands cla
 - `hv guest-exit require-entry-test`: resets guest-entry metadata and proves exit recording is rejected when no HV7 prepared frame exists.
 
 Smoke proof: `./smoke/smoke-hv-guest-exit-v0.sh` writes `smoke/transcripts/latest-hv-guest-exit-v0.txt` and checks command blocks for state transitions, counter increments, frame PC/SP copying, `vcpu.run_count=0`, and continued non-support for guest execution, Linux guests, second-stage translation, and H-extension presence.
+
+## HV9 Controlled Guest-Entry Attempt Commands
+
+HV9 adds a real `GuestRunAttempt` safety-gate object for VM 0 / vCPU 0. It inspects the existing HV4 guest memory, HV5 address-space metadata, HV6 tiny image state, HV7 prepared entry frame, and HV8 exit model before any future guest entry is allowed. It deliberately refuses execution because second-stage translation is still missing, H-extension support is still unknown, and guest execution remains disabled.
+
+Commands added:
+
+- `hv guest-run`: prints the current run-attempt object state, prerequisite booleans, HV7/HV8-linked frame snapshot, counters, blocker list, and explicit non-claims. It does not check or execute by itself.
+- `hv-run`: flat alias for `hv guest-run`.
+- `hv guest-run check`: evaluates the real HV4/HV5/HV6/HV7/HV8 prerequisites, copies PC/SP/run-count metadata into the attempt frame, records deterministic blockers, and reports `blocked` rather than executing.
+- `hv guest-run arm-no-execute`: arms metadata only when entry and exit metadata are ready, but still refuses execution because second-stage translation is missing, H-extension is unknown, and guest execution is disabled. It must not increment `vcpu.run_count` or mark a guest running.
+- `hv guest-run reset`: clears the current attempt state back to `idle` and increments `reset_count` while preserving historical counters consistently.
+- `hv guest-run require-entry-test`: resets HV7 entry metadata and proves the run attempt rejects when no prepared guest-entry frame exists.
+- `hv guest-run require-exit-test`: resets HV8 exit metadata and proves no-execute arming rejects when no initialized exit model exists.
+
+Smoke proof: `./smoke/smoke-hv-guest-run-attempt-v0.sh` writes `smoke/transcripts/latest-hv-guest-run-attempt-v0.txt` and verifies command blocks, prerequisite truth values, blocker fields, HV7 PC/SP copying, HV8 exit linkage, reset behavior, `vcpu.run_count=0`, and continued non-support for guest execution, Linux guests, second-stage translation, and H-extension presence.
+
+HV9 does **not** enter guest code, does **not** jump to guest memory, does **not** use `sret`/`hret`/`mret` for guest execution, does **not** boot Linux, does **not** implement second-stage translation, and does **not** prove RISC-V H-extension support.

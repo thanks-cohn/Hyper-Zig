@@ -7,6 +7,7 @@ const guest_address_space = @import("guest_address_space.zig");
 const guest_image = @import("guest_image.zig");
 const guest_entry = @import("guest_entry.zig");
 const guest_exit = @import("guest_exit.zig");
+const guest_run_attempt = @import("guest_run_attempt.zig");
 
 pub fn init() void {
     vm.init();
@@ -16,6 +17,7 @@ pub fn init() void {
     guest_image.init(vm.object().id);
     guest_entry.init(vm.object().id, vcpu.object().id);
     guest_exit.init(vm.object().id, vcpu.object().id);
+    guest_run_attempt.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -34,13 +36,14 @@ pub fn printStatus() void {
     guest_image.printState();
     guest_entry.printState();
     guest_exit.printState();
+    guest_run_attempt.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
     uart.write("hv: virtual_timer=MISSING\r\n");
     uart.write("hv: virtual_console=MISSING\r\n");
     uart.write("hv: sbi_layer=MISSING\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV9 controlled guest-entry attempt research\r\n");
+    uart.write("hv: next=HV10 hardware-gated guest execution research\r\n");
 }
 
 pub fn printCapability() void {
@@ -74,6 +77,30 @@ pub fn resetGuestExit() void {
 
 pub fn requireEntryTestGuestExit() void {
     guest_exit.printRequireEntryTestCommand();
+}
+
+pub fn printGuestRunAttempt() void {
+    guest_run_attempt.printState();
+}
+
+pub fn checkGuestRunAttempt() void {
+    guest_run_attempt.printCheckCommand();
+}
+
+pub fn armNoExecuteGuestRunAttempt() void {
+    guest_run_attempt.printArmNoExecuteCommand();
+}
+
+pub fn resetGuestRunAttempt() void {
+    guest_run_attempt.printResetCommand();
+}
+
+pub fn requireEntryTestGuestRunAttempt() void {
+    guest_run_attempt.printRequireEntryTestCommand();
+}
+
+pub fn requireExitTestGuestRunAttempt() void {
+    guest_run_attempt.printRequireExitTestCommand();
 }
 
 pub fn printVm() void {
@@ -123,6 +150,7 @@ pub fn printInspect() void {
     guest_image.printState();
     guest_entry.printState();
     guest_exit.printState();
+    guest_run_attempt.printState();
 }
 
 pub fn printObjects() void {
