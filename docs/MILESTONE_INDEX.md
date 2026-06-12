@@ -228,3 +228,13 @@ This index records the current milestone ladder and intentionally missing featur
 - **Transcript:** `smoke/transcripts/latest-hv-guest-exit-v0.txt`.
 - **Intentionally missing features:** guest execution, Linux guest support, H-extension presence proof, second-stage translation, Linux image loading, SBI mediation, virtual devices, and virtio for Linux.
 - **Next dependency:** HV9 controlled guest-entry attempt research, still without claiming Linux boot or second-stage translation until separately implemented and smoke-proven.
+
+## HV9 Controlled Guest-Entry Attempt Research
+
+- **Purpose:** Add the final no-execute safety gate before any later milestone may attempt guest execution.
+- **Actual capability proven:** `GuestRunAttempt` tracks VM/vCPU ownership, idle/checked/blocked/armed-no-execute state, deterministic decisions, prerequisite booleans for HV4/HV5/HV6/HV7/HV8 readiness, explicit blockers for missing second-stage translation, unknown H-extension support, and disabled guest execution, a frame copied from HV7/HV8 metadata, run-count before/after snapshots, counters, and last error.
+- **Key commands added:** `hv guest-run`, `hv-run`, `hv guest-run check`, `hv guest-run arm-no-execute`, `hv guest-run reset`, `hv guest-run require-entry-test`, `hv guest-run require-exit-test`.
+- **Smoke test file:** `smoke/smoke-hv-guest-run-attempt-v0.sh`.
+- **Transcript:** `smoke/transcripts/latest-hv-guest-run-attempt-v0.txt`.
+- **Intentionally missing features:** guest execution, Linux guest support, H-extension presence proof, second-stage translation, Linux image loading, SBI mediation, virtual devices, and virtio for Linux.
+- **Next dependency:** HV10 first hardware-gated guest execution research, still without claiming Linux boot until separately implemented and smoke-proven.

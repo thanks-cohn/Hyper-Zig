@@ -2,7 +2,7 @@
 
 Hyper-Zig is the hypervisor-first line of the ZIGN01D RISC-V teaching kernel. It is a proof-driven Zig 0.14.x repository for growing from an observable kernel toward real hypervisor subsystems without pretending that future work already exists.
 
-Current proven hypervisor milestones are **HV0**, **HV1**, **HV2**, **HV3**, **HV4**, **HV5**, **HV6**, and **HV7** when validation passes:
+Current proven hypervisor milestones are **HV0**, **HV1**, **HV2**, **HV3**, **HV4**, **HV5**, **HV6**, **HV7**, **HV8**, and **HV9** when validation passes:
 
 - **HV0** proves the honest hypervisor status surface.
 - **HV1** proves safe capability reporting and keeps the RISC-V H-extension status `unknown` because there is no smoke-proven safe detection yet.
@@ -12,8 +12,10 @@ Current proven hypervisor milestones are **HV0**, **HV1**, **HV2**, **HV3**, **H
 - **HV5** proves metadata-only guest physical address lookup and rejection behavior without guest execution.
 - **HV6** proves tiny `tiny-flat-v0` guest payload loading into HV4 memory through HV5 metadata, plus readback verification, without guest execution.
 - **HV7** proves guest-entry preparation metadata: PC from the HV6 entry point, SP inside configured guest memory, a register frame, and attachment to VM 0 / vCPU 0, without guest execution.
+- **HV8** proves guest trap/exit metadata and classification for simulated exits without guest execution.
+- **HV9** proves a controlled guest-entry attempt safety gate that checks HV4-HV8 prerequisites and arms no-execute metadata while refusing real execution.
 
-The next milestone is **HV9: controlled guest-entry attempt research**. HV7 remains separate from guest execution and does not claim Linux guest support, second-stage translation, or H-extension support.
+The next milestone is **HV10: first hardware-gated guest execution research**. HV9 remains separate from guest execution and does not claim Linux guest support, second-stage translation, or H-extension support.
 
 ## 1. Clone and select Zig 0.14.x
 
@@ -168,7 +170,7 @@ Forbidden shortcuts:
 - Do not mark vCPU lifecycle implemented until transition behavior and failed-transition counters are smoke-proven.
 - Do not treat HV4 guest memory metadata as executable guest memory.
 
-The honest next edit for hypervisor developers is HV9 controlled guest-entry attempt research, after reviewing the HV7 guest-entry preparation implementation and validation transcript.
+The honest next edit for hypervisor developers is HV10 first hardware-gated guest execution research, after reviewing HV9 run-attempt implementation and validation transcript.
 
 ## HV5 Guest Address Space current scope
 
@@ -226,4 +228,22 @@ zig build
 ./scripts/validate-hyperzig.sh
 ```
 
-HV8 does not execute the guest, does not mark the vCPU running, does not increment `vcpu.run_count`, does not boot Linux, does not implement second-stage translation, and does not prove H-extension support. The next milestone after HV8 is HV9 controlled guest-entry attempt research.
+HV8 does not execute the guest, does not mark the vCPU running, does not increment `vcpu.run_count`, does not boot Linux, does not implement second-stage translation, and does not prove H-extension support.
+
+## HV9 Controlled Guest-Entry Attempt current scope
+
+HV9 is implemented when validation passes. It adds `kernel/hypervisor/guest_run_attempt.zig`, wires `hv guest-run` commands, and proves that a future guest-entry attempt checks HV4 guest memory, HV5 address-space metadata, HV6 image loading, HV7 entry preparation, and HV8 exit readiness before arming no-execute metadata.
+
+HV9 commands for development:
+
+```sh
+hv guest-run
+hv-run
+hv guest-run check
+hv guest-run arm-no-execute
+hv guest-run reset
+hv guest-run require-entry-test
+hv guest-run require-exit-test
+```
+
+HV9 does not execute the guest, does not mark the vCPU running, does not increment `vcpu.run_count`, does not boot Linux, does not implement second-stage translation, and does not prove H-extension support. The next milestone after HV9 is HV10 first hardware-gated guest execution research.
