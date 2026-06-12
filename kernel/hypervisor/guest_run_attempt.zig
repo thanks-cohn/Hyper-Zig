@@ -91,14 +91,14 @@ pub const GuestRunAttemptResult = struct {
     primary_blocker: GuestRunAttemptBlocker,
     prereqs: GuestRunAttemptPrereqs,
     frame: GuestRunAttemptFrame,
-    error: GuestRunAttemptError,
+    attempt_error: GuestRunAttemptError,
 };
 
 pub const GuestRunAttemptResetResult = struct {
     result: GuestRunAttemptCommandResult,
     state: GuestRunAttemptState,
     reset_count: usize,
-    error: GuestRunAttemptError,
+    attempt_error: GuestRunAttemptError,
 };
 
 pub const GuestRunAttempt = struct {
@@ -244,7 +244,7 @@ pub fn reset() GuestRunAttemptResetResult {
         .result = .ok,
         .state = .idle,
         .reset_count = stats.reset_count,
-        .error = .none,
+        .attempt_error = .none,
     };
 }
 
@@ -351,7 +351,7 @@ fn makeResult(result: GuestRunAttemptCommandResult, attempt: *const GuestRunAtte
         .primary_blocker = attempt.primary_blocker,
         .prereqs = attempt.prereqs,
         .frame = attempt.frame,
-        .error = attempt.stats.last_error,
+        .attempt_error = attempt.stats.last_error,
     };
 }
 
@@ -386,8 +386,8 @@ pub fn printResetCommand() void {
     uart.write("hv: guest_run.reset_result=");
     uart.write(commandResultName(result.result));
     uart.write("\r\n");
-    uart.write("hv: guest_run.reset_result.error=");
-    uart.write(errorName(result.error));
+    uart.write("hv: guest_run.reset_result.attempt_error=");
+    uart.write(errorName(result.attempt_error));
     uart.write("\r\n");
     printState();
 }
