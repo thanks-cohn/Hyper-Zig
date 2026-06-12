@@ -263,3 +263,11 @@ Evidence:
 Scope: metadata and validation only. HV11 does not activate second-stage translation, does not write `hgatp`, does not prove H-extension support, does not execute a guest, and does not support Linux guests.
 
 Next milestone after HV11: HV12 real second-stage page-table activation research.
+
+## HV12 — Second-stage software table builder
+
+HV12 is the software-only page-table construction layer after HV11 metadata. It adds `kernel/hypervisor/stage2_table.zig`, derives one entry per HV11 metadata page, maps the current two-page guest region as GPA `0x0` and `0x1000`, preserves read/write permissions, denies execute permission, supports software walks and validation, and exposes rejection tests for bounds, alignment, and execute access.
+
+HV12 does not activate second-stage translation, does not write `hgatp`, does not claim H-extension support, does not execute a guest, and does not support Linux guests. Evidence is `smoke/smoke-hv-stage2-table-v0.sh` with transcript `smoke/transcripts/latest-hv-stage2-table-v0.txt`.
+
+Next milestone after HV12: HV13 guarded hardware second-stage activation research, still without Linux or guest-execution claims until proven.
