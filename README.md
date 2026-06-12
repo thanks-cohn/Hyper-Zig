@@ -135,6 +135,7 @@ Run individual milestone proofs:
 ./smoke/smoke-hv-guest-exit-v0.sh
 ./smoke/smoke-hv-guest-run-attempt-v0.sh
 ./smoke/smoke-hv-guest-execution-v0.sh
+./smoke/smoke-hv-second-stage-v0.sh
 ```
 
 Inspect proof transcripts:
@@ -151,6 +152,7 @@ cat smoke/transcripts/latest-hv-guest-entry-v0.txt
 cat smoke/transcripts/latest-hv-guest-exit-v0.txt
 cat smoke/transcripts/latest-hv-guest-run-attempt-v0.txt
 cat smoke/transcripts/latest-hv-guest-execution-v0.txt
+cat smoke/transcripts/latest-hv-second-stage-v0.txt
 ```
 
 Inspect validation evidence:
@@ -178,6 +180,7 @@ Proven when validation passes:
 | HV8 | Done | Guest trap/exit metadata and classification for simulated exits, attached to VM 0 / vCPU 0, with no guest execution. |
 | HV9 | Done | Controlled guest-entry attempt safety gate and no-execute arming metadata, with no guest execution. |
 | HV10 | Done | Hardware-gated execution preparation object that validates software prerequisites and refuses execution at real hardware blockers. |
+| HV11 | Done | Second-stage translation metadata and validation only: derives active=false, execute=false mapping metadata from HV4/HV5; hardware translation remains inactive. |
 
 ## What Hyper-Zig can do today
 
@@ -244,6 +247,7 @@ Exact validation commands include:
 ./smoke/smoke-hv-guest-exit-v0.sh
 ./smoke/smoke-hv-guest-run-attempt-v0.sh
 ./smoke/smoke-hv-guest-execution-v0.sh
+./smoke/smoke-hv-second-stage-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 ```
@@ -272,6 +276,7 @@ Exact validation commands include:
 ```bash
 ./smoke/smoke-hv-guest-run-attempt-v0.sh
 ./smoke/smoke-hv-guest-execution-v0.sh
+./smoke/smoke-hv-second-stage-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 ```
@@ -301,6 +306,7 @@ Exact validation commands include:
 
 ```bash
 ./smoke/smoke-hv-guest-execution-v0.sh
+./smoke/smoke-hv-second-stage-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 ```
@@ -349,7 +355,7 @@ The goal is to build a readable, verifiable hypervisor path in Zig:
 4. State exactly what works and what does not.
 5. Move to the next milestone.
 
-The next target is **HV11 continued hardware-gated guest execution research**, still without Linux or unsupported execution claims.
+The next target is **HV12 real second-stage page-table activation research**, still without Linux or unsupported execution claims.
 
 ## Useful files
 
@@ -359,7 +365,7 @@ The next target is **HV11 continued hardware-gated guest execution research**, s
 - `logs/latest/validate-hyperzig.log` — latest validation output after running validation.
 - `smoke/transcripts/` — latest smoke-test transcripts.
 
-## Exact HV10 Validation Command Set
+## Exact HV11 Validation Command Set
 
 ```bash
 export ZIG=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1/zig
@@ -382,7 +388,41 @@ zig build hyperzig-status
 ./smoke/smoke-hv-guest-exit-v0.sh
 ./smoke/smoke-hv-guest-run-attempt-v0.sh
 ./smoke/smoke-hv-guest-execution-v0.sh
+./smoke/smoke-hv-second-stage-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 tail -n 300 logs/latest/validate-hyperzig.log
 ```
+
+
+## HV11 scope note
+
+HV11 is second-stage translation metadata research only. It adds executing code for `SecondStage` mapping metadata, validation, metadata lookups, and rejection tests. It does not activate hardware second-stage translation, does not write `hgatp`, does not prove H-extension support, does not execute guest code, and does not support Linux guests.
+
+Exact validation commands for HV0-HV11:
+
+```bash
+export ZIG=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1/zig
+export PATH=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1:$PATH
+zig version
+./scripts/check-zig-version.sh
+zig build
+zig build hyperzig-status
+./smoke/smoke-hv-status-v0.sh
+./smoke/smoke-hv-capability-v0.sh
+./smoke/smoke-hv-vm-vcpu-v0.sh
+./smoke/smoke-hv-vcpu-lifecycle-v0.sh
+./smoke/smoke-hv-guest-memory-v0.sh
+./smoke/smoke-hv-address-space-v0.sh
+./smoke/smoke-hv-guest-image-v0.sh
+./smoke/smoke-hv-guest-entry-v0.sh
+./smoke/smoke-hv-guest-exit-v0.sh
+./smoke/smoke-hv-guest-run-attempt-v0.sh
+./smoke/smoke-hv-guest-execution-v0.sh
+./smoke/smoke-hv-second-stage-v0.sh
+./scripts/validate-hyperzig.sh
+zig build validate-hyperzig
+tail -n 300 logs/latest/validate-hyperzig.log
+```
+
+Current scope: HV0-HV11 are smoke-proven only when the validation ladder passes. Guest execution is still not supported. Linux guests are still not supported. Active second-stage translation is still missing.

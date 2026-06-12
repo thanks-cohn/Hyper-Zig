@@ -202,3 +202,22 @@ Commands added:
 Smoke proof: `./smoke/smoke-hv-guest-execution-v0.sh` writes `smoke/transcripts/latest-hv-guest-execution-v0.txt` and verifies object mutations, state transitions, prerequisite truth values, execution-frame fields, hardware-gate blockers, counter increments, reset behavior, and continued non-support for guest instruction execution, Linux guests, second-stage translation, and H-extension presence.
 
 HV10 does **not** enter guest code, does **not** jump to guest memory, does **not** increment `vcpu.run_count`, does **not** boot Linux, does **not** implement second-stage translation, and does **not** prove RISC-V H-extension support.
+
+## HV11 Second-Stage Translation Metadata Commands
+
+HV11 adds a real executing metadata subsystem in `kernel/hypervisor/second_stage.zig`. It derives a VM 0 second-stage mapping record from the already configured HV4 guest-memory object and HV5 guest address-space metadata. These commands **do not** activate hardware second-stage translation, **do not** write `hgatp`, **do not** prove the RISC-V H-extension, **do not** execute a guest, and **do not** support Linux guests.
+
+New commands:
+
+- `hv second-stage`: print the current second-stage metadata object, mapping fields, counters, and explicit non-claims. It reports metadata state only; it does not imply active translation.
+- `hv-stage2`: flat alias for `hv second-stage`.
+- `hv second-stage configure`: require configured HV4 guest memory and configured HV5 address-space metadata, then derive a metadata-only mapping with guest base, guest size, guest page count, host base, host size, page size, read/write permissions, execute=false, active=false, and validated metadata.
+- `hv second-stage validate`: revalidate the current metadata mapping against the live guest-memory and address-space objects.
+- `hv second-stage lookup-zero`: resolve GPA `0x0` through metadata to a host address inside configured guest memory.
+- `hv second-stage lookup-page`: resolve GPA `0x1000` through metadata to the second guest page when the default two-page guest memory configuration exists.
+- `hv second-stage bounds-test`: attempt an out-of-range GPA lookup and require an out-of-bounds rejection.
+- `hv second-stage alignment-test`: validate intentionally unaligned mapping metadata and require a misalignment rejection.
+- `hv second-stage execute-permission-test`: prove execute permission is not silently granted; HV11 mappings keep `flags_execute=false` and reject execute permission.
+- `hv second-stage reset`: clear metadata back to inactive state while preserving reset statistics.
+
+Smoke proof: `./smoke/smoke-hv-second-stage-v0.sh` writes `smoke/transcripts/latest-hv-second-stage-v0.txt` and checks command blocks for real state transitions, mapping values, lookup behavior, rejection behavior, reset behavior, and continued non-support for guest execution, Linux guests, H-extension presence, and active second-stage translation.

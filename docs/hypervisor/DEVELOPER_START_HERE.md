@@ -249,3 +249,20 @@ hv guest-run require-exit-test
 ```
 
 HV9 does not execute the guest, does not mark the vCPU running, does not increment `vcpu.run_count`, does not boot Linux, does not implement second-stage translation, and does not prove H-extension support. The next milestone after HV9 is HV10 first hardware-gated guest execution research.
+
+## HV11 current scope: second-stage translation metadata only
+
+HV11 starts in `kernel/hypervisor/second_stage.zig`. The subsystem derives a metadata-only mapping from HV4 guest memory and HV5 guest address-space state. The required proof command is:
+
+```bash
+./smoke/smoke-hv-second-stage-v0.sh
+```
+
+Run the full ladder with:
+
+```bash
+./scripts/validate-hyperzig.sh
+zig build validate-hyperzig
+```
+
+HV11 deliberately keeps `hv: second_stage_translation=MISSING`, `hv: guest_execution=not-supported-yet`, `hv: linux_guest=not-supported-yet`, and `hv: h_extension=unknown reason=no-safe-detection-yet`. The exact next milestone after HV11 is **HV12 real second-stage page-table activation research**, still without a Linux or guest-execution support claim.
