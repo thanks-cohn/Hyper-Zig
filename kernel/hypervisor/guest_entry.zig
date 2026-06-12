@@ -248,7 +248,7 @@ pub fn boundsTest() CommandResult {
 }
 
 pub fn requireImageTest() CommandResult {
-    reset();
+    _ = reset();
     guest_image.reset();
     if (guest_memory.object().state != .configured) _ = guest_memory.configureDefault();
     if (guest_address_space.object().state != .configured) _ = guest_address_space.createFromGuestMemory();
