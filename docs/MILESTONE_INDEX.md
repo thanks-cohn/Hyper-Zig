@@ -248,3 +248,18 @@ This index records the current milestone ladder and intentionally missing featur
 - **Transcript:** `smoke/transcripts/latest-hv-guest-execution-v0.txt`.
 - **Intentionally missing features:** guest instruction execution, Linux guest support, H-extension presence proof, second-stage translation, Linux image loading, SBI mediation, virtual devices, guest trap return, and virtio for Linux.
 - **Next dependency:** HV11 continued hardware-gated guest execution research, still without claiming Linux boot, guest instruction execution, second-stage translation, or H-extension support until separately implemented and smoke-proven.
+
+## HV11 — Second-stage translation metadata research
+
+Status: implemented only when `./smoke/smoke-hv-second-stage-v0.sh` passes.
+
+Evidence:
+
+- Implementation: `kernel/hypervisor/second_stage.zig`
+- Integration: `kernel/hypervisor/hv.zig`, `kernel/console/shell.zig`, `scripts/validate-hyperzig.sh`
+- Smoke: `smoke/smoke-hv-second-stage-v0.sh`
+- Transcript: `smoke/transcripts/latest-hv-second-stage-v0.txt`
+
+Scope: metadata and validation only. HV11 does not activate second-stage translation, does not write `hgatp`, does not prove H-extension support, does not execute a guest, and does not support Linux guests.
+
+Next milestone after HV11: HV12 real second-stage page-table activation research.
