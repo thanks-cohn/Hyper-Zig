@@ -221,3 +221,17 @@ New commands:
 - `hv second-stage reset`: clear metadata back to inactive state while preserving reset statistics.
 
 Smoke proof: `./smoke/smoke-hv-second-stage-v0.sh` writes `smoke/transcripts/latest-hv-second-stage-v0.txt` and checks command blocks for real state transitions, mapping values, lookup behavior, rejection behavior, reset behavior, and continued non-support for guest execution, Linux guests, H-extension presence, and active second-stage translation.
+
+## HV12 software-only second-stage table commands
+
+These commands exercise the HV12 software-owned second-stage page-table-like builder. They do **not** activate hardware second-stage translation, do **not** write `hgatp`, do **not** prove the RISC-V H extension, do **not** execute a guest, and do **not** imply Linux guest support.
+
+- `hv stage2-table` / `hv-stage2-table` — prints the current software table state, entries, counters, and explicit non-claims.
+- `hv stage2-table build` — requires HV11 second-stage metadata to be `metadata-ready`, derives one software entry per configured guest page, preserves read/write permissions, and forces execute permission off.
+- `hv stage2-table validate` — validates the built software entries against the live HV11 metadata and guest-memory page list.
+- `hv stage2-table walk-zero` — walks GPA `0x0` through the software table and reports the matching host page.
+- `hv stage2-table walk-page` — walks GPA `0x1000` through the software table and reports the second host page.
+- `hv stage2-table bounds-test` — attempts an out-of-range GPA walk and must report rejection.
+- `hv stage2-table alignment-test` — attempts an unaligned GPA walk and must report rejection.
+- `hv stage2-table execute-permission-test` — attempts an execute-qualified walk and must report rejection because HV12 entries are non-executable.
+- `hv stage2-table reset` — clears all software entries and returns the table to `empty`.

@@ -328,3 +328,22 @@ HV11 commands operate on the real `SecondStage` metadata object. They model mapp
 - `hv second-stage reset`: clear metadata back to inactive.
 
 Non-claims: these commands do not write `hgatp`, do not activate hardware second-stage translation, do not prove H-extension support, do not execute a guest, and do not support Linux guests.
+
+## HV12 software-only stage2 table command reference
+
+HV12 adds `hv stage2-table` and the flat alias `hv-stage2-table`. The command family builds and inspects a software-owned table from HV11 metadata only. It is intentionally inactive: no `hgatp` write occurs, second-stage translation remains `MISSING`, guest execution remains `not-supported-yet`, Linux remains `not-supported-yet`, and H-extension support remains unknown.
+
+Commands:
+
+- `hv stage2-table`
+- `hv-stage2-table`
+- `hv stage2-table build`
+- `hv stage2-table validate`
+- `hv stage2-table walk-zero`
+- `hv stage2-table walk-page`
+- `hv stage2-table bounds-test`
+- `hv stage2-table alignment-test`
+- `hv stage2-table execute-permission-test`
+- `hv stage2-table reset`
+
+The canonical behavior smoke is `./smoke/smoke-hv-stage2-table-v0.sh` and it verifies command-local blocks rather than merely grepping global static status text.

@@ -266,3 +266,19 @@ zig build validate-hyperzig
 ```
 
 HV11 deliberately keeps `hv: second_stage_translation=MISSING`, `hv: guest_execution=not-supported-yet`, `hv: linux_guest=not-supported-yet`, and `hv: h_extension=unknown reason=no-safe-detection-yet`. The exact next milestone after HV11 is **HV12 real second-stage page-table activation research**, still without a Linux or guest-execution support claim.
+
+## HV12 developer note — software-only stage2 table
+
+HV12 introduces a real software table builder in `kernel/hypervisor/stage2_table.zig`. Run the prerequisite sequence in the shell before building the table: `hv guest-memory alloc`, `hv address-space create`, `hv second-stage configure`, then `hv stage2-table build`. The table remains software-only and inactive; `hv stage2-table validate`, `walk-zero`, `walk-page`, `bounds-test`, `alignment-test`, `execute-permission-test`, and `reset` exercise actual table behavior.
+
+Validation commands:
+
+```sh
+export ZIG=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1/zig
+export PATH=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1:$PATH
+./smoke/smoke-hv-stage2-table-v0.sh
+./scripts/validate-hyperzig.sh
+zig build validate-hyperzig
+```
+
+Do not treat HV12 as guest execution, Linux boot, active second-stage translation, H-extension proof, or an `hgatp` activation milestone.

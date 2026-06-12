@@ -10,6 +10,7 @@ const guest_exit = @import("guest_exit.zig");
 const guest_run_attempt = @import("guest_run_attempt.zig");
 const guest_execution = @import("guest_execution.zig");
 const second_stage = @import("second_stage.zig");
+const stage2_table = @import("stage2_table.zig");
 
 pub fn init() void {
     vm.init();
@@ -22,6 +23,7 @@ pub fn init() void {
     guest_run_attempt.init(vm.object().id, vcpu.object().id);
     guest_execution.init(vm.object().id, vcpu.object().id);
     second_stage.init(vm.object().id);
+    stage2_table.init(vm.object().id);
 }
 
 pub fn printStatus() void {
@@ -43,13 +45,14 @@ pub fn printStatus() void {
     guest_run_attempt.printState();
     guest_execution.printState();
     second_stage.printState();
+    stage2_table.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
     uart.write("hv: virtual_timer=MISSING\r\n");
     uart.write("hv: virtual_console=MISSING\r\n");
     uart.write("hv: sbi_layer=MISSING\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV12 real second-stage page-table activation research\r\n");
+    uart.write("hv: next=HV13 guarded hardware second-stage activation research (no Linux claim)\r\n");
 }
 
 pub fn printCapability() void {
@@ -143,6 +146,42 @@ pub fn executePermissionTestSecondStage() void {
 
 pub fn resetSecondStage() void {
     second_stage.printResetCommand();
+}
+
+pub fn printStage2Table() void {
+    stage2_table.printState();
+}
+
+pub fn buildStage2Table() void {
+    stage2_table.printBuildCommand();
+}
+
+pub fn validateStage2Table() void {
+    stage2_table.printValidateCommand();
+}
+
+pub fn walkZeroStage2Table() void {
+    stage2_table.printWalkZeroCommand();
+}
+
+pub fn walkPageStage2Table() void {
+    stage2_table.printWalkPageCommand();
+}
+
+pub fn boundsTestStage2Table() void {
+    stage2_table.printBoundsTestCommand();
+}
+
+pub fn alignmentTestStage2Table() void {
+    stage2_table.printAlignmentTestCommand();
+}
+
+pub fn executePermissionTestStage2Table() void {
+    stage2_table.printExecutePermissionTestCommand();
+}
+
+pub fn resetStage2Table() void {
+    stage2_table.printResetCommand();
 }
 
 pub fn printGuestExecution() void {

@@ -4,14 +4,14 @@ const hyperzig_status_text =
     \\Hyper-Zig developer status
     \\  current project: Hyper-Zig
     \\  Zig target: 0.14.x
-    \\  current proven milestones: HV0, HV1, HV2, HV3, HV4, HV5, HV6, HV7, HV8, HV9, HV10, HV11 when smoke validation passes
-    \\  next milestone: HV12 real second-stage page-table activation research (no Linux claim)
+    \\  current proven milestones: HV0, HV1, HV2, HV3, HV4, HV5, HV6, HV7, HV8, HV9, HV10, HV11, HV12 when smoke validation passes
+    \\  next milestone: HV13 guarded hardware second-stage activation research (no Linux claim)
     \\  canonical validation command: ./scripts/validate-hyperzig.sh
     \\  no Linux guest support yet
     \\  no guest execution yet
     \\  no guest instruction execution yet; HV7 prepares guest-entry metadata, HV8 records simulated exit metadata, HV9 arms no-execute run-attempt metadata, and HV10 builds a hardware-gated execution preparation layer only
-    \\  no active second-stage translation yet; HV11 models metadata only
-    \\  VM/vCPU model, vCPU lifecycle, guest-memory object, guest-address-space metadata, tiny-flat-v0 guest-image loader, guest-entry preparation, guest trap/exit metadata, controlled guest-run attempt safety gate, hardware-gated execution preparation, and second-stage translation metadata implemented and smoke-proven when validation passes
+    \\  no active second-stage translation yet; HV11 models metadata and HV12 builds a software-only page-table-like structure
+    \\  VM/vCPU model, vCPU lifecycle, guest-memory object, guest-address-space metadata, tiny-flat-v0 guest-image loader, guest-entry preparation, guest trap/exit metadata, controlled guest-run attempt safety gate, hardware-gated execution preparation, and second-stage translation metadata and the software-only stage2 table builder implemented and smoke-proven when validation passes
     \\  next: read docs/hypervisor/DEVELOPER_START_HERE.md
     \\
 ;

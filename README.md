@@ -426,3 +426,54 @@ tail -n 300 logs/latest/validate-hyperzig.log
 ```
 
 Current scope: HV0-HV11 are smoke-proven only when the validation ladder passes. Guest execution is still not supported. Linux guests are still not supported. Active second-stage translation is still missing.
+
+## Current hypervisor scope through HV12
+
+Hyper-Zig targets Zig 0.14.x only. The currently validated hypervisor ladder is HV0 through HV12 when the canonical validation suite passes:
+
+- HV0 status smoke
+- HV1 capability smoke
+- HV2 VM/vCPU object smoke
+- HV3 vCPU lifecycle smoke
+- HV4 PMM-backed guest memory smoke
+- HV5 guest physical address-space metadata smoke
+- HV6 tiny guest-image loading/readback smoke
+- HV7 guest-entry preparation metadata smoke
+- HV8 guest trap/exit metadata smoke
+- HV9 controlled no-execute guest-run attempt gate smoke
+- HV10 hardware-gated guest execution preparation smoke
+- HV11 second-stage translation metadata smoke
+- HV12 software-only second-stage page-table-like builder smoke
+
+HV12 builds a software-owned second-stage table from HV11 metadata. For the current two-page guest region it creates one entry for GPA `0x0` and one entry for GPA `0x1000`, preserves read/write permissions, denies execute permission, supports software walks, validates entries, and can reset back to empty.
+
+Scope boundaries remain strict: second-stage translation is not active, no `hgatp` write occurs, H-extension support is not claimed, guest execution is still not supported, and Linux guests are still not supported.
+
+Exact validation commands:
+
+```sh
+export ZIG=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1/zig
+export PATH=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1:$PATH
+git status
+git branch --show-current
+zig version
+./scripts/check-zig-version.sh
+zig build
+zig build hyperzig-status
+./smoke/smoke-hv-status-v0.sh
+./smoke/smoke-hv-capability-v0.sh
+./smoke/smoke-hv-vm-vcpu-v0.sh
+./smoke/smoke-hv-vcpu-lifecycle-v0.sh
+./smoke/smoke-hv-guest-memory-v0.sh
+./smoke/smoke-hv-address-space-v0.sh
+./smoke/smoke-hv-guest-image-v0.sh
+./smoke/smoke-hv-guest-entry-v0.sh
+./smoke/smoke-hv-guest-exit-v0.sh
+./smoke/smoke-hv-guest-run-attempt-v0.sh
+./smoke/smoke-hv-guest-execution-v0.sh
+./smoke/smoke-hv-second-stage-v0.sh
+./smoke/smoke-hv-stage2-table-v0.sh
+./scripts/validate-hyperzig.sh
+zig build validate-hyperzig
+tail -n 300 logs/latest/validate-hyperzig.log
+```
