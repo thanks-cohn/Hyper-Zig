@@ -217,4 +217,14 @@ This index records the current milestone ladder and intentionally missing featur
 - **Smoke test file:** `smoke/smoke-hv-guest-entry-v0.sh`.
 - **Transcript:** `smoke/transcripts/latest-hv-guest-entry-v0.txt`.
 - **Intentionally missing features:** guest execution, Linux guest support, H-extension presence proof, guest trap return, second-stage translation, Linux image loading, SBI mediation, virtual devices, and virtio for Linux.
-- **Next dependency:** HV8 guest trap/exit handling research with no Linux support claim until separately implemented and smoke-proven.
+- **Next dependency:** HV8 guest trap/exit metadata and classification, with no Linux support claim until separately implemented and smoke-proven.
+
+## HV8 Guest Trap / Exit Metadata
+
+- **Purpose:** Define and prove a real guest trap/exit metadata subsystem before any guest execution attempt.
+- **Actual capability proven:** `GuestExit` tracks VM/vCPU ownership, no-exit vs recorded state, last exit kind/reason, last frame PC/SP/cause/trap-value/instruction-bits, record/reset/failure counters, kind-specific counters, and last error. Record commands require an HV7 prepared guest-entry frame and copy its PC/SP into the exit frame.
+- **Key commands added:** `hv guest-exit`, `hv-exit`, `hv guest-exit record-instruction`, `hv guest-exit record-memory-fault`, `hv guest-exit record-timer`, `hv guest-exit record-halt`, `hv guest-exit reset`, `hv guest-exit require-entry-test`.
+- **Smoke test file:** `smoke/smoke-hv-guest-exit-v0.sh`.
+- **Transcript:** `smoke/transcripts/latest-hv-guest-exit-v0.txt`.
+- **Intentionally missing features:** guest execution, Linux guest support, H-extension presence proof, second-stage translation, Linux image loading, SBI mediation, virtual devices, and virtio for Linux.
+- **Next dependency:** HV9 controlled guest-entry attempt research, still without claiming Linux boot or second-stage translation until separately implemented and smoke-proven.

@@ -151,3 +151,18 @@ Commands:
 Expected non-claims remain visible: `hv: guest_execution=not-supported-yet`, `hv: linux_guest=not-supported-yet`, `hv: second_stage_translation=MISSING`, and `hv: h_extension=unknown reason=no-safe-detection-yet`.
 
 Smoke proof: `./smoke/smoke-hv-guest-entry-v0.sh` with transcript `smoke/transcripts/latest-hv-guest-entry-v0.txt`.
+
+## HV8 Guest Trap / Exit Metadata Commands
+
+HV8 adds a real guest-exit metadata object for VM 0 / vCPU 0. These commands classify simulated exits and copy the HV7 prepared PC/SP metadata into a `GuestExitFrame`. They do **not** execute guest code, do **not** jump to guest memory, do **not** increment `vcpu.run_count`, do **not** boot Linux, do **not** implement second-stage translation, and do **not** prove the RISC-V H-extension.
+
+- `hv guest-exit`: prints the current `GuestExit` state, owner IDs, last kind/reason, last frame fields, counters, and explicit non-claims.
+- `hv-exit`: flat alias for `hv guest-exit`.
+- `hv guest-exit record-instruction`: records a simulated instruction-trap exit using the already prepared HV7 guest-entry frame PC/SP.
+- `hv guest-exit record-memory-fault`: records a simulated memory-fault exit using the already prepared HV7 guest-entry frame PC/SP.
+- `hv guest-exit record-timer`: records a simulated timer-interrupt exit using the already prepared HV7 guest-entry frame PC/SP.
+- `hv guest-exit record-halt`: records a simulated explicit-halt exit using the already prepared HV7 guest-entry frame PC/SP.
+- `hv guest-exit reset`: clears current last-exit state and frame back to `no-exit` while preserving historical record/failure counters and incrementing `reset_count`.
+- `hv guest-exit require-entry-test`: resets guest-entry metadata and proves exit recording is rejected when no HV7 prepared frame exists.
+
+Smoke proof: `./smoke/smoke-hv-guest-exit-v0.sh` writes `smoke/transcripts/latest-hv-guest-exit-v0.txt` and checks command blocks for state transitions, counter increments, frame PC/SP copying, `vcpu.run_count=0`, and continued non-support for guest execution, Linux guests, second-stage translation, and H-extension presence.
