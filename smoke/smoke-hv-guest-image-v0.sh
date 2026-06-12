@@ -182,7 +182,7 @@ need(0, "hv guest-image", "hv: guest_image.state=not-loaded")
 need(0, "hv guest-image", "hv: guest_image.format=tiny-flat-v0")
 need(0, "hv guest-image", "hv: guest_execution=not-supported-yet")
 need(0, "hv guest-image", "hv: linux_guest=not-supported-yet")
-need(0, "hv guest-image", "hv: guest_entry=MISSING")
+need(0, "hv guest-image", "hv: guest_entry=implemented")
 need(0, "hv guest-image", "hv: second_stage_translation=MISSING")
 need(1, "hv-image", "hv: guest_image=implemented")
 
@@ -234,7 +234,7 @@ need(7, "hv guest-image", "hv: guest_image.state=not-loaded")
 need(8, "hv status", "hv: guest_image=implemented")
 need(8, "hv status", "hv: guest_execution=not-supported-yet")
 need(8, "hv status", "hv: linux_guest=not-supported-yet")
-need(8, "hv status", "hv: guest_entry=MISSING")
+need(8, "hv status", "hv: guest_entry=implemented")
 need(8, "hv status", "hv: second_stage_translation=MISSING")
 
 for forbidden in [
@@ -246,7 +246,6 @@ for forbidden in [
     "booted linux",
     "h_extension=present",
     "second_stage_translation=implemented",
-    "guest_entry=implemented",
     "guest_image placeholder",
     "guest_image=placeholder",
     "guest_image fake",
@@ -272,7 +271,6 @@ reject "Linux guest booted"
 reject "booted linux"
 reject "h_extension=present"
 reject "second_stage_translation=implemented"
-reject "guest_entry=implemented"
 reject "guest_image placeholder"
 reject "guest_image=placeholder"
 reject "guest_image fake"

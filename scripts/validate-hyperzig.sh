@@ -26,6 +26,7 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv-guest-memory-v0.sh"
     "smoke/smoke-hv-address-space-v0.sh"
     "smoke/smoke-hv-guest-image-v0.sh"
+    "smoke/smoke-hv-guest-entry-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -109,6 +110,7 @@ run_smoke() {
         smoke-hv-guest-memory-v0) transcript="$ROOT/smoke/transcripts/latest-hv-guest-memory-v0.txt" ;;
         smoke-hv-address-space-v0) transcript="$ROOT/smoke/transcripts/latest-hv-address-space-v0.txt" ;;
         smoke-hv-guest-image-v0) transcript="$ROOT/smoke/transcripts/latest-hv-guest-image-v0.txt" ;;
+        smoke-hv-guest-entry-v0) transcript="$ROOT/smoke/transcripts/latest-hv-guest-entry-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"
@@ -181,7 +183,7 @@ done
 MISSING_MILESTONES+=(
     "Linux guest support (not implemented; do not claim)"
     "guest execution (not implemented; do not claim)"
-    "guest entry (not implemented; do not claim)"
+    "guest execution beyond HV7 preparation (not implemented; do not claim)"
     "second-stage translation (not implemented; do not claim)"
 )
 
@@ -201,6 +203,7 @@ HV3_STATUS="$(smoke_status_for smoke/smoke-hv-vcpu-lifecycle-v0.sh)"
 HV4_STATUS="$(smoke_status_for smoke/smoke-hv-guest-memory-v0.sh)"
 HV5_STATUS="$(smoke_status_for smoke/smoke-hv-address-space-v0.sh)"
 HV6_STATUS="$(smoke_status_for smoke/smoke-hv-guest-image-v0.sh)"
+HV7_STATUS="$(smoke_status_for smoke/smoke-hv-guest-entry-v0.sh)"
 OVERALL="PASS"
 REASON="All required checks passed; optional missing items are reported without being counted as PASS."
 if [[ "$(status_for check-zig-version)" != "PASS" ]]; then
@@ -214,8 +217,8 @@ elif [[ $FAIL_COUNT -ne 0 ]]; then
     REASON="One or more required checks or discovered smoke tests failed; inspect blockers and logs."
 fi
 
-CURRENT_MILESTONE="HV0/HV1/HV2/HV3/HV4/HV5/HV6 proven when all required smoke passes; guest image loader implemented"
-NEXT_MILESTONE="HV7 guest entry research without Linux support claim"
+CURRENT_MILESTONE="HV0/HV1/HV2/HV3/HV4/HV5/HV6/HV7 proven when all required smoke passes; guest entry preparation implemented"
+NEXT_MILESTONE="HV8 guest trap/exit handling research without Linux support claim"
 
 {
 cat <<SUMMARY
@@ -237,6 +240,7 @@ HV3 vCPU lifecycle smoke: $HV3_STATUS
 HV4 guest memory smoke: $HV4_STATUS
 HV5 guest address space smoke: $HV5_STATUS
 HV6 guest image loader smoke: $HV6_STATUS
+HV7 guest entry preparation smoke: $HV7_STATUS
 HV0 PASS: $HV0_STATUS
 HV1 PASS: $HV1_STATUS
 HV2 PASS: $HV2_STATUS
@@ -244,16 +248,18 @@ HV3 vCPU lifecycle PASS: $HV3_STATUS
 HV4 guest memory PASS: $HV4_STATUS
 HV5 guest address space PASS: $HV5_STATUS
 HV6 guest image loader PASS: $HV6_STATUS
+HV7 guest entry preparation PASS: $HV7_STATUS
 VM/vCPU model implemented
 vCPU lifecycle implemented only if smoke passes: $HV3_STATUS
 guest memory object implemented only if smoke passes: $HV4_STATUS
 guest address space metadata implemented only if smoke passes: $HV5_STATUS
 guest image loader implemented only if smoke passes: $HV6_STATUS
+guest entry preparation implemented only if smoke passes: $HV7_STATUS
 guest image format: tiny-flat-v0
 guest memory backing: pmm-bitmap-v0
 guest execution still not supported
 Linux guest still not supported
-next milestone: HV7 guest entry research
+next milestone: HV8 guest trap/exit handling research
 Overall readiness: $OVERALL
 Reason: $REASON
 
@@ -267,7 +273,7 @@ First-run developer guidance:
   - tail -n 200 logs/latest/validate-hyperzig.log
 
 Current milestone: $CURRENT_MILESTONE
-Next coding target: HV7 guest entry research
+Next coding target: HV8 guest trap/exit handling research
 HV2/HV3/HV4/HV5 file map:
   - kernel/hypervisor/vm.zig
   - kernel/hypervisor/vcpu.zig
@@ -278,6 +284,7 @@ HV2/HV3/HV4/HV5 file map:
   - smoke/smoke-hv-guest-memory-v0.sh
   - smoke/smoke-hv-address-space-v0.sh
   - smoke/smoke-hv-guest-image-v0.sh
+  - smoke/smoke-hv-guest-entry-v0.sh
   - docs/hypervisor/HV2_VM_VCPU_MODEL.md
 Exact command to rerun validation:
   - ./scripts/validate-hyperzig.sh
@@ -293,6 +300,7 @@ Non-claims:
   - guest memory object is smoke-proven only when HV4 smoke passes
   - guest address space metadata is smoke-proven only when HV5 smoke passes
   - guest image loading and readback verification are smoke-proven only when HV6 smoke passes
+  - guest entry preparation metadata is smoke-proven only when HV7 smoke passes
   - no guest execution or Linux guest support yet
 
 Command log: $COMMAND_LOG
@@ -320,6 +328,7 @@ printf '  - HV3 vCPU lifecycle: %s\n' "$ROOT/smoke/transcripts/latest-hv-vcpu-li
 printf '  - HV4 guest memory: %s\n' "$ROOT/smoke/transcripts/latest-hv-guest-memory-v0.txt"
 printf '  - HV5 guest address space: %s\n' "$ROOT/smoke/transcripts/latest-hv-address-space-v0.txt"
 printf '  - HV6 guest image loader: %s\n' "$ROOT/smoke/transcripts/latest-hv-guest-image-v0.txt"
+printf '  - HV7 guest entry preparation: %s\n' "$ROOT/smoke/transcripts/latest-hv-guest-entry-v0.txt"
 printf '\nCompleted milestones/evidence:\n'
 if [[ ${#COMPLETED[@]} -eq 0 ]]; then printf '  - none\n'; else printf '  - %s\n' "${COMPLETED[@]}"; fi
 printf '\nMissing optional smoke tests (MISSING is not PASS):\n'

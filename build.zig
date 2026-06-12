@@ -4,14 +4,14 @@ const hyperzig_status_text =
     \\Hyper-Zig developer status
     \\  current project: Hyper-Zig
     \\  Zig target: 0.14.x
-    \\  current proven milestones: HV0, HV1, HV2, HV3, HV4, HV5, HV6 when smoke validation passes
-    \\  next milestone: HV7 guest entry research
+    \\  current proven milestones: HV0, HV1, HV2, HV3, HV4, HV5, HV6, HV7 when smoke validation passes
+    \\  next milestone: HV8 guest trap/exit handling research
     \\  canonical validation command: ./scripts/validate-hyperzig.sh
     \\  no Linux guest support yet
     \\  no guest execution yet
-    \\  no guest entry yet
+    \\  no guest execution yet; HV7 only prepares guest-entry metadata
     \\  no second-stage translation yet
-    \\  VM/vCPU model, vCPU lifecycle, guest-memory object, guest-address-space metadata, and tiny-flat-v0 guest-image loader implemented and smoke-proven when validation passes
+    \\  VM/vCPU model, vCPU lifecycle, guest-memory object, guest-address-space metadata, tiny-flat-v0 guest-image loader, and guest-entry preparation implemented and smoke-proven when validation passes
     \\  next: read docs/hypervisor/DEVELOPER_START_HERE.md
     \\
 ;

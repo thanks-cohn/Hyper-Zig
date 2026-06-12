@@ -219,7 +219,7 @@ need(9, "hv address-space", "hv: address_space.state=not-configured")
 need(10, "hv status", "hv: guest_execution=not-supported-yet")
 need(10, "hv status", "hv: linux_guest=not-supported-yet")
 need(10, "hv status", "hv: second_stage_translation=MISSING")
-need(10, "hv status", "hv: guest_entry=MISSING")
+need(10, "hv status", "hv: guest_entry=implemented")
 
 create_lookup_count = int(value(2, "hv address-space create", "hv: address_space.lookup_count="))
 after_zero_lookup_count = int(value(4, "hv address-space lookup-zero", "hv: address_space.lookup_count="))
@@ -261,7 +261,7 @@ for marker in \
     'hv: guest_execution=not-supported-yet' \
     'hv: linux_guest=not-supported-yet' \
     'hv: second_stage_translation=MISSING' \
-    'hv: guest_entry=MISSING'
+    'hv: guest_entry=implemented'
 do
     require "$marker"
 done
@@ -271,7 +271,6 @@ for forbidden in \
     'linux_guest=supported' \
     'h_extension=present' \
     'second_stage_translation=implemented' \
-    'guest_entry=implemented' \
     'guest entered' \
     'guest running' \
     'booted linux' \

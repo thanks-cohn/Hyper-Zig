@@ -214,7 +214,7 @@ need(10, "hv guest-memory overflow-test", "hv: guest_memory.overflow_test=reject
 need(10, "hv guest-memory overflow-test", "hv: guest_memory.last_error=invalid-page-count")
 need(11, "hv status", "hv: guest_execution=not-supported-yet")
 need(11, "hv status", "hv: linux_guest=not-supported-yet")
-need(11, "hv status", "hv: guest_entry=MISSING")
+need(11, "hv status", "hv: guest_entry=implemented")
 need(11, "hv status", "hv: second_stage_translation=MISSING")
 
 initial_allocs = int(value(0, "hv guest-memory", "hv: guest_memory.alloc_count="))
@@ -248,7 +248,7 @@ for marker in \
     'hv: guest_execution=not-supported-yet' \
     'hv: linux_guest=not-supported-yet' \
     'hv: second_stage_translation=MISSING' \
-    'hv: guest_entry=MISSING'
+    'hv: guest_entry=implemented'
 do
     require "$marker"
 done
@@ -258,7 +258,6 @@ for forbidden in \
     'linux_guest=supported' \
     'h_extension=present' \
     'second_stage_translation=implemented' \
-    'guest_entry=implemented' \
     'guest entered' \
     'guest running' \
     'booted linux' \

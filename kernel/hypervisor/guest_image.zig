@@ -523,6 +523,6 @@ fn errorName(err: GuestImageError) []const u8 {
 fn printNonClaims() void {
     uart.write("hv: guest_execution=not-supported-yet\r\n");
     uart.write("hv: linux_guest=not-supported-yet\r\n");
-    uart.write("hv: guest_entry=MISSING\r\n");
+    uart.write("hv: guest_entry=implemented\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 }

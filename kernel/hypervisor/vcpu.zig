@@ -30,6 +30,17 @@ pub const LifecycleStats = struct {
     last_transition_result: TransitionResult,
 };
 
+pub const GuestEntryAttachment = struct {
+    prepared: bool,
+    pc: usize,
+    sp: usize,
+    status_flags: usize,
+    owner_vm_id: vm_model.VmId,
+    owner_vcpu_id: VcpuId,
+    attach_count: u64,
+    clear_count: u64,
+};
+
 pub const Vcpu = struct {
     id: VcpuId,
     vm_id: vm_model.VmId,
@@ -37,6 +48,7 @@ pub const Vcpu = struct {
     hart_binding: HartBinding,
     run_count: u64,
     stats: LifecycleStats,
+    guest_entry: GuestEntryAttachment,
 };
 
 var boot_vcpu: Vcpu = undefined;
@@ -58,6 +70,7 @@ pub fn init(vm_id: vm_model.VmId) void {
             .failed_transition_count = 0,
             .last_transition_result = .never_run,
         },
+        .guest_entry = emptyGuestEntryAttachment(vm_id, 0, 0),
     };
     initialized = true;
 }
@@ -70,6 +83,38 @@ pub fn object() *const Vcpu {
 fn mutableObject() *Vcpu {
     if (!initialized) init(vm_model.object().id);
     return &boot_vcpu;
+}
+
+fn emptyGuestEntryAttachment(owner_vm_id: vm_model.VmId, owner_vcpu_id: VcpuId, clear_count: u64) GuestEntryAttachment {
+    return .{
+        .prepared = false,
+        .pc = 0,
+        .sp = 0,
+        .status_flags = 0,
+        .owner_vm_id = owner_vm_id,
+        .owner_vcpu_id = owner_vcpu_id,
+        .attach_count = 0,
+        .clear_count = clear_count,
+    };
+}
+
+pub fn attachGuestEntryFrame(frame: anytype) void {
+    const vcpu = mutableObject();
+    vcpu.guest_entry.prepared = true;
+    vcpu.guest_entry.pc = frame.pc;
+    vcpu.guest_entry.sp = frame.sp;
+    vcpu.guest_entry.status_flags = frame.status_flags;
+    vcpu.guest_entry.owner_vm_id = frame.owner_vm_id;
+    vcpu.guest_entry.owner_vcpu_id = frame.owner_vcpu_id;
+    vcpu.guest_entry.attach_count += 1;
+}
+
+pub fn clearGuestEntryFrame() void {
+    const vcpu = mutableObject();
+    const attach_count = vcpu.guest_entry.attach_count;
+    const clear_count = vcpu.guest_entry.clear_count + 1;
+    vcpu.guest_entry = emptyGuestEntryAttachment(vcpu.vm_id, vcpu.id, clear_count);
+    vcpu.guest_entry.attach_count = attach_count;
 }
 
 pub fn initializeLifecycle() TransitionResult {
@@ -176,6 +221,7 @@ pub fn printObject() void {
     uart.write("hv: vcpu.run_count=");
     uart.writeDec(vcpu.run_count);
     uart.write("\r\n");
+    printGuestEntryAttachment();
 }
 
 pub fn printLifecycle() void {
@@ -218,6 +264,34 @@ pub fn printTransition(command_name: []const u8, result: TransitionResult) void 
     uart.writeDec(vcpu.stats.reset_generation);
     uart.write("\r\n");
     printStats();
+}
+
+fn printGuestEntryAttachment() void {
+    const attachment = object().guest_entry;
+    uart.write("hv: vcpu.guest_entry.prepared=");
+    uart.write(if (attachment.prepared) "true" else "false");
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_entry.pc=");
+    uart.writeHex(attachment.pc);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_entry.sp=");
+    uart.writeHex(attachment.sp);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_entry.status_flags=");
+    uart.writeHex(attachment.status_flags);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_entry.owner_vm_id=");
+    uart.writeDec(attachment.owner_vm_id);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_entry.owner_vcpu_id=");
+    uart.writeDec(attachment.owner_vcpu_id);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_entry.attach_count=");
+    uart.writeDec(attachment.attach_count);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_entry.clear_count=");
+    uart.writeDec(attachment.clear_count);
+    uart.write("\r\n");
 }
 
 fn printStats() void {

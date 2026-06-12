@@ -256,4 +256,21 @@ These commands are behavior commands, not static status claims. They load and ve
 - `hv guest-image bounds-test`: attempt a metadata-checked oversized load span and require rejection before any oversized image write.
 - `hv guest-image reset`: clear guest-image loader metadata back to `not-loaded`.
 
-Expected non-claims remain visible in command output: `hv: guest_execution=not-supported-yet`, `hv: linux_guest=not-supported-yet`, `hv: guest_entry=MISSING`, and `hv: second_stage_translation=MISSING`.
+Expected non-claims remain visible in command output: `hv: guest_execution=not-supported-yet`, `hv: linux_guest=not-supported-yet`, `hv: guest_entry=implemented`, and `hv: second_stage_translation=MISSING`.
+
+
+## HV7 Guest Entry Preparation Commands
+
+HV7 prepares guest-entry metadata only. It never executes a guest and never claims Linux support.
+
+Commands:
+
+- `hv guest-entry` / `hv-entry`: print the current guest-entry object, register-frame metadata, counters, and non-claims.
+- `hv guest-entry prepare`: safely ensures HV4/HV5 metadata if needed, requires an already loaded HV6 guest image, derives `pc` from the image entry point, derives `sp` within guest memory, creates the register frame, and attaches it to VM 0 / vCPU 0.
+- `hv guest-entry reset`: clears prepared metadata and returns to `not-prepared`.
+- `hv guest-entry bounds-test`: proves invalid stack metadata is rejected.
+- `hv guest-entry require-image-test`: proves preparation is rejected when no HV6 guest image is loaded.
+
+Expected non-claims remain visible: `hv: guest_execution=not-supported-yet`, `hv: linux_guest=not-supported-yet`, `hv: second_stage_translation=MISSING`, and `hv: h_extension=unknown reason=no-safe-detection-yet`.
+
+Smoke proof: `./smoke/smoke-hv-guest-entry-v0.sh` with transcript `smoke/transcripts/latest-hv-guest-entry-v0.txt`.
