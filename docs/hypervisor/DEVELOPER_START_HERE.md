@@ -13,7 +13,7 @@ Current proven hypervisor milestones are **HV0**, **HV1**, **HV2**, **HV3**, **H
 - **HV6** proves tiny `tiny-flat-v0` guest payload loading into HV4 memory through HV5 metadata, plus readback verification, without guest execution.
 - **HV7** proves guest-entry preparation metadata: PC from the HV6 entry point, SP inside configured guest memory, a register frame, and attachment to VM 0 / vCPU 0, without guest execution.
 
-The next milestone is **HV8: guest trap/exit handling research**. HV7 remains separate from guest execution and does not claim Linux guest support, second-stage translation, or H-extension support.
+The next milestone is **HV9: controlled guest-entry attempt research**. HV7 remains separate from guest execution and does not claim Linux guest support, second-stage translation, or H-extension support.
 
 ## 1. Clone and select Zig 0.14.x
 
@@ -168,7 +168,7 @@ Forbidden shortcuts:
 - Do not mark vCPU lifecycle implemented until transition behavior and failed-transition counters are smoke-proven.
 - Do not treat HV4 guest memory metadata as executable guest memory.
 
-The honest next edit for hypervisor developers is HV8 guest trap/exit handling research, after reviewing the HV7 guest-entry preparation implementation and validation transcript.
+The honest next edit for hypervisor developers is HV9 controlled guest-entry attempt research, after reviewing the HV7 guest-entry preparation implementation and validation transcript.
 
 ## HV5 Guest Address Space current scope
 
@@ -211,3 +211,19 @@ Exact HV7 validation command:
 ```bash
 ./smoke/smoke-hv-guest-entry-v0.sh
 ```
+
+## HV8 Guest Trap / Exit Metadata current scope
+
+HV8 is implemented when validation passes. It adds `kernel/hypervisor/guest_exit.zig`, wires `hv guest-exit` commands, and proves that simulated guest exits are rejected without an HV7 prepared frame and recorded after HV7 preparation. The recorded exit frame copies PC/SP from the HV7 guest-entry frame and stores cause, trap value, instruction bits, owner IDs, counters, and last error.
+
+HV8 commands for development:
+
+```bash
+export ZIG=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1/zig
+export PATH=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1:$PATH
+zig build
+./smoke/smoke-hv-guest-exit-v0.sh
+./scripts/validate-hyperzig.sh
+```
+
+HV8 does not execute the guest, does not mark the vCPU running, does not increment `vcpu.run_count`, does not boot Linux, does not implement second-stage translation, and does not prove H-extension support. The next milestone after HV8 is HV9 controlled guest-entry attempt research.

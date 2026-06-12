@@ -6,6 +6,7 @@ const guest_memory = @import("guest_memory.zig");
 const guest_address_space = @import("guest_address_space.zig");
 const guest_image = @import("guest_image.zig");
 const guest_entry = @import("guest_entry.zig");
+const guest_exit = @import("guest_exit.zig");
 
 pub fn init() void {
     vm.init();
@@ -14,6 +15,7 @@ pub fn init() void {
     guest_address_space.init(vm.object().id);
     guest_image.init(vm.object().id);
     guest_entry.init(vm.object().id, vcpu.object().id);
+    guest_exit.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -31,17 +33,47 @@ pub fn printStatus() void {
     guest_address_space.printState();
     guest_image.printState();
     guest_entry.printState();
+    guest_exit.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
     uart.write("hv: virtual_timer=MISSING\r\n");
     uart.write("hv: virtual_console=MISSING\r\n");
     uart.write("hv: sbi_layer=MISSING\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV8 guest trap/exit handling research\r\n");
+    uart.write("hv: next=HV9 controlled guest-entry attempt research\r\n");
 }
 
 pub fn printCapability() void {
     capability.print();
+}
+
+
+pub fn printGuestExit() void {
+    guest_exit.printState();
+}
+
+pub fn recordInstructionGuestExit() void {
+    guest_exit.printRecordInstructionCommand();
+}
+
+pub fn recordMemoryFaultGuestExit() void {
+    guest_exit.printRecordMemoryFaultCommand();
+}
+
+pub fn recordTimerGuestExit() void {
+    guest_exit.printRecordTimerCommand();
+}
+
+pub fn recordHaltGuestExit() void {
+    guest_exit.printRecordHaltCommand();
+}
+
+pub fn resetGuestExit() void {
+    guest_exit.printResetCommand();
+}
+
+pub fn requireEntryTestGuestExit() void {
+    guest_exit.printRequireEntryTestCommand();
 }
 
 pub fn printVm() void {
@@ -90,6 +122,7 @@ pub fn printInspect() void {
     guest_address_space.printState();
     guest_image.printState();
     guest_entry.printState();
+    guest_exit.printState();
 }
 
 pub fn printObjects() void {
@@ -176,6 +209,7 @@ pub fn boundsTestGuestImage() void {
 
 pub fn printGuestEntry() void {
     guest_entry.printState();
+    guest_exit.printState();
 }
 
 pub fn prepareGuestEntry() void {

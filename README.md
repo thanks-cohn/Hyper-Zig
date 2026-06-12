@@ -132,6 +132,7 @@ Run individual milestone proofs:
 ./smoke/smoke-hv-address-space-v0.sh
 ./smoke/smoke-hv-guest-image-v0.sh
 ./smoke/smoke-hv-guest-entry-v0.sh
+./smoke/smoke-hv-guest-exit-v0.sh
 ```
 
 Inspect proof transcripts:
@@ -145,6 +146,7 @@ cat smoke/transcripts/latest-hv-guest-memory-v0.txt
 cat smoke/transcripts/latest-hv-address-space-v0.txt
 cat smoke/transcripts/latest-hv-guest-image-v0.txt
 cat smoke/transcripts/latest-hv-guest-entry-v0.txt
+cat smoke/transcripts/latest-hv-guest-exit-v0.txt
 ```
 
 Inspect validation evidence:
@@ -169,7 +171,8 @@ Proven when validation passes:
 | HV5 | Done | Guest physical address metadata lookup for configured guest pages. |
 | HV6 | Done | Tiny `tiny-flat-v0` guest image load and readback verification. |
 | HV7 | Done | Guest-entry preparation metadata only: PC/SP/register frame for VM 0 / vCPU 0, with no guest execution. |
-| HV8 | Next | Guest trap/exit handling research. |
+| HV8 | Done | Guest trap/exit metadata and classification for simulated exits, attached to VM 0 / vCPU 0, with no guest execution. |
+| HV9 | Next | Controlled guest-entry attempt research, still without Linux support claims. |
 
 ## What Hyper-Zig can do today
 
@@ -183,6 +186,7 @@ Hyper-Zig can:
 - Allocate, free, reset, and reject invalid guest-memory operations.
 - Map simple guest physical address metadata for two guest pages.
 - Prepare a guest-entry metadata object for VM 0 / vCPU 0 from the loaded HV6 image entry point and configured guest memory stack bounds.
+- Record and classify simulated guest exits using the prepared HV7 PC/SP metadata without entering guest code.
 - Produce logs and transcripts that prove the above behavior.
 
 ## HV7 Guest Entry Preparation
@@ -210,6 +214,33 @@ zig build validate-hyperzig
 
 HV7 explicitly does **not** execute the guest, does **not** use `sret`/`hret`/`mret` to enter a guest, does **not** boot Linux, does **not** implement second-stage translation, and does **not** prove RISC-V H-extension support.
 
+## HV8 Guest Trap / Exit Metadata
+
+HV8 adds a real `GuestExit` metadata subsystem for VM 0 / vCPU 0. It classifies simulated instruction-trap, memory-fault, timer-interrupt, and explicit-halt exits; records PC/SP from the already prepared HV7 guest-entry frame; stores cause, trap value, instruction bits, owner IDs, counters, and last error; and attaches the latest exit frame to the vCPU object.
+
+HV8 shell proof commands:
+
+```bash
+hv guest-exit
+hv-exit
+hv guest-exit record-instruction
+hv guest-exit record-memory-fault
+hv guest-exit record-timer
+hv guest-exit record-halt
+hv guest-exit reset
+hv guest-exit require-entry-test
+```
+
+Exact validation commands include:
+
+```bash
+./smoke/smoke-hv-guest-exit-v0.sh
+./scripts/validate-hyperzig.sh
+zig build validate-hyperzig
+```
+
+HV8 is trap/exit metadata and classification only. It does **not** execute the guest, does **not** jump to guest code, does **not** use `sret`/`hret`/`mret` for guest execution, does **not** boot Linux, does **not** implement second-stage translation, and does **not** prove RISC-V H-extension support.
+
 ## What Hyper-Zig cannot do yet
 
 Hyper-Zig cannot yet:
@@ -230,7 +261,7 @@ Not close yet. Hyper-Zig is still before guest entry.
 
 The missing pieces are large and explicit:
 
-1. **HV8 guest trap/exit handling**: design a safe, honest entry-attempt and exit classification path after HV7 metadata preparation.
+1. **HV9 controlled guest-entry attempt research**: build on HV8 exit metadata without claiming Linux support or second-stage translation.
 2. **Trap and exit handling**: handle guest exits, faults, interrupts, and lifecycle transitions.
 3. **Second-stage translation**: isolate guest physical memory with real hardware-backed mappings.
 4. **H-extension proof**: safely detect and use the RISC-V hypervisor extension, or clearly document any non-H path.
@@ -252,7 +283,7 @@ The goal is to build a readable, verifiable hypervisor path in Zig:
 4. State exactly what works and what does not.
 5. Move to the next milestone.
 
-The next target is **HV8 guest trap/exit handling research**, still without Linux or guest-execution support claims.
+The next target is **HV9 controlled guest-entry attempt research**, still without Linux or unsupported execution claims.
 
 ## Useful files
 
@@ -261,3 +292,29 @@ The next target is **HV8 guest trap/exit handling research**, still without Linu
 - `docs/hypervisor/HV_MILESTONE_LADDER.md` — hypervisor milestone ladder.
 - `logs/latest/validate-hyperzig.log` — latest validation output after running validation.
 - `smoke/transcripts/` — latest smoke-test transcripts.
+
+## Exact HV8 Validation Command Set
+
+```bash
+export ZIG=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1/zig
+export PATH=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1:$PATH
+
+git status
+git branch --show-current
+zig version
+./scripts/check-zig-version.sh
+zig build
+zig build hyperzig-status
+./smoke/smoke-hv-status-v0.sh
+./smoke/smoke-hv-capability-v0.sh
+./smoke/smoke-hv-vm-vcpu-v0.sh
+./smoke/smoke-hv-vcpu-lifecycle-v0.sh
+./smoke/smoke-hv-guest-memory-v0.sh
+./smoke/smoke-hv-address-space-v0.sh
+./smoke/smoke-hv-guest-image-v0.sh
+./smoke/smoke-hv-guest-entry-v0.sh
+./smoke/smoke-hv-guest-exit-v0.sh
+./scripts/validate-hyperzig.sh
+zig build validate-hyperzig
+tail -n 300 logs/latest/validate-hyperzig.log
+```

@@ -41,6 +41,20 @@ pub const GuestEntryAttachment = struct {
     clear_count: u64,
 };
 
+pub const GuestExitAttachment = struct {
+    recorded: bool,
+    kind_tag: usize,
+    pc: usize,
+    sp: usize,
+    cause: usize,
+    trap_value: usize,
+    instruction_bits: usize,
+    owner_vm_id: vm_model.VmId,
+    owner_vcpu_id: VcpuId,
+    record_count: u64,
+    clear_count: u64,
+};
+
 pub const Vcpu = struct {
     id: VcpuId,
     vm_id: vm_model.VmId,
@@ -49,6 +63,7 @@ pub const Vcpu = struct {
     run_count: u64,
     stats: LifecycleStats,
     guest_entry: GuestEntryAttachment,
+    guest_exit: GuestExitAttachment,
 };
 
 var boot_vcpu: Vcpu = undefined;
@@ -71,6 +86,7 @@ pub fn init(vm_id: vm_model.VmId) void {
             .last_transition_result = .never_run,
         },
         .guest_entry = emptyGuestEntryAttachment(vm_id, 0, 0),
+        .guest_exit = emptyGuestExitAttachment(vm_id, 0, 0),
     };
     initialized = true;
 }
@@ -98,6 +114,22 @@ fn emptyGuestEntryAttachment(owner_vm_id: vm_model.VmId, owner_vcpu_id: VcpuId, 
     };
 }
 
+fn emptyGuestExitAttachment(owner_vm_id: vm_model.VmId, owner_vcpu_id: VcpuId, clear_count: u64) GuestExitAttachment {
+    return .{
+        .recorded = false,
+        .kind_tag = 0,
+        .pc = 0,
+        .sp = 0,
+        .cause = 0,
+        .trap_value = 0,
+        .instruction_bits = 0,
+        .owner_vm_id = owner_vm_id,
+        .owner_vcpu_id = owner_vcpu_id,
+        .record_count = 0,
+        .clear_count = clear_count,
+    };
+}
+
 pub fn attachGuestEntryFrame(frame: anytype) void {
     const vcpu = mutableObject();
     vcpu.guest_entry.prepared = true;
@@ -115,6 +147,28 @@ pub fn clearGuestEntryFrame() void {
     const clear_count = vcpu.guest_entry.clear_count + 1;
     vcpu.guest_entry = emptyGuestEntryAttachment(vcpu.vm_id, vcpu.id, clear_count);
     vcpu.guest_entry.attach_count = attach_count;
+}
+
+pub fn attachGuestExitRecord(frame: anytype, kind_tag: usize, record_count: usize) void {
+    const vcpu = mutableObject();
+    vcpu.guest_exit.recorded = true;
+    vcpu.guest_exit.kind_tag = kind_tag;
+    vcpu.guest_exit.pc = frame.pc;
+    vcpu.guest_exit.sp = frame.sp;
+    vcpu.guest_exit.cause = frame.cause;
+    vcpu.guest_exit.trap_value = frame.trap_value;
+    vcpu.guest_exit.instruction_bits = frame.instruction_bits;
+    vcpu.guest_exit.owner_vm_id = frame.owner_vm_id;
+    vcpu.guest_exit.owner_vcpu_id = frame.owner_vcpu_id;
+    vcpu.guest_exit.record_count = @intCast(record_count);
+}
+
+pub fn clearGuestExitAttachment() void {
+    const vcpu = mutableObject();
+    const record_count = vcpu.guest_exit.record_count;
+    const clear_count = vcpu.guest_exit.clear_count + 1;
+    vcpu.guest_exit = emptyGuestExitAttachment(vcpu.vm_id, vcpu.id, clear_count);
+    vcpu.guest_exit.record_count = record_count;
 }
 
 pub fn initializeLifecycle() TransitionResult {
@@ -222,6 +276,7 @@ pub fn printObject() void {
     uart.writeDec(vcpu.run_count);
     uart.write("\r\n");
     printGuestEntryAttachment();
+    printGuestExitAttachment();
 }
 
 pub fn printLifecycle() void {
@@ -290,6 +345,43 @@ fn printGuestEntryAttachment() void {
     uart.writeDec(attachment.attach_count);
     uart.write("\r\n");
     uart.write("hv: vcpu.guest_entry.clear_count=");
+    uart.writeDec(attachment.clear_count);
+    uart.write("\r\n");
+}
+
+fn printGuestExitAttachment() void {
+    const attachment = object().guest_exit;
+    uart.write("hv: vcpu.guest_exit.recorded=");
+    uart.write(if (attachment.recorded) "true" else "false");
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_exit.kind_tag=");
+    uart.writeDec(attachment.kind_tag);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_exit.pc=");
+    uart.writeHex(attachment.pc);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_exit.sp=");
+    uart.writeHex(attachment.sp);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_exit.cause=");
+    uart.writeHex(attachment.cause);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_exit.trap_value=");
+    uart.writeHex(attachment.trap_value);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_exit.instruction_bits=");
+    uart.writeHex(attachment.instruction_bits);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_exit.owner_vm_id=");
+    uart.writeDec(attachment.owner_vm_id);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_exit.owner_vcpu_id=");
+    uart.writeDec(attachment.owner_vcpu_id);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_exit.record_count=");
+    uart.writeDec(attachment.record_count);
+    uart.write("\r\n");
+    uart.write("hv: vcpu.guest_exit.clear_count=");
     uart.writeDec(attachment.clear_count);
     uart.write("\r\n");
 }

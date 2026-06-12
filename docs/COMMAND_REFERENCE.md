@@ -26,7 +26,7 @@ Build-system status guide:
 zig build hyperzig-status
 ```
 
-`zig build hyperzig-status` prints the current project, Zig target, proven hypervisor milestones, next milestone, canonical validator, and the explicit non-claims: no Linux guest support, no guest execution, and HV2 smoke-proven VM/vCPU objects.
+`zig build hyperzig-status` prints the current project, Zig target, proven hypervisor milestones, next milestone, canonical validator, and the explicit non-claims: no Linux guest support, no guest execution, and the HV0-HV8 smoke-proven hypervisor milestones when validation passes.
 
 Normal build path, which must continue to build without running the full validator:
 
@@ -274,3 +274,23 @@ Commands:
 Expected non-claims remain visible: `hv: guest_execution=not-supported-yet`, `hv: linux_guest=not-supported-yet`, `hv: second_stage_translation=MISSING`, and `hv: h_extension=unknown reason=no-safe-detection-yet`.
 
 Smoke proof: `./smoke/smoke-hv-guest-entry-v0.sh` with transcript `smoke/transcripts/latest-hv-guest-entry-v0.txt`.
+
+## HV8 Guest Trap / Exit Metadata Commands
+
+HV8 implements guest trap/exit metadata and classification only. It records simulated exit causes against the HV7 prepared VM 0 / vCPU 0 entry frame so future guest execution work has a real structure for explaining why a guest stopped. HV8 never enters guest code and never claims Linux support.
+
+Commands:
+
+- `hv guest-exit` / `hv-exit`: print the current `GuestExit` object state, owner IDs, last kind, reason, frame fields, counters, and non-claims.
+- `hv guest-exit record-instruction`: require a prepared HV7 guest-entry frame and record a simulated instruction-trap exit using that frame's PC/SP.
+- `hv guest-exit record-memory-fault`: require a prepared HV7 guest-entry frame and record a simulated memory-fault exit using that frame's PC/SP.
+- `hv guest-exit record-timer`: require a prepared HV7 guest-entry frame and record a simulated timer-interrupt exit using that frame's PC/SP.
+- `hv guest-exit record-halt`: require a prepared HV7 guest-entry frame and record a simulated explicit-halt exit using that frame's PC/SP.
+- `hv guest-exit reset`: clear last-exit state and frame to `no-exit` while preserving historical counters consistently.
+- `hv guest-exit require-entry-test`: prove recording is rejected when no HV7 prepared frame exists.
+
+Expected markers include `hv: guest_exit=implemented`, `hv: guest_exit.state=no-exit` or `recorded`, `hv: guest_exit.last_kind=instruction-trap` / `memory-fault` / `timer-interrupt` / `explicit-halt`, frame PC/SP/cause/trap-value/instruction-bits fields, `hv: guest_exit.record_result=ok`, `hv: guest_exit.reset_result=ok`, and `hv: guest_exit.require_entry_test=rejected`.
+
+Expected non-claims remain visible: `hv: guest_execution=not-supported-yet`, `hv: linux_guest=not-supported-yet`, `hv: second_stage_translation=MISSING`, and `hv: h_extension=unknown reason=no-safe-detection-yet`.
+
+Smoke proof: `./smoke/smoke-hv-guest-exit-v0.sh` with transcript `smoke/transcripts/latest-hv-guest-exit-v0.txt`.
