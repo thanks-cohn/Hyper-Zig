@@ -122,7 +122,7 @@ for marker in \
     'hv: vm_object=implemented' \
     'hv: vcpu_object=implemented' \
     'hv: guest_memory=implemented' \
-    'hv: guest_entry=MISSING' \
+    'hv: guest_entry=implemented' \
     'hv: guest_trap_return=MISSING' \
     'hv: second_stage_translation=MISSING' \
     'hv: virtual_timer=MISSING' \

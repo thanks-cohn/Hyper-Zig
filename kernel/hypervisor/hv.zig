@@ -5,6 +5,7 @@ const vcpu = @import("vcpu.zig");
 const guest_memory = @import("guest_memory.zig");
 const guest_address_space = @import("guest_address_space.zig");
 const guest_image = @import("guest_image.zig");
+const guest_entry = @import("guest_entry.zig");
 
 pub fn init() void {
     vm.init();
@@ -12,6 +13,7 @@ pub fn init() void {
     guest_memory.init(vm.object().id);
     guest_address_space.init(vm.object().id);
     guest_image.init(vm.object().id);
+    guest_entry.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -28,14 +30,14 @@ pub fn printStatus() void {
     guest_memory.printState();
     guest_address_space.printState();
     guest_image.printState();
-    uart.write("hv: guest_entry=MISSING\r\n");
+    guest_entry.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
     uart.write("hv: virtual_timer=MISSING\r\n");
     uart.write("hv: virtual_console=MISSING\r\n");
     uart.write("hv: sbi_layer=MISSING\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV7 guest entry research\r\n");
+    uart.write("hv: next=HV8 guest trap/exit handling research\r\n");
 }
 
 pub fn printCapability() void {
@@ -87,6 +89,7 @@ pub fn printInspect() void {
     guest_memory.printState();
     guest_address_space.printState();
     guest_image.printState();
+    guest_entry.printState();
 }
 
 pub fn printObjects() void {
@@ -171,9 +174,29 @@ pub fn boundsTestGuestImage() void {
     guest_image.printBoundsTestCommand();
 }
 
+pub fn printGuestEntry() void {
+    guest_entry.printState();
+}
+
+pub fn prepareGuestEntry() void {
+    guest_entry.printPrepareCommand();
+}
+
+pub fn resetGuestEntry() void {
+    guest_entry.printResetCommand();
+}
+
+pub fn boundsTestGuestEntry() void {
+    guest_entry.printBoundsTestCommand();
+}
+
+pub fn requireImageTestGuestEntry() void {
+    guest_entry.printRequireImageTestCommand();
+}
+
 fn printNonClaims() void {
     uart.write("hv: guest_execution=not-supported-yet\r\n");
     uart.write("hv: linux_guest=not-supported-yet\r\n");
-    uart.write("hv: guest_entry=MISSING\r\n");
+    uart.write("hv: guest_entry=implemented\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 }

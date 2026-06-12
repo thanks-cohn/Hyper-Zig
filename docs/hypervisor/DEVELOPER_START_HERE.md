@@ -2,7 +2,7 @@
 
 Hyper-Zig is the hypervisor-first line of the ZIGN01D RISC-V teaching kernel. It is a proof-driven Zig 0.14.x repository for growing from an observable kernel toward real hypervisor subsystems without pretending that future work already exists.
 
-Current proven hypervisor milestones are **HV0**, **HV1**, **HV2**, **HV3**, **HV4**, **HV5**, and **HV6** when validation passes:
+Current proven hypervisor milestones are **HV0**, **HV1**, **HV2**, **HV3**, **HV4**, **HV5**, **HV6**, and **HV7** when validation passes:
 
 - **HV0** proves the honest hypervisor status surface.
 - **HV1** proves safe capability reporting and keeps the RISC-V H-extension status `unknown` because there is no smoke-proven safe detection yet.
@@ -11,8 +11,9 @@ Current proven hypervisor milestones are **HV0**, **HV1**, **HV2**, **HV3**, **H
 - **HV4** proves a real PMM-backed guest-memory ownership object for VM 0 without guest execution.
 - **HV5** proves metadata-only guest physical address lookup and rejection behavior without guest execution.
 - **HV6** proves tiny `tiny-flat-v0` guest payload loading into HV4 memory through HV5 metadata, plus readback verification, without guest execution.
+- **HV7** proves guest-entry preparation metadata: PC from the HV6 entry point, SP inside configured guest memory, a register frame, and attachment to VM 0 / vCPU 0, without guest execution.
 
-The next milestone is **HV7: guest entry research**. HV6 remains separate from guest entry and does not claim Linux guest support, second-stage translation, or H-extension support.
+The next milestone is **HV8: guest trap/exit handling research**. HV7 remains separate from guest execution and does not claim Linux guest support, second-stage translation, or H-extension support.
 
 ## 1. Clone and select Zig 0.14.x
 
@@ -82,6 +83,7 @@ Use transcript evidence as ground truth. The current validated facts include the
 - HV4 guest-memory smoke passes.
 - HV5 guest-address-space smoke passes.
 - HV6 guest-image loader smoke passes.
+- HV7 guest-entry preparation smoke passes.
 - Minimus-Log validation passes.
 
 Commands:
@@ -106,6 +108,7 @@ Current hypervisor code is intentionally small:
 - `kernel/hypervisor/guest_memory.zig` implements the HV4 PMM-backed guest-memory ownership object and metadata-only rejection tests.
 - `kernel/hypervisor/guest_address_space.zig` implements the HV5 guest physical address-space metadata object and lookup/rejection tests.
 - `kernel/hypervisor/guest_image.zig` implements the HV6 tiny flat guest image loader and readback verifier.
+- `kernel/hypervisor/guest_entry.zig` implements the HV7 guest-entry preparation object and register-frame derivation.
 - `kernel/hypervisor/capability.zig` implements the HV1 safe capability status data and prints the current `unknown` H-extension result.
 - `kernel/console/shell.zig` wires shell commands such as `hv`, `hv status`, `hv-status`, `hv capability`, `hv-capability`, and the `hv guest-memory` and `hv address-space` families.
 - `smoke/smoke-hv-status-v0.sh` proves the HV0 status command transcript.
@@ -113,6 +116,7 @@ Current hypervisor code is intentionally small:
 - `smoke/smoke-hv-guest-memory-v0.sh` proves the HV4 guest-memory command transcript.
 - `smoke/smoke-hv-address-space-v0.sh` proves the HV5 guest-address-space command transcript.
 - `smoke/smoke-hv-guest-image-v0.sh` proves the HV6 guest-image command transcript.
+- `smoke/smoke-hv-guest-entry-v0.sh` proves the HV7 guest-entry preparation transcript.
 - `docs/hypervisor/HV2_IMPLEMENTATION_MAP.md` remains historical design context for the VM/vCPU model.
 
 ## 6. What HV0 through HV5 prove
@@ -159,12 +163,12 @@ Forbidden shortcuts:
 - Do not fake H-extension support.
 - Do not treat OpenSBI as H-extension proof.
 - Do not treat S-mode boot as hypervisor mode.
-- Do not replace `guest_execution=not-supported-yet` until a real guest-entry milestone exists and is smoke-proven.
+- Do not replace `guest_execution=not-supported-yet` until real guest execution exists and is smoke-proven; HV7 guest-entry preparation is metadata only.
 - Do not mark VM/vCPU objects implemented until real initialized data-model objects are inspected by smoke.
 - Do not mark vCPU lifecycle implemented until transition behavior and failed-transition counters are smoke-proven.
 - Do not treat HV4 guest memory metadata as executable guest memory.
 
-The honest next edit for hypervisor developers is HV7 guest entry research, after reviewing the HV6 guest-image implementation and validation transcript.
+The honest next edit for hypervisor developers is HV8 guest trap/exit handling research, after reviewing the HV7 guest-entry preparation implementation and validation transcript.
 
 ## HV5 Guest Address Space current scope
 
@@ -193,4 +197,17 @@ Exact HV6 validation command:
 
 ```sh
 ./smoke/smoke-hv-guest-image-v0.sh
+```
+
+
+## HV7 current scope
+
+HV7 creates `kernel/hypervisor/guest_entry.zig`. It prepares metadata only: `GuestEntry`, `GuestEntryState`, `GuestRegisterFrame`, `GuestEntryError`, `GuestEntryPrepareResult`, and `GuestEntryResetResult`. Preparation requires a loaded HV6 image, uses HV4/HV5 guest-memory/address-space metadata, derives `pc` from the HV6 image entry point, derives a stack pointer within configured guest memory, and attaches the frame to VM 0 / vCPU 0.
+
+HV7 does **not** execute the guest. HV7 does **not** load Linux. HV7 does **not** implement second-stage translation. HV7 does **not** prove H-extension support.
+
+Exact HV7 validation command:
+
+```bash
+./smoke/smoke-hv-guest-entry-v0.sh
 ```

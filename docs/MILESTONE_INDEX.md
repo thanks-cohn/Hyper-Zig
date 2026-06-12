@@ -206,4 +206,15 @@ This index records the current milestone ladder and intentionally missing featur
 - **Smoke test file:** `smoke/smoke-hv-guest-image-v0.sh`.
 - **Transcript:** `smoke/transcripts/latest-hv-guest-image-v0.txt`.
 - **Intentionally missing features:** guest execution, Linux guest support, H-extension presence proof, guest entry, guest trap return, second-stage translation, ELF loading, Linux image loading, virtual console, SBI layer, and virtio for Linux.
-- **Next dependency:** HV7 guest entry research, still without claiming Linux boot or second-stage translation until separately implemented and smoke-proven.
+- **Next dependency:** HV7 guest-entry preparation metadata, still without claiming guest execution, Linux boot, or second-stage translation until separately implemented and smoke-proven.
+
+
+## HV7 Guest Entry Preparation
+
+- **Purpose:** Prepare guest-entry metadata for a future guest entry attempt without executing the guest.
+- **Actual capability proven:** `GuestEntry` tracks VM/vCPU ownership, state, PC from the HV6 loaded image entry point, SP derived within configured guest memory, stack bounds metadata, counters, last error, and a concrete `GuestRegisterFrame` attached to VM 0 / vCPU 0.
+- **Key commands added:** `hv guest-entry`, `hv-entry`, `hv guest-entry prepare`, `hv guest-entry reset`, `hv guest-entry bounds-test`, `hv guest-entry require-image-test`.
+- **Smoke test file:** `smoke/smoke-hv-guest-entry-v0.sh`.
+- **Transcript:** `smoke/transcripts/latest-hv-guest-entry-v0.txt`.
+- **Intentionally missing features:** guest execution, Linux guest support, H-extension presence proof, guest trap return, second-stage translation, Linux image loading, SBI mediation, virtual devices, and virtio for Linux.
+- **Next dependency:** HV8 guest trap/exit handling research with no Linux support claim until separately implemented and smoke-proven.
