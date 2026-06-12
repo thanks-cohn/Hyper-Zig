@@ -29,6 +29,7 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv-guest-entry-v0.sh"
     "smoke/smoke-hv-guest-exit-v0.sh"
     "smoke/smoke-hv-guest-run-attempt-v0.sh"
+    "smoke/smoke-hv-guest-execution-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -115,6 +116,7 @@ run_smoke() {
         smoke-hv-guest-entry-v0) transcript="$ROOT/smoke/transcripts/latest-hv-guest-entry-v0.txt" ;;
         smoke-hv-guest-exit-v0) transcript="$ROOT/smoke/transcripts/latest-hv-guest-exit-v0.txt" ;;
         smoke-hv-guest-run-attempt-v0) transcript="$ROOT/smoke/transcripts/latest-hv-guest-run-attempt-v0.txt" ;;
+        smoke-hv-guest-execution-v0) transcript="$ROOT/smoke/transcripts/latest-hv-guest-execution-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"
@@ -187,7 +189,7 @@ done
 MISSING_MILESTONES+=(
     "Linux guest support (not implemented; do not claim)"
     "guest execution (not implemented; do not claim)"
-    "guest execution beyond HV9 no-execute run-attempt arming (not implemented; do not claim)"
+    "guest instruction execution beyond HV10 hardware-gated preparation (not implemented; do not claim)"
     "second-stage translation (not implemented; do not claim)"
 )
 
@@ -210,6 +212,7 @@ HV6_STATUS="$(smoke_status_for smoke/smoke-hv-guest-image-v0.sh)"
 HV7_STATUS="$(smoke_status_for smoke/smoke-hv-guest-entry-v0.sh)"
 HV8_STATUS="$(smoke_status_for smoke/smoke-hv-guest-exit-v0.sh)"
 HV9_STATUS="$(smoke_status_for smoke/smoke-hv-guest-run-attempt-v0.sh)"
+HV10_STATUS="$(smoke_status_for smoke/smoke-hv-guest-execution-v0.sh)"
 OVERALL="PASS"
 REASON="All required checks passed; optional missing items are reported without being counted as PASS."
 if [[ "$(status_for check-zig-version)" != "PASS" ]]; then
@@ -223,8 +226,8 @@ elif [[ $FAIL_COUNT -ne 0 ]]; then
     REASON="One or more required checks or discovered smoke tests failed; inspect blockers and logs."
 fi
 
-CURRENT_MILESTONE="HV0/HV1/HV2/HV3/HV4/HV5/HV6/HV7/HV8/HV9 proven when all required smoke passes; controlled no-execute guest run-attempt safety gate implemented"
-NEXT_MILESTONE="HV10 first hardware-gated guest execution research without Linux support claim"
+CURRENT_MILESTONE="HV0/HV1/HV2/HV3/HV4/HV5/HV6/HV7/HV8/HV9/HV10 proven when all required smoke passes; hardware-gated guest execution preparation implemented without guest execution"
+NEXT_MILESTONE="HV11 continue hardware-gated guest execution research without Linux support claim"
 
 {
 cat <<SUMMARY
@@ -249,6 +252,7 @@ HV6 guest image loader smoke: $HV6_STATUS
 HV7 guest entry preparation smoke: $HV7_STATUS
 HV8 guest trap/exit smoke: $HV8_STATUS
 HV9 guest run-attempt smoke: $HV9_STATUS
+HV10 guest execution preparation smoke: $HV10_STATUS
 HV0 PASS: $HV0_STATUS
 HV1 PASS: $HV1_STATUS
 HV2 PASS: $HV2_STATUS
@@ -259,6 +263,7 @@ HV6 guest image loader PASS: $HV6_STATUS
 HV7 guest entry preparation PASS: $HV7_STATUS
 HV8 guest trap/exit PASS: $HV8_STATUS
 HV9 guest run-attempt PASS: $HV9_STATUS
+HV10 guest execution preparation PASS: $HV10_STATUS
 VM/vCPU model implemented
 vCPU lifecycle implemented only if smoke passes: $HV3_STATUS
 guest memory object implemented only if smoke passes: $HV4_STATUS
@@ -267,11 +272,13 @@ guest image loader implemented only if smoke passes: $HV6_STATUS
 guest entry preparation implemented only if smoke passes: $HV7_STATUS
 guest trap/exit metadata implemented only if smoke passes: $HV8_STATUS
 guest run-attempt safety gate implemented only if smoke passes: $HV9_STATUS
+guest execution preparation gate implemented only if smoke passes: $HV10_STATUS
 guest image format: tiny-flat-v0
 guest memory backing: pmm-bitmap-v0
 guest execution still not supported
 Linux guest still not supported
-next milestone: HV10 first hardware-gated guest execution research
+current milestone: HV10 first hardware-gated guest execution preparation
+next milestone: HV11 continue hardware-gated guest execution research
 Overall readiness: $OVERALL
 Reason: $REASON
 
@@ -285,7 +292,7 @@ First-run developer guidance:
   - tail -n 200 logs/latest/validate-hyperzig.log
 
 Current milestone: $CURRENT_MILESTONE
-Next coding target: HV10 first hardware-gated guest execution research
+Next coding target: HV11 continue hardware-gated guest execution research
 HV2/HV3/HV4/HV5 file map:
   - kernel/hypervisor/vm.zig
   - kernel/hypervisor/vcpu.zig
@@ -299,6 +306,7 @@ HV2/HV3/HV4/HV5 file map:
   - smoke/smoke-hv-guest-entry-v0.sh
   - smoke/smoke-hv-guest-exit-v0.sh
   - smoke/smoke-hv-guest-run-attempt-v0.sh
+  - smoke/smoke-hv-guest-execution-v0.sh
   - docs/hypervisor/HV2_VM_VCPU_MODEL.md
 Exact command to rerun validation:
   - ./scripts/validate-hyperzig.sh
@@ -317,6 +325,7 @@ Non-claims:
   - guest entry preparation metadata is smoke-proven only when HV7 smoke passes
   - guest trap/exit metadata is smoke-proven only when HV8 smoke passes
   - guest run-attempt no-execute safety gate is smoke-proven only when HV9 smoke passes
+  - guest execution preparation and hardware gate logic are smoke-proven only when HV10 smoke passes
   - no guest execution or Linux guest support yet
 
 Command log: $COMMAND_LOG
@@ -347,6 +356,7 @@ printf '  - HV6 guest image loader: %s\n' "$ROOT/smoke/transcripts/latest-hv-gue
 printf '  - HV7 guest entry preparation: %s\n' "$ROOT/smoke/transcripts/latest-hv-guest-entry-v0.txt"
 printf '  - HV8 guest trap/exit: %s\n' "$ROOT/smoke/transcripts/latest-hv-guest-exit-v0.txt"
 printf '  - HV9 guest run-attempt: %s\n' "$ROOT/smoke/transcripts/latest-hv-guest-run-attempt-v0.txt"
+printf '  - HV10 guest execution preparation: %s\n' "$ROOT/smoke/transcripts/latest-hv-guest-execution-v0.txt"
 printf '\nCompleted milestones/evidence:\n'
 if [[ ${#COMPLETED[@]} -eq 0 ]]; then printf '  - none\n'; else printf '  - %s\n' "${COMPLETED[@]}"; fi
 printf '\nMissing optional smoke tests (MISSING is not PASS):\n'

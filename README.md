@@ -134,6 +134,7 @@ Run individual milestone proofs:
 ./smoke/smoke-hv-guest-entry-v0.sh
 ./smoke/smoke-hv-guest-exit-v0.sh
 ./smoke/smoke-hv-guest-run-attempt-v0.sh
+./smoke/smoke-hv-guest-execution-v0.sh
 ```
 
 Inspect proof transcripts:
@@ -149,6 +150,7 @@ cat smoke/transcripts/latest-hv-guest-image-v0.txt
 cat smoke/transcripts/latest-hv-guest-entry-v0.txt
 cat smoke/transcripts/latest-hv-guest-exit-v0.txt
 cat smoke/transcripts/latest-hv-guest-run-attempt-v0.txt
+cat smoke/transcripts/latest-hv-guest-execution-v0.txt
 ```
 
 Inspect validation evidence:
@@ -175,6 +177,7 @@ Proven when validation passes:
 | HV7 | Done | Guest-entry preparation metadata only: PC/SP/register frame for VM 0 / vCPU 0, with no guest execution. |
 | HV8 | Done | Guest trap/exit metadata and classification for simulated exits, attached to VM 0 / vCPU 0, with no guest execution. |
 | HV9 | Done | Controlled guest-entry attempt safety gate and no-execute arming metadata, with no guest execution. |
+| HV10 | Done | Hardware-gated execution preparation object that validates software prerequisites and refuses execution at real hardware blockers. |
 
 ## What Hyper-Zig can do today
 
@@ -190,6 +193,7 @@ Hyper-Zig can:
 - Prepare a guest-entry metadata object for VM 0 / vCPU 0 from the loaded HV6 image entry point and configured guest memory stack bounds.
 - Record and classify simulated guest exits using the prepared HV7 PC/SP metadata without entering guest code.
 - Check and arm controlled HV9 guest-run-attempt metadata while refusing execution because second-stage translation is missing, H-extension is unknown, and guest execution is disabled.
+- Evaluate an HV10 hardware-gated execution preparation object that captures prerequisite state, execution-frame metadata, blockers, state transitions, and counters while still refusing instruction execution.
 - Produce logs and transcripts that prove the above behavior.
 
 ## HV7 Guest Entry Preparation
@@ -239,6 +243,7 @@ Exact validation commands include:
 ```bash
 ./smoke/smoke-hv-guest-exit-v0.sh
 ./smoke/smoke-hv-guest-run-attempt-v0.sh
+./smoke/smoke-hv-guest-execution-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 ```
@@ -266,18 +271,48 @@ Exact validation commands include:
 
 ```bash
 ./smoke/smoke-hv-guest-run-attempt-v0.sh
+./smoke/smoke-hv-guest-execution-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 ```
 
 HV9 explicitly does **not** execute the guest, does **not** jump to guest code, does **not** use `sret`/`hret`/`mret` for guest execution, does **not** boot Linux, does **not** implement second-stage translation, and does **not** prove RISC-V H-extension support.
 
+
+## HV10 Hardware-Gated Guest Execution Preparation
+
+HV10 adds a real `GuestExecutionGate` object for VM 0 / vCPU 0. It gathers the software prerequisites future guest execution will require: VM/vCPU ownership, HV4 guest memory, HV5 address-space metadata, HV6 loaded tiny image, HV7 entry frame, HV8 exit metadata, and HV9 no-execute run-attempt arming. It then exposes hardware-gate blockers for missing second-stage translation, unproven H-extension support, and disabled guest instruction execution.
+
+HV10 shell proof commands:
+
+```bash
+hv exec
+hv-exec
+hv execution
+hv exec-status
+hv exec-check
+hv exec-arm
+hv exec-blockers
+hv exec-reset
+hv exec-require-prereq-test
+```
+
+Exact validation commands include:
+
+```bash
+./smoke/smoke-hv-guest-execution-v0.sh
+./scripts/validate-hyperzig.sh
+zig build validate-hyperzig
+```
+
+HV10 explicitly does **not** execute guest instructions, does **not** jump to guest memory, does **not** increment `vcpu.run_count`, does **not** boot Linux, does **not** implement second-stage translation, and does **not** prove RISC-V H-extension support.
+
 ## What Hyper-Zig cannot do yet
 
 Hyper-Zig cannot yet:
 
 - Enter a guest.
-- Execute guest code. HV7 prepares entry metadata, HV8 records exit metadata, and HV9 arms no-execute run-attempt metadata only.
+- Execute guest code. HV7 prepares entry metadata, HV8 records exit metadata, HV9 arms no-execute run-attempt metadata, and HV10 evaluates hardware-gated execution preparation only.
 - Boot Linux as a guest.
 - Host Linux.
 - Provide second-stage address translation.
@@ -288,11 +323,11 @@ Hyper-Zig cannot yet:
 
 ## How far from hosting Linux?
 
-Not close yet. Hyper-Zig is still before guest entry.
+Not close yet. Hyper-Zig is still before guest entry and before guest instruction execution.
 
 The missing pieces are large and explicit:
 
-1. **HV10 first hardware-gated guest execution research**: build on HV9 safety-gate metadata without claiming Linux support.
+1. **HV11 continued hardware-gated guest execution research**: build on HV10 gate state without claiming Linux support.
 2. **Trap and exit handling**: handle guest exits, faults, interrupts, and lifecycle transitions.
 3. **Second-stage translation**: isolate guest physical memory with real hardware-backed mappings.
 4. **H-extension proof**: safely detect and use the RISC-V hypervisor extension, or clearly document any non-H path.
@@ -314,7 +349,7 @@ The goal is to build a readable, verifiable hypervisor path in Zig:
 4. State exactly what works and what does not.
 5. Move to the next milestone.
 
-The next target is **HV10 first hardware-gated guest execution research**, still without Linux or unsupported execution claims.
+The next target is **HV11 continued hardware-gated guest execution research**, still without Linux or unsupported execution claims.
 
 ## Useful files
 
@@ -324,7 +359,7 @@ The next target is **HV10 first hardware-gated guest execution research**, still
 - `logs/latest/validate-hyperzig.log` — latest validation output after running validation.
 - `smoke/transcripts/` — latest smoke-test transcripts.
 
-## Exact HV9 Validation Command Set
+## Exact HV10 Validation Command Set
 
 ```bash
 export ZIG=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1/zig
@@ -346,6 +381,7 @@ zig build hyperzig-status
 ./smoke/smoke-hv-guest-entry-v0.sh
 ./smoke/smoke-hv-guest-exit-v0.sh
 ./smoke/smoke-hv-guest-run-attempt-v0.sh
+./smoke/smoke-hv-guest-execution-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 tail -n 300 logs/latest/validate-hyperzig.log

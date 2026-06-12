@@ -2,7 +2,7 @@
 
 Hyper-Zig is the hypervisor-first line of the ZIGN01D RISC-V teaching kernel. It is a proof-driven Zig 0.14.x repository for growing from an observable kernel toward real hypervisor subsystems without pretending that future work already exists.
 
-Current proven hypervisor milestones are **HV0**, **HV1**, **HV2**, **HV3**, **HV4**, **HV5**, **HV6**, **HV7**, **HV8**, and **HV9** when validation passes:
+Current proven hypervisor milestones are **HV0**, **HV1**, **HV2**, **HV3**, **HV4**, **HV5**, **HV6**, **HV7**, **HV8**, **HV9**, and **HV10** when validation passes:
 
 - **HV0** proves the honest hypervisor status surface.
 - **HV1** proves safe capability reporting and keeps the RISC-V H-extension status `unknown` because there is no smoke-proven safe detection yet.
@@ -14,8 +14,9 @@ Current proven hypervisor milestones are **HV0**, **HV1**, **HV2**, **HV3**, **H
 - **HV7** proves guest-entry preparation metadata: PC from the HV6 entry point, SP inside configured guest memory, a register frame, and attachment to VM 0 / vCPU 0, without guest execution.
 - **HV8** proves guest trap/exit metadata and classification for simulated exits without guest execution.
 - **HV9** proves a controlled guest-entry attempt safety gate that checks HV4-HV8 prerequisites and arms no-execute metadata while refusing real execution.
+- **HV10** proves a hardware-gated guest execution preparation layer that validates HV4-HV9 prerequisites, captures execution-frame metadata, tracks blockers/counters, and refuses instruction execution at the missing hardware gate.
 
-The next milestone is **HV10: first hardware-gated guest execution research**. HV9 remains separate from guest execution and does not claim Linux guest support, second-stage translation, or H-extension support.
+The next milestone is **HV11: continued hardware-gated guest execution research**. HV10 remains separate from guest instruction execution and does not claim Linux guest support, second-stage translation, or H-extension support.
 
 ## 1. Clone and select Zig 0.14.x
 
@@ -98,6 +99,7 @@ cat smoke/transcripts/latest-hv-vcpu-lifecycle-v0.txt
 cat smoke/transcripts/latest-hv-guest-memory-v0.txt
 cat smoke/transcripts/latest-hv-address-space-v0.txt
 cat smoke/transcripts/latest-hv-guest-image-v0.txt
+cat smoke/transcripts/latest-hv-guest-execution-v0.txt
 ```
 
 Do not treat OpenSBI presence as H-extension proof. Do not treat S-mode boot as hypervisor-mode proof.

@@ -184,3 +184,21 @@ Commands added:
 Smoke proof: `./smoke/smoke-hv-guest-run-attempt-v0.sh` writes `smoke/transcripts/latest-hv-guest-run-attempt-v0.txt` and verifies command blocks, prerequisite truth values, blocker fields, HV7 PC/SP copying, HV8 exit linkage, reset behavior, `vcpu.run_count=0`, and continued non-support for guest execution, Linux guests, second-stage translation, and H-extension presence.
 
 HV9 does **not** enter guest code, does **not** jump to guest memory, does **not** use `sret`/`hret`/`mret` for guest execution, does **not** boot Linux, does **not** implement second-stage translation, and does **not** prove RISC-V H-extension support.
+
+## HV10 Hardware-Gated Guest Execution Preparation Commands
+
+HV10 adds a real `GuestExecutionGate` preparation object for VM 0 / vCPU 0. It collects the software execution path that future guest entry will need: VM/vCPU presence, HV4 guest memory, HV5 address-space metadata, HV6 tiny image state, HV7 entry frame, HV8 exit metadata, and HV9 no-execute run-attempt arming. It then applies the hardware gate and refuses execution because second-stage translation is missing, H-extension support is not proven, and guest instruction execution remains disabled.
+
+Commands added:
+
+- `hv exec` / `hv-exec` / `hv execution`: print the current execution-gate object, prerequisite booleans, execution-frame snapshot, blocker booleans, counters, and explicit non-claims.
+- `hv exec-status` / `hv exec status`: alias for printing the current execution-gate status; increments the gate status counter.
+- `hv exec-check` / `hv exec check`: evaluates all software prerequisites, records transition/rejection counters, captures PC/SP/guest-memory/image/exit metadata, and reports whether the request reached the hardware gate.
+- `hv exec-arm` / `hv exec arm`: attempts to arm the hardware-gated execution preparation layer. With the current repository state it must produce `armed-blocked`, increment `hardware_block_count`, and report missing second-stage translation / unknown H-extension / disabled guest execution instead of entering a guest.
+- `hv exec-blockers` / `hv exec blockers`: recomputes blockers and exposes the current execution-blocker list without claiming execution.
+- `hv exec-reset` / `hv exec reset`: clears the gate state back to `cold` and increments `reset_count` while preserving historical accounting.
+- `hv exec-require-prereq-test` / `hv exec require-prereq-test`: resets HV7 entry metadata and proves the execution gate rejects arming when a required software prerequisite is missing.
+
+Smoke proof: `./smoke/smoke-hv-guest-execution-v0.sh` writes `smoke/transcripts/latest-hv-guest-execution-v0.txt` and verifies object mutations, state transitions, prerequisite truth values, execution-frame fields, hardware-gate blockers, counter increments, reset behavior, and continued non-support for guest instruction execution, Linux guests, second-stage translation, and H-extension presence.
+
+HV10 does **not** enter guest code, does **not** jump to guest memory, does **not** increment `vcpu.run_count`, does **not** boot Linux, does **not** implement second-stage translation, and does **not** prove RISC-V H-extension support.

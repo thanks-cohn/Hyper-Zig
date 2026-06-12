@@ -8,6 +8,7 @@ const guest_image = @import("guest_image.zig");
 const guest_entry = @import("guest_entry.zig");
 const guest_exit = @import("guest_exit.zig");
 const guest_run_attempt = @import("guest_run_attempt.zig");
+const guest_execution = @import("guest_execution.zig");
 
 pub fn init() void {
     vm.init();
@@ -18,6 +19,7 @@ pub fn init() void {
     guest_entry.init(vm.object().id, vcpu.object().id);
     guest_exit.init(vm.object().id, vcpu.object().id);
     guest_run_attempt.init(vm.object().id, vcpu.object().id);
+    guest_execution.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -37,6 +39,7 @@ pub fn printStatus() void {
     guest_entry.printState();
     guest_exit.printState();
     guest_run_attempt.printState();
+    guest_execution.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
     uart.write("hv: virtual_timer=MISSING\r\n");
@@ -103,6 +106,30 @@ pub fn requireExitTestGuestRunAttempt() void {
     guest_run_attempt.printRequireExitTestCommand();
 }
 
+pub fn printGuestExecution() void {
+    guest_execution.printStatusCommand();
+}
+
+pub fn validateGuestExecution() void {
+    guest_execution.printValidateCommand();
+}
+
+pub fn armGuestExecution() void {
+    guest_execution.printArmCommand();
+}
+
+pub fn blockersGuestExecution() void {
+    guest_execution.printBlockersCommand();
+}
+
+pub fn resetGuestExecution() void {
+    guest_execution.printResetCommand();
+}
+
+pub fn requirePrereqTestGuestExecution() void {
+    guest_execution.printRequirePrereqTestCommand();
+}
+
 pub fn printVm() void {
     vm.printObject();
     printNonClaims();
@@ -151,6 +178,7 @@ pub fn printInspect() void {
     guest_entry.printState();
     guest_exit.printState();
     guest_run_attempt.printState();
+    guest_execution.printState();
 }
 
 pub fn printObjects() void {
