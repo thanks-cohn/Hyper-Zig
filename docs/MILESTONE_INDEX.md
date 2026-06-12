@@ -238,3 +238,13 @@ This index records the current milestone ladder and intentionally missing featur
 - **Transcript:** `smoke/transcripts/latest-hv-guest-run-attempt-v0.txt`.
 - **Intentionally missing features:** guest execution, Linux guest support, H-extension presence proof, second-stage translation, Linux image loading, SBI mediation, virtual devices, and virtio for Linux.
 - **Next dependency:** HV10 first hardware-gated guest execution research, still without claiming Linux boot until separately implemented and smoke-proven.
+
+## HV10 Hardware-Gated Guest Execution Preparation
+
+- **Purpose:** Create the first real guest execution preparation layer without executing guest instructions.
+- **Actual capability proven:** `GuestExecutionGate` tracks VM/vCPU ownership, cold/collecting/validated/blocked/armed-blocked state, prerequisite booleans for HV4/HV5/HV6/HV7/HV8/HV9 readiness, an execution-frame snapshot containing PC/SP/guest-memory/image/exit metadata, hardware-gate blockers for missing second-stage translation, unproven H-extension support, and disabled guest execution, plus status/validate/arm/blocker/reset/rejection/hardware-block counters.
+- **Key commands added:** `hv exec`, `hv-exec`, `hv execution`, `hv exec-status`, `hv exec check`, `hv exec-check`, `hv exec arm`, `hv exec-arm`, `hv exec blockers`, `hv exec-blockers`, `hv exec reset`, `hv exec-reset`, `hv exec require-prereq-test`, `hv exec-require-prereq-test`.
+- **Smoke test file:** `smoke/smoke-hv-guest-execution-v0.sh`.
+- **Transcript:** `smoke/transcripts/latest-hv-guest-execution-v0.txt`.
+- **Intentionally missing features:** guest instruction execution, Linux guest support, H-extension presence proof, second-stage translation, Linux image loading, SBI mediation, virtual devices, guest trap return, and virtio for Linux.
+- **Next dependency:** HV11 continued hardware-gated guest execution research, still without claiming Linux boot, guest instruction execution, second-stage translation, or H-extension support until separately implemented and smoke-proven.
