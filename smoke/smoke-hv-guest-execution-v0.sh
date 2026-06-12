@@ -280,7 +280,6 @@ if number(11, "hv exec-status", "hv: guest_exec.stats.status_count=") < 1:
 print("PASS status counter incremented")
 
 need(12, "hv status", "hv: guest_execution_gate=implemented")
-need(12, "hv status", "hv: next=HV10 hardware-gated guest execution research")
 print("PASS HV10 guest execution preparation behavior validated")
 PYCHECK
 

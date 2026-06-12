@@ -49,12 +49,12 @@ pub const SecondStageLookupResult = struct {
     host_address: usize,
     page_index: usize,
     page_offset: usize,
-    error: SecondStageError,
+    stage_error: SecondStageError,
 };
 
 pub const SecondStageValidateResult = struct {
     result: SecondStageMapResult,
-    error: SecondStageError,
+    stage_error: SecondStageError,
     checked_page_count: usize,
 };
 
@@ -217,7 +217,7 @@ pub fn configureFromCurrentGuest() SecondStageMapResult {
     const validation = validateMappingInternal(ss.mapping, false);
     if (validation.result != .ok) {
         ss.mapping.validated = false;
-        return rejectConfigure(ss, validation.error);
+        return rejectConfigure(ss, validation.stage_error);
     }
 
     ss.mapping.validated = true;
@@ -244,13 +244,13 @@ pub fn validateCurrent() SecondStageValidateResult {
     if (ss.state != .metadata_ready) {
         ss.mapping.validated = false;
         ss.stats.last_error = .metadata_not_ready;
-        return .{ .result = .rejected, .error = .metadata_not_ready, .checked_page_count = 0 };
+        return .{ .result = .rejected, .stage_error = .metadata_not_ready, .checked_page_count = 0 };
     }
     const result = validateMappingInternal(ss.mapping, true);
     ss.mapping.validated = result.result == .ok;
-    ss.stats.last_error = result.error;
-    if (result.error == .misaligned) ss.stats.alignment_reject_count += 1;
-    if (result.error == .out_of_bounds) ss.stats.bounds_reject_count += 1;
+    ss.stats.last_error = result.stage_error;
+    if (result.stage_error == .misaligned) ss.stats.alignment_reject_count += 1;
+    if (result.stage_error == .out_of_bounds) ss.stats.bounds_reject_count += 1;
     if (result.result != .ok) ss.state = .rejected;
     return result;
 }
@@ -283,14 +283,14 @@ fn validateMappingInternal(mapping: SecondStageMapping, require_current_objects:
             const page = guest_memory.pageAtIndex(i) orelse return validateRejected(.out_of_bounds, i);
             if (!isAligned(page, mapping.page_size)) return validateRejected(.misaligned, i);
         }
-        return .{ .result = .ok, .error = .none, .checked_page_count = mapping.guest_page_count };
+        return .{ .result = .ok, .stage_error = .none, .checked_page_count = mapping.guest_page_count };
     }
 
-    return .{ .result = .ok, .error = .none, .checked_page_count = mapping.guest_page_count };
+    return .{ .result = .ok, .stage_error = .none, .checked_page_count = mapping.guest_page_count };
 }
 
 fn validateRejected(err: SecondStageError, checked_page_count: usize) SecondStageValidateResult {
-    return .{ .result = .rejected, .error = err, .checked_page_count = checked_page_count };
+    return .{ .result = .rejected, .stage_error = err, .checked_page_count = checked_page_count };
 }
 
 pub fn lookup(gpa: usize) SecondStageLookupResult {
@@ -335,7 +335,7 @@ pub fn lookup(gpa: usize) SecondStageLookupResult {
         .host_address = host_address,
         .page_index = page_index,
         .page_offset = page_offset,
-        .error = .none,
+        .stage_error = .none,
     };
 }
 
@@ -346,7 +346,7 @@ fn lookupRejected(gpa: usize, err: SecondStageError) SecondStageLookupResult {
         .host_address = 0,
         .page_index = 0,
         .page_offset = 0,
-        .error = err,
+        .stage_error = err,
     };
 }
 
@@ -371,11 +371,11 @@ pub fn alignmentTest() SecondStageValidateResult {
     if (mapping.host_size_bytes == 0) mapping.host_size_bytes = pmm.page_size;
     if (mapping.guest_page_count == 0) mapping.guest_page_count = 1;
     const result = validateMappingInternal(mapping, false);
-    if (result.error == .misaligned) {
+    if (result.stage_error == .misaligned) {
         ss.stats.alignment_reject_count += 1;
         ss.stats.last_error = .misaligned;
     } else {
-        ss.stats.last_error = result.error;
+        ss.stats.last_error = result.stage_error;
     }
     return result;
 }
@@ -450,8 +450,8 @@ pub fn printValidateCommand() void {
     uart.write("hv: second_stage.validate.checked_page_count=");
     uart.writeDec(result.checked_page_count);
     uart.write("\r\n");
-    uart.write("hv: second_stage.validate.error=");
-    uart.write(errorName(result.error));
+    uart.write("hv: second_stage.validate.stage_error=");
+    uart.write(errorName(result.stage_error));
     uart.write("\r\n");
     printFields();
     printStats();
@@ -483,7 +483,7 @@ pub fn printLookupPageCommand() void {
 pub fn printBoundsTestCommand() void {
     const result = boundsTest();
     uart.write("hv: second_stage.bounds_test=");
-    uart.write(if (result.result == .rejected and result.error == .out_of_bounds) "rejected" else "failed-to-reject");
+    uart.write(if (result.result == .rejected and result.stage_error == .out_of_bounds) "rejected" else "failed-to-reject");
     uart.write("\r\n");
     printLookup("bounds_test", result);
     printFields();
@@ -494,10 +494,10 @@ pub fn printBoundsTestCommand() void {
 pub fn printAlignmentTestCommand() void {
     const result = alignmentTest();
     uart.write("hv: second_stage.alignment_test=");
-    uart.write(if (result.result == .rejected and result.error == .misaligned) "rejected" else "failed-to-reject");
+    uart.write(if (result.result == .rejected and result.stage_error == .misaligned) "rejected" else "failed-to-reject");
     uart.write("\r\n");
-    uart.write("hv: second_stage.alignment_test.error=");
-    uart.write(errorName(result.error));
+    uart.write("hv: second_stage.alignment_test.stage_error=");
+    uart.write(errorName(result.stage_error));
     uart.write("\r\n");
     printFields();
     printStats();
@@ -551,8 +551,8 @@ fn printLookup(prefix: []const u8, result: SecondStageLookupResult) void {
     uart.write("\r\n");
     uart.write("hv: second_stage.");
     uart.write(prefix);
-    uart.write(".error=");
-    uart.write(errorName(result.error));
+    uart.write(".stage_error=");
+    uart.write(errorName(result.stage_error));
     uart.write("\r\n");
 }
 
