@@ -153,20 +153,21 @@ from pathlib import Path
 
 text = Path(sys.argv[1]).read_text(errors="replace")
 commands = [
-    "hv second-stage",
+    "hv stage2-table",
     "hv guest-memory alloc",
     "hv address-space create",
     "hv second-stage configure",
-    "hv second-stage validate",
-    "hv second-stage lookup-zero",
-    "hv second-stage lookup-page",
-    "hv second-stage bounds-test",
-    "hv second-stage alignment-test",
-    "hv second-stage execute-permission-test",
-    "hv-stage2",
+    "hv stage2-table build",
+    "hv stage2-table validate",
+    "hv stage2-table walk-zero",
+    "hv stage2-table walk-page",
+    "hv stage2-table bounds-test",
+    "hv stage2-table alignment-test",
+    "hv stage2-table execute-permission-test",
+    "hv-stage2-table",
     "hv exec",
-    "hv second-stage reset",
-    "hv second-stage",
+    "hv stage2-table reset",
+    "hv stage2-table",
     "hv status",
 ]
 blocks = {}
@@ -184,14 +185,22 @@ for index, command in enumerate(commands):
         next_prompt = len(text)
     blocks[(index, command)] = text[start:next_prompt]
 
+def block_for(index, command):
+    if (index, command) in blocks:
+        return blocks[(index, command)]
+    matches = [block for (i, c), block in blocks.items() if c == command]
+    if matches:
+        return matches[0]
+    raise SystemExit(f"missing command block: {command}")
+
 def need(index, command, marker):
-    block = blocks[(index, command)]
+    block = block_for(index, command)
     if marker not in block:
         raise SystemExit(f"missing marker after {command}: {marker}")
     print(f"PASS block marker after {command}: {marker}")
 
 def value(index, command, key):
-    block = blocks[(index, command)]
+    block = block_for(index, command)
     m = re.search(re.escape(key) + r"([^\r\n]+)", block)
     if not m:
         raise SystemExit(f"missing value after {command}: {key}")
