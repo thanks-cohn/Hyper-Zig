@@ -70,7 +70,7 @@ Hyper-Zig/
 │   "Run this and learn one concept."
 │
 └── COMMANDS.md
-    The command bible.
+    All Commands.
 ```
 
 
