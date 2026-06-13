@@ -11,6 +11,7 @@ const guest_run_attempt = @import("guest_run_attempt.zig");
 const guest_execution = @import("guest_execution.zig");
 const second_stage = @import("second_stage.zig");
 const stage2_table = @import("stage2_table.zig");
+const stage2_activation = @import("stage2_activation.zig");
 
 pub fn init() void {
     vm.init();
@@ -24,6 +25,7 @@ pub fn init() void {
     guest_execution.init(vm.object().id, vcpu.object().id);
     second_stage.init(vm.object().id);
     stage2_table.init(vm.object().id);
+    stage2_activation.init(vm.object().id);
 }
 
 pub fn printStatus() void {
@@ -46,13 +48,14 @@ pub fn printStatus() void {
     guest_execution.printState();
     second_stage.printState();
     stage2_table.printState();
+    stage2_activation.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
     uart.write("hv: virtual_timer=MISSING\r\n");
     uart.write("hv: virtual_console=MISSING\r\n");
     uart.write("hv: sbi_layer=MISSING\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV13 guarded hardware second-stage activation research (no Linux claim)\r\n");
+    uart.write("hv: next=HV14 real hardware H-extension probe planning (no Linux claim)\r\n");
 }
 
 pub fn printCapability() void {
@@ -182,6 +185,35 @@ pub fn executePermissionTestStage2Table() void {
 
 pub fn resetStage2Table() void {
     stage2_table.printResetCommand();
+}
+
+
+pub fn printStage2Activation() void {
+    stage2_activation.printState();
+}
+
+pub fn checkStage2Activation() void {
+    stage2_activation.printCheckCommand();
+}
+
+pub fn planStage2Activation() void {
+    stage2_activation.printPlanCommand();
+}
+
+pub fn validateStage2Activation() void {
+    stage2_activation.printValidateCommand();
+}
+
+pub fn resetStage2Activation() void {
+    stage2_activation.printResetCommand();
+}
+
+pub fn requireTableTestStage2Activation() void {
+    stage2_activation.printRequireTableTestCommand();
+}
+
+pub fn hgatpWriteTestStage2Activation() void {
+    stage2_activation.printHgatpWriteTestCommand();
 }
 
 pub fn printGuestExecution() void {

@@ -347,3 +347,25 @@ Commands:
 - `hv stage2-table reset`
 
 The canonical behavior smoke is `./smoke/smoke-hv-stage2-table-v0.sh` and it verifies command-local blocks rather than merely grepping global static status text.
+
+## HV13 guarded hardware second-stage activation readiness
+
+HV13 adds a real execution path in `kernel/hypervisor/stage2_activation.zig` that inspects HV11 metadata and HV12 software table state before planning hardware activation. The plan is deliberately non-activating: HGATP writes are disabled, second-stage translation remains missing, H-extension support remains unknown, guest execution remains unsupported, and Linux guest support remains unsupported.
+
+Commands:
+
+- `hv stage2-activation` and `hv-stage2-activation`: show the current activation-readiness object, plan, blockers, counters, and non-claims.
+- `hv stage2-activation check`: checks metadata/table prerequisites and records blockers.
+- `hv stage2-activation plan`: derives entry count, page size, table root, and expected HGATP PPN from the HV12 table while refusing activation.
+- `hv stage2-activation validate`: verifies the plan is safe, blocked, and non-activating.
+- `hv stage2-activation reset`: returns readiness state to idle.
+- `hv stage2-activation require-table-test`: proves missing/reset table rejection.
+- `hv stage2-activation hgatp-write-test`: proves HGATP write rejection.
+
+Validation:
+
+```bash
+./smoke/smoke-hv-stage2-activation-v0.sh
+./scripts/validate-hyperzig.sh
+zig build validate-hyperzig
+```

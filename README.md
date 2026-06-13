@@ -477,3 +477,52 @@ zig build hyperzig-status
 zig build validate-hyperzig
 tail -n 300 logs/latest/validate-hyperzig.log
 ```
+
+## HV13 guarded stage2 activation readiness scope
+
+Hyper-Zig currently targets Zig 0.14.x only. When the full validation ladder passes, HV0 through HV13 are the proven hypervisor milestones:
+
+- HV0: honest hypervisor status output.
+- HV1: safe capability reporting with H-extension still `unknown` until safely proven.
+- HV2: VM/vCPU object model.
+- HV3: vCPU lifecycle metadata.
+- HV4: PMM-backed guest memory object.
+- HV5: guest physical address-space metadata.
+- HV6: tiny guest image loading and readback verification.
+- HV7: guest-entry preparation metadata only.
+- HV8: guest trap/exit metadata and classification only.
+- HV9: controlled no-execute guest-run attempt gate.
+- HV10: hardware-gated guest execution preparation that still refuses execution.
+- HV11: second-stage translation metadata only.
+- HV12: software-only stage2 table construction and validation.
+- HV13: guarded hardware second-stage activation readiness only.
+
+HV13 inspects the HV11 metadata and HV12 software table, builds a safe activation plan, validates that the plan is non-activating, and proves rejection paths for missing/reset tables and HGATP writes. It does **not** activate second-stage translation. It does **not** write HGATP. It does **not** prove the H-extension. It does **not** enter a guest. Guest execution and Linux guests remain unsupported.
+
+Exact validation commands:
+
+```bash
+export ZIG=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1/zig
+export PATH=/home/big-bro/dev/zig-zag/.tools/zig-x86_64-linux-0.14.1:$PATH
+
+./scripts/check-zig-version.sh
+zig build
+zig build hyperzig-status
+./smoke/smoke-hv-status-v0.sh
+./smoke/smoke-hv-capability-v0.sh
+./smoke/smoke-hv-vm-vcpu-v0.sh
+./smoke/smoke-hv-vcpu-lifecycle-v0.sh
+./smoke/smoke-hv-guest-memory-v0.sh
+./smoke/smoke-hv-address-space-v0.sh
+./smoke/smoke-hv-guest-image-v0.sh
+./smoke/smoke-hv-guest-entry-v0.sh
+./smoke/smoke-hv-guest-exit-v0.sh
+./smoke/smoke-hv-guest-run-attempt-v0.sh
+./smoke/smoke-hv-guest-execution-v0.sh
+./smoke/smoke-hv-second-stage-v0.sh
+./smoke/smoke-hv-stage2-table-v0.sh
+./smoke/smoke-hv-stage2-activation-v0.sh
+./scripts/validate-hyperzig.sh
+zig build validate-hyperzig
+tail -n 300 logs/latest/validate-hyperzig.log
+```

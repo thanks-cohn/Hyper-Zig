@@ -32,6 +32,7 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv-guest-execution-v0.sh"
     "smoke/smoke-hv-second-stage-v0.sh"
     "smoke/smoke-hv-stage2-table-v0.sh"
+    "smoke/smoke-hv-stage2-activation-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -121,6 +122,7 @@ run_smoke() {
         smoke-hv-guest-execution-v0) transcript="$ROOT/smoke/transcripts/latest-hv-guest-execution-v0.txt" ;;
         smoke-hv-second-stage-v0) transcript="$ROOT/smoke/transcripts/latest-hv-second-stage-v0.txt" ;;
         smoke-hv-stage2-table-v0) transcript="$ROOT/smoke/transcripts/latest-hv-stage2-table-v0.txt" ;;
+        smoke-hv-stage2-activation-v0) transcript="$ROOT/smoke/transcripts/latest-hv-stage2-activation-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"
@@ -194,7 +196,7 @@ MISSING_MILESTONES+=(
     "Linux guest support (not implemented; do not claim)"
     "guest execution (not implemented; do not claim)"
     "guest instruction execution beyond HV10 hardware-gated preparation (not implemented; do not claim)"
-    "hardware second-stage translation (not active; HV11 metadata and HV12 software table only; do not claim active translation)"
+    "hardware second-stage translation (not active; HV11 metadata, HV12 software table, and HV13 guarded readiness only; do not claim active translation)"
 )
 
 FAIL_COUNT=0
@@ -219,6 +221,7 @@ HV9_STATUS="$(smoke_status_for smoke/smoke-hv-guest-run-attempt-v0.sh)"
 HV10_STATUS="$(smoke_status_for smoke/smoke-hv-guest-execution-v0.sh)"
 HV11_STATUS="$(smoke_status_for smoke/smoke-hv-second-stage-v0.sh)"
 HV12_STATUS="$(smoke_status_for smoke/smoke-hv-stage2-table-v0.sh)"
+HV13_STATUS="$(smoke_status_for smoke/smoke-hv-stage2-activation-v0.sh)"
 OVERALL="PASS"
 REASON="All required checks passed; optional missing items are reported without being counted as PASS."
 if [[ "$(status_for check-zig-version)" != "PASS" ]]; then
@@ -232,8 +235,8 @@ elif [[ $FAIL_COUNT -ne 0 ]]; then
     REASON="One or more required checks or discovered smoke tests failed; inspect blockers and logs."
 fi
 
-CURRENT_MILESTONE="HV0/HV1/HV2/HV3/HV4/HV5/HV6/HV7/HV8/HV9/HV10/HV11/HV12 proven when all required smoke passes; HV12 adds software-only stage2 table construction without activating hardware translation"
-NEXT_MILESTONE="HV13 guarded hardware second-stage activation research without Linux support claim"
+CURRENT_MILESTONE="HV0/HV1/HV2/HV3/HV4/HV5/HV6/HV7/HV8/HV9/HV10/HV11/HV12/HV13 proven when all required smoke passes; HV13 adds guarded hardware second-stage activation readiness without activating hardware translation"
+NEXT_MILESTONE="HV14 safe hardware H-extension proof and HGATP-readiness research without Linux support claim"
 
 {
 cat <<SUMMARY
@@ -261,6 +264,7 @@ HV9 guest run-attempt smoke: $HV9_STATUS
 HV10 guest execution preparation smoke: $HV10_STATUS
 HV11 second-stage metadata smoke: $HV11_STATUS
 HV12 stage2 software table smoke: $HV12_STATUS
+HV13 guarded stage2 activation readiness smoke: $HV13_STATUS
 HV0 PASS: $HV0_STATUS
 HV1 PASS: $HV1_STATUS
 HV2 PASS: $HV2_STATUS
@@ -274,6 +278,7 @@ HV9 guest run-attempt PASS: $HV9_STATUS
 HV10 guest execution preparation PASS: $HV10_STATUS
 HV11 second-stage metadata PASS: $HV11_STATUS
 HV12 stage2 software table PASS: $HV12_STATUS
+HV13 guarded stage2 activation readiness PASS: $HV13_STATUS
 VM/vCPU model implemented
 vCPU lifecycle implemented only if smoke passes: $HV3_STATUS
 guest memory object implemented only if smoke passes: $HV4_STATUS
@@ -285,12 +290,13 @@ guest run-attempt safety gate implemented only if smoke passes: $HV9_STATUS
 guest execution preparation gate implemented only if smoke passes: $HV10_STATUS
 second-stage translation metadata implemented only if smoke passes: $HV11_STATUS
 stage2 software table implemented only if smoke passes: $HV12_STATUS
+stage2 activation readiness implemented only if smoke passes: $HV13_STATUS
 guest image format: tiny-flat-v0
 guest memory backing: pmm-bitmap-v0
 guest execution still not supported
 Linux guest still not supported
-current milestone: HV12 software-only second-stage page-table construction
-next milestone: HV13 guarded hardware second-stage activation research
+current milestone: HV13 guarded hardware second-stage activation readiness
+next milestone: HV14 safe hardware H-extension proof and HGATP-readiness research
 Overall readiness: $OVERALL
 Reason: $REASON
 
@@ -304,7 +310,7 @@ First-run developer guidance:
   - tail -n 200 logs/latest/validate-hyperzig.log
 
 Current milestone: $CURRENT_MILESTONE
-Next coding target: HV13 guarded hardware second-stage activation research
+Next coding target: HV14 safe hardware H-extension proof and HGATP-readiness research
 HV2/HV3/HV4/HV5 file map:
   - kernel/hypervisor/vm.zig
   - kernel/hypervisor/vcpu.zig
@@ -321,6 +327,7 @@ HV2/HV3/HV4/HV5 file map:
   - smoke/smoke-hv-guest-execution-v0.sh
   - smoke/smoke-hv-second-stage-v0.sh
   - smoke/smoke-hv-stage2-table-v0.sh
+  - smoke/smoke-hv-stage2-activation-v0.sh
   - docs/hypervisor/HV2_VM_VCPU_MODEL.md
 Exact command to rerun validation:
   - ./scripts/validate-hyperzig.sh
@@ -340,7 +347,7 @@ Non-claims:
   - guest trap/exit metadata is smoke-proven only when HV8 smoke passes
   - guest run-attempt no-execute safety gate is smoke-proven only when HV9 smoke passes
   - guest execution preparation and hardware gate logic are smoke-proven only when HV10 smoke passes
-  - second-stage translation metadata is smoke-proven only when HV11 smoke passes; HV12 software table is smoke-proven only when HV12 smoke passes; hardware translation remains missing
+  - second-stage translation metadata is smoke-proven only when HV11 smoke passes; HV12 software table is smoke-proven only when HV12 smoke passes; hardware translation remains missing; HV13 readiness remains guarded and non-activating with no HGATP write
   - no guest execution or Linux guest support yet
 
 Command log: $COMMAND_LOG
@@ -374,6 +381,7 @@ printf '  - HV9 guest run-attempt: %s\n' "$ROOT/smoke/transcripts/latest-hv-gues
 printf '  - HV10 guest execution preparation: %s\n' "$ROOT/smoke/transcripts/latest-hv-guest-execution-v0.txt"
 printf '  - HV11 second-stage metadata: %s\n' "$ROOT/smoke/transcripts/latest-hv-second-stage-v0.txt"
 printf '  - HV12 stage2 software table: %s\n' "$ROOT/smoke/transcripts/latest-hv-stage2-table-v0.txt"
+printf '  - HV13 guarded stage2 activation readiness: %s\n' "$ROOT/smoke/transcripts/latest-hv-stage2-activation-v0.txt"
 printf '\nCompleted milestones/evidence:\n'
 if [[ ${#COMPLETED[@]} -eq 0 ]]; then printf '  - none\n'; else printf '  - %s\n' "${COMPLETED[@]}"; fi
 printf '\nMissing optional smoke tests (MISSING is not PASS):\n'

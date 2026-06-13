@@ -235,3 +235,15 @@ These commands exercise the HV12 software-owned second-stage page-table-like bui
 - `hv stage2-table alignment-test` — attempts an unaligned GPA walk and must report rejection.
 - `hv stage2-table execute-permission-test` — attempts an execute-qualified walk and must report rejection because HV12 entries are non-executable.
 - `hv stage2-table reset` — clears all software entries and returns the table to `empty`.
+
+## HV13 guarded stage2 activation readiness commands
+
+These commands are guarded-readiness only. They do not write `hgatp`, do not enable hardware second-stage translation, do not prove the RISC-V H-extension, do not enter a guest, and do not imply Linux guest support.
+
+- `hv stage2-activation` / `hv-stage2-activation` — prints the HV13 activation-readiness object, the current non-activating plan fields, counters, blockers, and explicit non-claims.
+- `hv stage2-activation check` — inspects HV11 second-stage metadata and the HV12 software stage2 table, records deterministic blockers, and refuses activation while H-extension proof, HGATP writes, guest execution, or table-root prerequisites are unavailable.
+- `hv stage2-activation plan` — derives a safe non-activating plan from the HV12 table, including entry count, page size, table root, and expected HGATP PPN when a real root exists; it still leaves `activation_allowed=false` and `would_write_hgatp=false`.
+- `hv stage2-activation validate` — validates that the current plan is internally consistent, still blocked, and non-activating.
+- `hv stage2-activation reset` — clears the activation-readiness object back to idle without touching HGATP or entering a guest.
+- `hv stage2-activation require-table-test` — resets the software table and proves activation readiness rejects a missing/reset HV12 table.
+- `hv stage2-activation hgatp-write-test` — exercises the guarded HGATP write rejection path and proves HGATP writes remain disabled and not performed.

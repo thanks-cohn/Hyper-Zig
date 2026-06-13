@@ -215,6 +215,13 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "hv second-stage alignment-test")) return hv.alignmentTestSecondStage();
     if (equals(cmd, "hv second-stage execute-permission-test")) return hv.executePermissionTestSecondStage();
     if (equals(cmd, "hv second-stage reset")) return hv.resetSecondStage();
+    if (equals(cmd, "hv stage2-activation") or equals(cmd, "hv-stage2-activation")) return hv.printStage2Activation();
+    if (equals(cmd, "hv stage2-activation check")) return hv.checkStage2Activation();
+    if (equals(cmd, "hv stage2-activation plan")) return hv.planStage2Activation();
+    if (equals(cmd, "hv stage2-activation validate")) return hv.validateStage2Activation();
+    if (equals(cmd, "hv stage2-activation reset")) return hv.resetStage2Activation();
+    if (equals(cmd, "hv stage2-activation require-table-test")) return hv.requireTableTestStage2Activation();
+    if (equals(cmd, "hv stage2-activation hgatp-write-test")) return hv.hgatpWriteTestStage2Activation();
     if (equals(cmd, "hv stage2-table") or equals(cmd, "hv-stage2-table")) return hv.printStage2Table();
     if (equals(cmd, "hv stage2-table build")) return hv.buildStage2Table();
     if (equals(cmd, "hv stage2-table validate")) return hv.validateStage2Table();

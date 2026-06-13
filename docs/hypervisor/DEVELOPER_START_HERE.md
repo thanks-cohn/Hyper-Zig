@@ -282,3 +282,19 @@ zig build validate-hyperzig
 ```
 
 Do not treat HV12 as guest execution, Linux boot, active second-stage translation, H-extension proof, or an `hgatp` activation milestone.
+
+## HV13 developer note
+
+HV13 is guarded hardware second-stage activation readiness only. Start with the validated HV11/HV12 flow, then run:
+
+```bash
+hv stage2-activation
+hv stage2-activation check
+hv stage2-activation plan
+hv stage2-activation validate
+hv stage2-activation hgatp-write-test
+hv stage2-activation require-table-test
+hv stage2-activation reset
+```
+
+The implementation must continue to show `activation_allowed=false`, `hgatp_write_allowed=false`, `hgatp_written=false`, `second_stage_enabled=false`, `h_extension_known=false`, `guest_execution=not-supported-yet`, and `linux_guest=not-supported-yet`. The HV13 smoke test proves HV12 `entry_count` and `page_size` flow into the HV13 plan.
