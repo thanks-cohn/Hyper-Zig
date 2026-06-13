@@ -12,6 +12,7 @@ const guest_execution = @import("guest_execution.zig");
 const second_stage = @import("second_stage.zig");
 const stage2_table = @import("stage2_table.zig");
 const boot_package = @import("boot_package.zig");
+const guest_dtb = @import("guest_dtb.zig");
 
 pub fn init() void {
     vm.init();
@@ -26,6 +27,7 @@ pub fn init() void {
     second_stage.init(vm.object().id);
     stage2_table.init(vm.object().id);
     boot_package.init(vm.object().id);
+    guest_dtb.init(vm.object().id);
 }
 
 pub fn printStatus() void {
@@ -49,13 +51,14 @@ pub fn printStatus() void {
     second_stage.printState();
     stage2_table.printState();
     boot_package.printState();
+    guest_dtb.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
     uart.write("hv: virtual_timer=MISSING\r\n");
     uart.write("hv: virtual_console=MISSING\r\n");
     uart.write("hv: sbi_layer=MISSING\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV14 DTB/SBI/active guest-entry prerequisites (no Linux claim)\r\n");
+    uart.write("hv: next=HV15 SBI foundation or controlled active guest-entry prerequisites (no Linux claim)\r\n");
 }
 
 pub fn printCapability() void {
@@ -233,6 +236,38 @@ pub fn resetBootPackage() void {
     boot_package.printResetCommand();
 }
 
+pub fn printDtbContract() void {
+    guest_dtb.printState();
+}
+
+pub fn buildDtbContract() void {
+    guest_dtb.printBuildCommand();
+}
+
+pub fn validateDtbContract() void {
+    guest_dtb.printValidateCommand();
+}
+
+pub fn blockersDtbContract() void {
+    guest_dtb.printBlockersCommand();
+}
+
+pub fn nodesDtbContract() void {
+    guest_dtb.printNodesCommand();
+}
+
+pub fn boundsTestDtbContract() void {
+    guest_dtb.printBoundsTestCommand();
+}
+
+pub fn overlapTestDtbContract() void {
+    guest_dtb.printOverlapTestCommand();
+}
+
+pub fn resetDtbContract() void {
+    guest_dtb.printResetCommand();
+}
+
 pub fn printGuestExecution() void {
     guest_execution.printStatusCommand();
 }
@@ -308,6 +343,7 @@ pub fn printInspect() void {
     guest_execution.printState();
     second_stage.printState();
     boot_package.printState();
+    guest_dtb.printState();
 }
 
 pub fn printObjects() void {

@@ -258,3 +258,18 @@ HV13 smoke and validation entries:
 - `./smoke/smoke-hv-boot-package-v0.sh`: behavior smoke proof with transcript `smoke/transcripts/latest-hv-boot-package-v0.txt`.
 - `./scripts/validate-hyperzig.sh`: includes the HV13 smoke in the required validation ladder.
 - `zig build validate-hyperzig`: runs the canonical validation script through the Zig build target.
+
+## HV14 Guest DTB Contract Commands
+
+HV14 adds a real structured guest DTB contract object derived from the HV13 boot package. These commands do not boot Linux, do not execute a guest, do not activate second-stage translation, and do not implement SBI.
+
+- `hv dtb` / `hv-dtb` / `hv dtb status`: print DTB contract ownership, payload GPA/size, guest-memory bounds, bootargs, memory/cpu/chosen/initrd/console metadata, blockers, and non-claims.
+- `hv dtb build`: require a ready HV13 boot package, copy HV13 bootargs, derive guest memory and initrd metadata, place the DTB payload metadata at a checked GPA, and reject kernel/initrd overlaps.
+- `hv dtb validate`: recompute readiness from DTB fields and deterministic blockers.
+- `hv dtb blockers`: print computed blockers.
+- `hv dtb nodes`: print structured `/memory`, `/cpus/cpu@0`, `/chosen`, initrd, console, timer, and interrupt-controller metadata.
+- `hv dtb bounds-test`: execute a numeric out-of-guest-memory DTB placement rejection.
+- `hv dtb overlap-test`: execute a numeric kernel-overlap DTB placement rejection.
+- `hv dtb reset`: clear the DTB contract back to empty/not-ready.
+
+Smoke proof: `./smoke/smoke-hv-dtb-contract-v0.sh` writes `smoke/transcripts/latest-hv-dtb-contract-v0.txt` and is included in `./scripts/validate-hyperzig.sh` and `zig build validate-hyperzig`.

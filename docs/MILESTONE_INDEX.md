@@ -282,3 +282,13 @@ Next milestone after HV12: HV13 Guest Boot Package Contract, still without Linux
 - **Transcript:** `smoke/transcripts/latest-hv-boot-package-v0.txt`.
 - **Intentionally missing features:** Linux boot, Buildroot boot, Ubuntu boot, guest execution, active second-stage translation, `hgatp` writes, H-extension support claims, SBI mediation, and virtio for Linux.
 - **Next dependency:** DTB/SBI/active guest-entry prerequisites for later Linux work, still without claiming Linux boot until separately implemented and smoke-proven.
+
+## HV14 Guest DTB Contract / Device Tree Payload Foundation
+
+- **Purpose:** Add executable structured DTB handoff contract machinery derived from the HV13 guest boot package, without attempting Linux boot or guest execution.
+- **Actual capability proven:** `GuestDtbContract` tracks VM ownership, payload GPA/size, guest memory bounds, bootargs copied from HV13 command line metadata, memory node metadata, CPU node metadata, chosen node metadata, optional initrd start/end metadata, console path metadata, explicit missing/non-claim timer and interrupt-controller metadata, readiness, deterministic blockers, validation, bounds rejection, overlap rejection, and reset behavior.
+- **Key commands added:** `hv dtb`, `hv-dtb`, `hv dtb status`, `hv dtb build`, `hv dtb validate`, `hv dtb blockers`, `hv dtb nodes`, `hv dtb bounds-test`, `hv dtb overlap-test`, `hv dtb reset`.
+- **Smoke test file:** `smoke/smoke-hv-dtb-contract-v0.sh`.
+- **Transcript:** `smoke/transcripts/latest-hv-dtb-contract-v0.txt`.
+- **Intentionally missing features:** Linux guest support, Buildroot/Ubuntu boot, guest execution, active second-stage translation, `hgatp` writes, H-extension support claims, SBI, binary FDT encoding, virtual timer, virtual interrupt controller, and virtio for Linux.
+- **Next dependency:** SBI foundation or controlled active guest-entry prerequisites, still without Linux support claims until separately implemented and smoke-proven.

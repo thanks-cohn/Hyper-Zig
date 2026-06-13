@@ -33,6 +33,7 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv-second-stage-v0.sh"
     "smoke/smoke-hv-stage2-table-v0.sh"
     "smoke/smoke-hv-boot-package-v0.sh"
+    "smoke/smoke-hv-dtb-contract-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -123,6 +124,7 @@ run_smoke() {
         smoke-hv-second-stage-v0) transcript="$ROOT/smoke/transcripts/latest-hv-second-stage-v0.txt" ;;
         smoke-hv-stage2-table-v0) transcript="$ROOT/smoke/transcripts/latest-hv-stage2-table-v0.txt" ;;
         smoke-hv-boot-package-v0) transcript="$ROOT/smoke/transcripts/latest-hv-boot-package-v0.txt" ;;
+        smoke-hv-dtb-contract-v0) transcript="$ROOT/smoke/transcripts/latest-hv-dtb-contract-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"
@@ -222,6 +224,7 @@ HV10_STATUS="$(smoke_status_for smoke/smoke-hv-guest-execution-v0.sh)"
 HV11_STATUS="$(smoke_status_for smoke/smoke-hv-second-stage-v0.sh)"
 HV12_STATUS="$(smoke_status_for smoke/smoke-hv-stage2-table-v0.sh)"
 HV13_STATUS="$(smoke_status_for smoke/smoke-hv-boot-package-v0.sh)"
+HV14_STATUS="$(smoke_status_for smoke/smoke-hv-dtb-contract-v0.sh)"
 OVERALL="PASS"
 REASON="All required checks passed; optional missing items are reported without being counted as PASS."
 if [[ "$(status_for check-zig-version)" != "PASS" ]]; then
@@ -235,8 +238,8 @@ elif [[ $FAIL_COUNT -ne 0 ]]; then
     REASON="One or more required checks or discovered smoke tests failed; inspect blockers and logs."
 fi
 
-CURRENT_MILESTONE="HV0/HV1/HV2/HV3/HV4/HV5/HV6/HV7/HV8/HV9/HV10/HV11/HV12 proven when all required smoke passes; HV12 adds software-only stage2 table construction; HV13 adds a guest boot package contract without booting Linux"
-NEXT_MILESTONE="HV14 DTB/SBI/active guest-entry prerequisites without Linux support claim"
+CURRENT_MILESTONE="HV14 guest DTB contract / device tree payload foundation proven when required smoke passes; no Linux boot, no guest execution, no active second-stage translation"
+NEXT_MILESTONE="HV15 SBI foundation or controlled active guest-entry prerequisites without Linux support claim"
 
 {
 cat <<SUMMARY
@@ -265,6 +268,7 @@ HV10 guest execution preparation smoke: $HV10_STATUS
 HV11 second-stage metadata smoke: $HV11_STATUS
 HV12 stage2 software table smoke: $HV12_STATUS
 HV13 guest boot package smoke: $HV13_STATUS
+HV14 DTB contract smoke: $HV14_STATUS
 HV0 PASS: $HV0_STATUS
 HV1 PASS: $HV1_STATUS
 HV2 PASS: $HV2_STATUS
@@ -279,6 +283,7 @@ HV10 guest execution preparation PASS: $HV10_STATUS
 HV11 second-stage metadata PASS: $HV11_STATUS
 HV12 stage2 software table PASS: $HV12_STATUS
 HV13 guest boot package PASS: $HV13_STATUS
+HV14 DTB contract PASS: $HV14_STATUS
 VM/vCPU model implemented
 vCPU lifecycle implemented only if smoke passes: $HV3_STATUS
 guest memory object implemented only if smoke passes: $HV4_STATUS
@@ -294,8 +299,8 @@ guest image format: tiny-flat-v0
 guest memory backing: pmm-bitmap-v0
 guest execution still not supported
 Linux guest still not supported
-current milestone: HV13 guest boot package contract
-next milestone: HV14 DTB/SBI/active guest-entry prerequisites
+current milestone: HV14 guest DTB contract / device tree payload foundation
+next milestone: HV15 SBI foundation or controlled active guest-entry prerequisites
 Overall readiness: $OVERALL
 Reason: $REASON
 
@@ -309,7 +314,7 @@ First-run developer guidance:
   - tail -n 200 logs/latest/validate-hyperzig.log
 
 Current milestone: $CURRENT_MILESTONE
-Next coding target: HV14 DTB/SBI/active guest-entry prerequisites
+Next coding target: HV15 SBI foundation or controlled active guest-entry prerequisites
 HV2/HV3/HV4/HV5 file map:
   - kernel/hypervisor/vm.zig
   - kernel/hypervisor/vcpu.zig
@@ -327,6 +332,7 @@ HV2/HV3/HV4/HV5 file map:
   - smoke/smoke-hv-second-stage-v0.sh
   - smoke/smoke-hv-stage2-table-v0.sh
   - smoke/smoke-hv-boot-package-v0.sh
+  - smoke/smoke-hv-dtb-contract-v0.sh
   - docs/hypervisor/HV2_VM_VCPU_MODEL.md
 Exact command to rerun validation:
   - ./scripts/validate-hyperzig.sh
