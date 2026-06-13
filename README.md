@@ -542,7 +542,7 @@ tail -n 300 logs/latest/validate-hyperzig.log
 ```
 
 <p align="center">
-  <img src="who_needs_anything_else.png" alt="we're gona make it!" width="720">
+  <img src="who_needs_anything_else_2.png" alt="we're gona make it!" width="720">
 </p>
 
 ## HV13 Guest Boot Package Contract
