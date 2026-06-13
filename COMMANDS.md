@@ -235,3 +235,26 @@ These commands exercise the HV12 software-owned second-stage page-table-like bui
 - `hv stage2-table alignment-test` — attempts an unaligned GPA walk and must report rejection.
 - `hv stage2-table execute-permission-test` — attempts an execute-qualified walk and must report rejection because HV12 entries are non-executable.
 - `hv stage2-table reset` — clears all software entries and returns the table to `empty`.
+
+
+## HV13 Guest Boot Package Contract commands
+
+HV13 adds a real guest boot package object for VM 0. Readiness is computed from the object fields and active guest-memory limits. These commands do **not** boot Linux, execute guests, activate second-stage translation, write `hgatp`, or claim H-extension support.
+
+- `hv bootpkg` / `hv-bootpkg` / `hv bootpkg status`: print boot package ownership, guest-memory bounds, kernel/initrd/DTB ranges, command line, readiness, blockers, counters, and non-claims.
+- `hv bootpkg attach-kernel`: ensure the existing HV6 `tiny-flat-v0` image is loaded and attach its load GPA and byte range as kernel-like metadata.
+- `hv bootpkg set-entry`: set and validate the kernel entry GPA using the HV6 tiny entry point.
+- `hv bootpkg set-cmdline <text>`: store a command line in the fixed HV13 command-line buffer; rejects oversized lines.
+- `hv bootpkg attach-initrd`: attach default initrd metadata at GPA `0x1000` with numeric bounds and overlap validation.
+- `hv bootpkg attach-dtb`: attach default DTB metadata at GPA `0x1800` with numeric bounds and overlap validation.
+- `hv bootpkg validate`: recompute readiness from kernel presence, entry GPA, guest-memory bounds, non-overlap of active ranges, and command-line validity.
+- `hv bootpkg blockers`: print deterministic readiness blockers computed from the current object.
+- `hv bootpkg overlap-test`: execute a real overlapping metadata attach and require rejection.
+- `hv bootpkg bounds-test`: execute a real out-of-bounds metadata attach and require rejection.
+- `hv bootpkg reset`: clear the package back to empty and not-ready.
+
+HV13 smoke and validation entries:
+
+- `./smoke/smoke-hv-boot-package-v0.sh`: behavior smoke proof with transcript `smoke/transcripts/latest-hv-boot-package-v0.txt`.
+- `./scripts/validate-hyperzig.sh`: includes the HV13 smoke in the required validation ladder.
+- `zig build validate-hyperzig`: runs the canonical validation script through the Zig build target.

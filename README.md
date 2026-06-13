@@ -181,6 +181,8 @@ Proven when validation passes:
 | HV9 | Done | Controlled guest-entry attempt safety gate and no-execute arming metadata, with no guest execution. |
 | HV10 | Done | Hardware-gated execution preparation object that validates software prerequisites and refuses execution at real hardware blockers. |
 | HV11 | Done | Second-stage translation metadata and validation only: derives active=false, execute=false mapping metadata from HV4/HV5; hardware translation remains inactive. |
+| HV12 | Done | Software-only second-stage page-table-like builder; does not activate translation. |
+| HV13 | Done | Guest Boot Package Contract for kernel/initrd/DTB/cmdline metadata readiness; does not boot Linux or execute guests. |
 
 ## What Hyper-Zig can do today
 
@@ -197,6 +199,7 @@ Hyper-Zig can:
 - Record and classify simulated guest exits using the prepared HV7 PC/SP metadata without entering guest code.
 - Check and arm controlled HV9 guest-run-attempt metadata while refusing execution because second-stage translation is missing, H-extension is unknown, and guest execution is disabled.
 - Evaluate an HV10 hardware-gated execution preparation object that captures prerequisite state, execution-frame metadata, blockers, state transitions, and counters while still refusing instruction execution.
+- Prepare and validate a guest boot package object that records VM ownership, guest-memory bounds, HV6 tiny-image kernel metadata, entry GPA, optional initrd/DTB metadata, command line, readiness blockers, numeric bounds checks, and numeric overlap checks.
 - Produce logs and transcripts that prove the above behavior.
 
 ## HV7 Guest Entry Preparation
@@ -473,6 +476,7 @@ zig build hyperzig-status
 ./smoke/smoke-hv-guest-execution-v0.sh
 ./smoke/smoke-hv-second-stage-v0.sh
 ./smoke/smoke-hv-stage2-table-v0.sh
+./smoke/smoke-hv-boot-package-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 tail -n 300 logs/latest/validate-hyperzig.log
@@ -481,3 +485,37 @@ tail -n 300 logs/latest/validate-hyperzig.log
 <p align="center">
   <img src="who_needs_anything_else.png" alt="we're gona make it!" width="720">
 </p>
+
+## HV13 Guest Boot Package Contract
+
+HV13 adds a real guest boot package object for future tiny Linux boot work. It is metadata and validation infrastructure only: it prepares kernel/initrd/DTB/cmdline contract state, computes readiness from actual fields, rejects numeric GPA range overlaps, rejects numeric guest-memory bounds violations, reports deterministic readiness blockers, and resets back to empty.
+
+HV13 does **not** boot Linux, does **not** execute guests, does **not** activate second-stage translation, does **not** write `hgatp`, and does **not** claim RISC-V H-extension support.
+
+HV13 shell proof commands:
+
+```bash
+hv bootpkg
+hv bootpkg status
+hv bootpkg attach-kernel
+hv bootpkg set-entry
+hv bootpkg set-cmdline root=/dev/ram0 console=hvc0 earlycon
+hv bootpkg attach-initrd
+hv bootpkg attach-dtb
+hv bootpkg validate
+hv bootpkg blockers
+hv bootpkg overlap-test
+hv bootpkg bounds-test
+hv bootpkg reset
+hv-bootpkg
+```
+
+Exact validation commands include:
+
+```bash
+./smoke/smoke-hv-boot-package-v0.sh
+./scripts/validate-hyperzig.sh
+zig build validate-hyperzig
+```
+
+The next milestone should move toward DTB/SBI/active guest-entry prerequisites while keeping Linux boot, guest execution, active second-stage translation, and H-extension claims separate until implemented and smoke-proven.
