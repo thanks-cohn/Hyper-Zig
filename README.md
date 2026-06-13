@@ -284,6 +284,13 @@ zig build validate-hyperzig
 HV9 explicitly does **not** execute the guest, does **not** jump to guest code, does **not** use `sret`/`hret`/`mret` for guest execution, does **not** boot Linux, does **not** implement second-stage translation, and does **not** prove RISC-V H-extension support.
 
 
+
+<p align="center">
+  <img src="this_could_be_us_but_you_playin.png" alt="an_everyday_thing" width="720">
+</p>
+
+
+
 ## HV10 Hardware-Gated Guest Execution Preparation
 
 HV10 adds a real `GuestExecutionGate` object for VM 0 / vCPU 0. It gathers the software prerequisites future guest execution will require: VM/vCPU ownership, HV4 guest memory, HV5 address-space metadata, HV6 loaded tiny image, HV7 entry frame, HV8 exit metadata, and HV9 no-execute run-attempt arming. It then exposes hardware-gate blockers for missing second-stage translation, unproven H-extension support, and disabled guest instruction execution.
