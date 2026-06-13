@@ -127,7 +127,7 @@ for marker in \
     'hv: second_stage_translation=MISSING' \
     'hv: virtual_timer=MISSING' \
     'hv: virtual_console=MISSING' \
-    'hv: sbi_layer=MISSING' \
+    'hv: sbi_layer=foundation-metadata-only' \
     'hv: virtio_for_linux=MISSING'
 do
     require "$marker"

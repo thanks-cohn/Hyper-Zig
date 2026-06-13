@@ -76,7 +76,7 @@ pub fn printState() void { printImplementedMarker(); printFields(); printCapabil
 pub fn printStatusCommand() void { printState(); }
 pub fn printValidateCommand() void { const r = validateLast(); printResult("validate_result", r); printFields(); printNonClaims(); }
 pub fn printResetCommand() void { reset(); uart.write("hv: sbi.reset_result=ok\r\n"); printFields(); printNonClaims(); }
-pub fn printBlockersCommand() void { const r = validateLast(); uart.write("hv: sbi.blocker_count="); uart.writeDec(if (r == .ok) 0 else 1); uart.write("\r\n"); if (r == .ok) uart.write("hv: sbi.blocker=none\r\n") else { uart.write("hv: sbi.blocker="); uart.write(errorName(object().last_error)); uart.write("\r\n"); } printNonClaims(); }
+pub fn printBlockersCommand() void { const r = validateLast(); const blocker_count: usize = if (r == .ok) 0 else 1; uart.write("hv: sbi.blocker_count="); uart.writeDec(blocker_count); uart.write("\r\n"); if (r == .ok) uart.write("hv: sbi.blocker=none\r\n") else { uart.write("hv: sbi.blocker="); uart.write(errorName(object().last_error)); uart.write("\r\n"); } printNonClaims(); }
 pub fn printBaseTestCommand() void { const r = recordRequest(base_ext.id, 0, [_]usize{0} ** 6); printResult("base_test", r); printFields(); printCapabilities(); printNonClaims(); }
 pub fn printTimerTestCommand() void { const r = recordRequest(timer_ext.id, 0, [_]usize{ 1, 0, 0, 0, 0, 0 }); printResult("timer_test", r); printFields(); printCapabilities(); printNonClaims(); }
 pub fn printConsoleTestCommand() void { const r = recordRequest(console_ext.id, 0, [_]usize{ 65, 0, 0, 0, 0, 0 }); printResult("console_test", r); printFields(); printCapabilities(); printNonClaims(); }
