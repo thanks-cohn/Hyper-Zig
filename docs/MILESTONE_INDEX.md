@@ -270,4 +270,15 @@ HV12 is the software-only page-table construction layer after HV11 metadata. It 
 
 HV12 does not activate second-stage translation, does not write `hgatp`, does not claim H-extension support, does not execute a guest, and does not support Linux guests. Evidence is `smoke/smoke-hv-stage2-table-v0.sh` with transcript `smoke/transcripts/latest-hv-stage2-table-v0.txt`.
 
-Next milestone after HV12: HV13 guarded hardware second-stage activation research, still without Linux or guest-execution claims until proven.
+Next milestone after HV12: HV13 Guest Boot Package Contract, still without Linux or guest-execution claims until proven.
+
+
+## HV13 Guest Boot Package Contract
+
+- **Purpose:** Add executable boot-contract infrastructure for future tiny Linux guest boot work without claiming Linux support.
+- **Actual capability proven:** A `Guest Boot Package` object tracks VM ownership, guest-memory bounds, kernel-like HV6 tiny image range and load GPA, entry GPA, optional initrd range, optional DTB range, command line buffer, readiness state, deterministic blockers, numeric overlap checks, numeric bounds checks, reset behavior, and inspection/reporting.
+- **Key commands added:** `hv bootpkg`, `hv-bootpkg`, `hv bootpkg status`, `hv bootpkg attach-kernel`, `hv bootpkg set-entry`, `hv bootpkg set-cmdline <text>`, `hv bootpkg attach-initrd`, `hv bootpkg attach-dtb`, `hv bootpkg validate`, `hv bootpkg blockers`, `hv bootpkg overlap-test`, `hv bootpkg bounds-test`, `hv bootpkg reset`.
+- **Smoke test file:** `smoke/smoke-hv-boot-package-v0.sh`.
+- **Transcript:** `smoke/transcripts/latest-hv-boot-package-v0.txt`.
+- **Intentionally missing features:** Linux boot, Buildroot boot, Ubuntu boot, guest execution, active second-stage translation, `hgatp` writes, H-extension support claims, SBI mediation, and virtio for Linux.
+- **Next dependency:** DTB/SBI/active guest-entry prerequisites for later Linux work, still without claiming Linux boot until separately implemented and smoke-proven.

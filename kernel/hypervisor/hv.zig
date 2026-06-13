@@ -11,6 +11,7 @@ const guest_run_attempt = @import("guest_run_attempt.zig");
 const guest_execution = @import("guest_execution.zig");
 const second_stage = @import("second_stage.zig");
 const stage2_table = @import("stage2_table.zig");
+const boot_package = @import("boot_package.zig");
 
 pub fn init() void {
     vm.init();
@@ -24,6 +25,7 @@ pub fn init() void {
     guest_execution.init(vm.object().id, vcpu.object().id);
     second_stage.init(vm.object().id);
     stage2_table.init(vm.object().id);
+    boot_package.init(vm.object().id);
 }
 
 pub fn printStatus() void {
@@ -46,13 +48,14 @@ pub fn printStatus() void {
     guest_execution.printState();
     second_stage.printState();
     stage2_table.printState();
+    boot_package.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
     uart.write("hv: virtual_timer=MISSING\r\n");
     uart.write("hv: virtual_console=MISSING\r\n");
     uart.write("hv: sbi_layer=MISSING\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV13 guarded hardware second-stage activation research (no Linux claim)\r\n");
+    uart.write("hv: next=HV14 DTB/SBI/active guest-entry prerequisites (no Linux claim)\r\n");
 }
 
 pub fn printCapability() void {
@@ -114,6 +117,7 @@ pub fn requireExitTestGuestRunAttempt() void {
 
 pub fn printSecondStage() void {
     second_stage.printState();
+    boot_package.printState();
 }
 
 pub fn configureSecondStage() void {
@@ -150,6 +154,7 @@ pub fn resetSecondStage() void {
 
 pub fn printStage2Table() void {
     stage2_table.printState();
+    boot_package.printState();
 }
 
 pub fn buildStage2Table() void {
@@ -182,6 +187,50 @@ pub fn executePermissionTestStage2Table() void {
 
 pub fn resetStage2Table() void {
     stage2_table.printResetCommand();
+}
+
+pub fn printBootPackage() void {
+    boot_package.printState();
+}
+
+pub fn attachKernelBootPackage() void {
+    boot_package.printAttachKernelCommand();
+}
+
+pub fn setEntryBootPackage() void {
+    boot_package.printSetEntryCommand();
+}
+
+pub fn setCmdlineBootPackage(line: []const u8) void {
+    boot_package.printSetCmdlineCommand(line);
+}
+
+pub fn attachInitrdBootPackage() void {
+    boot_package.printAttachInitrdCommand();
+}
+
+pub fn attachDtbBootPackage() void {
+    boot_package.printAttachDtbCommand();
+}
+
+pub fn validateBootPackage() void {
+    boot_package.printValidateCommand();
+}
+
+pub fn blockersBootPackage() void {
+    boot_package.printBlockersCommand();
+}
+
+pub fn overlapTestBootPackage() void {
+    boot_package.printOverlapTestCommand();
+}
+
+pub fn boundsTestBootPackage() void {
+    boot_package.printBoundsTestCommand();
+}
+
+pub fn resetBootPackage() void {
+    boot_package.printResetCommand();
 }
 
 pub fn printGuestExecution() void {
@@ -258,6 +307,7 @@ pub fn printInspect() void {
     guest_run_attempt.printState();
     guest_execution.printState();
     second_stage.printState();
+    boot_package.printState();
 }
 
 pub fn printObjects() void {
