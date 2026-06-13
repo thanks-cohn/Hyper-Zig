@@ -129,7 +129,7 @@ pub fn validate() Result { const c = mutable(); c.validate_count += 1; const b =
 pub fn computeBlockers() Blockers {
     const c = object(); const bp = boot_package.object();
     var b = Blockers{ .boot_package_not_ready = false, .missing_guest_memory = false, .missing_payload = false, .invalid_payload_bounds = false, .kernel_overlap = false, .initrd_overlap = false, .missing_bootargs = false, .missing_memory_node = false, .missing_cpu_node = false, .missing_chosen_node = false, .missing_console_path = false };
-    if (boot_package.computeBlockers().any()) b.boot_package_not_ready = true;
+    if (boot_package.validate() != .ok) b.boot_package_not_ready = true;
     if (c.guest_size == 0) b.missing_guest_memory = true;
     if (!c.payload_present) b.missing_payload = true else if (validateBounds(c.guest_base, c.guest_size, .{ .present = true, .start = c.payload_gpa, .size = c.payload_size }) != .ok) b.invalid_payload_bounds = true;
     if (c.payload_present and bp.kernel.present and rangesOverlap(.{ .present = true, .start = c.payload_gpa, .size = c.payload_size }, bp.kernel)) b.kernel_overlap = true;
