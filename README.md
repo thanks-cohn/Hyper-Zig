@@ -139,6 +139,7 @@ Run individual milestone proofs:
 ./smoke/smoke-hv-stage2-table-v0.sh
 ./smoke/smoke-hv-boot-package-v0.sh
 ./smoke/smoke-hv-dtb-contract-v0.sh
+./smoke/smoke-hv-sbi-foundation-v0.sh
 ```
 
 Inspect proof transcripts:
@@ -159,6 +160,7 @@ cat smoke/transcripts/latest-hv-second-stage-v0.txt
 cat smoke/transcripts/latest-hv-stage2-table-v0.txt
 cat smoke/transcripts/latest-hv-boot-package-v0.txt
 cat smoke/transcripts/latest-hv-dtb-contract-v0.txt
+cat smoke/transcripts/latest-hv-sbi-foundation-v0.txt
 ```
 
 Inspect validation evidence:
@@ -190,6 +192,7 @@ Proven when validation passes:
 | HV12 | Done | Software-only second-stage page-table-like builder; does not activate translation. |
 | HV13 | Done | Guest Boot Package Contract for kernel/initrd/DTB/cmdline metadata readiness; does not boot Linux or execute guests. |
 | HV14 | Done | Guest DTB Contract / Device Tree Payload Foundation for structured DTB payload, node, bootargs, initrd, and memory metadata; does not boot Linux or execute guests. |
+| HV15 | Done | SBI Foundation for metadata-only SBI request recording, validation, reset, counters, and base/timer/console extension capability metadata; does not implement SBI services, boot Linux, or execute guests. |
 
 ## What Hyper-Zig can do today
 
@@ -208,38 +211,37 @@ Hyper-Zig can:
 - Evaluate an HV10 hardware-gated execution preparation object that captures prerequisite state, execution-frame metadata, blockers, state transitions, and counters while still refusing instruction execution.
 - Prepare and validate a guest boot package object that records VM ownership, guest-memory bounds, HV6 tiny-image kernel metadata, entry GPA, optional initrd/DTB metadata, command line, readiness blockers, numeric bounds checks, and numeric overlap checks.
 - Build and inspect an HV14 structured guest DTB contract from the HV13 boot package, including DTB payload GPA/size, bootargs copied from HV13, guest memory node metadata, CPU node metadata, chosen node metadata, initrd start/end metadata when present, console path metadata, explicit timer/interrupt-controller non-claims, readiness validation, deterministic blockers, reset behavior, numeric bounds rejection, and numeric kernel/initrd overlap rejection.
+- Record and validate HV15 metadata-only SBI-shaped requests for the base, timer, and legacy console extensions, including owner VM/vCPU metadata, argument registers, return/error fields, request counters, validation counters, rejection counters, reset behavior, and extension capability lookup metadata.
 - Produce logs and transcripts that prove the above behavior.
 
 
-## Current milestone: HV14 Guest DTB Contract / Device Tree Payload Foundation
+## Current milestone: HV15 SBI Foundation
 
-HV14 prepares structured DTB/node/bootargs/initrd/memory metadata for future tiny Linux guest work. It exposes the behavior through `hv dtb` commands and proves it with `./smoke/smoke-hv-dtb-contract-v0.sh`.
+HV15 adds metadata-only SBI request recording and validation infrastructure for future guest-to-hypervisor interaction. It exposes the behavior through `hv sbi` commands and proves it with `./smoke/smoke-hv-sbi-foundation-v0.sh`. It does not implement SBI services, Linux guest support, guest execution, H-extension support, hgatp writes, or active second-stage translation.
 
 Exact start commands:
 
 ```bash
 ./scripts/check-zig-version.sh
 zig build
-hv dtb
-hv bootpkg attach-kernel
-hv bootpkg set-cmdline root=/dev/ram0 console=hvc0 earlycon
-hv bootpkg set-entry
-hv bootpkg attach-initrd
-hv bootpkg validate
-hv dtb build
-hv dtb validate
-hv dtb nodes
+hv sbi
+hv sbi base-test
+hv sbi timer-test
+hv sbi console-test
+hv sbi validate
+hv sbi blockers
+hv sbi reset
 ```
 
 Exact validation commands:
 
 ```bash
-./smoke/smoke-hv-dtb-contract-v0.sh
+./smoke/smoke-hv-sbi-foundation-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 ```
 
-HV14 does **not** boot Linux, execute guests, activate second-stage translation, write `hgatp`, implement SBI, claim H-extension support, or boot Buildroot/Ubuntu. The next honest milestone should move toward SBI foundation or controlled active guest-entry prerequisites while preserving these non-claims until separately implemented and smoke-proven.
+HV15 does **not** boot Linux, execute guests, activate second-stage translation, write `hgatp`, implement SBI services, claim H-extension support, or boot Buildroot/Ubuntu. The next honest milestone should move toward virtual timer/SBI mediation prerequisites while preserving these non-claims until separately implemented and smoke-proven.
 
 ## HV7 Guest Entry Preparation
 
@@ -576,3 +578,14 @@ zig build validate-hyperzig
 ```
 
 The next milestone should move toward DTB/SBI/active guest-entry prerequisites while keeping Linux boot, guest execution, active second-stage translation, and H-extension claims separate until implemented and smoke-proven.
+
+
+HV15 start commands:
+
+```bash
+hv sbi
+hv sbi base-test
+hv sbi timer-test
+hv sbi console-test
+hv sbi validate
+```
