@@ -287,3 +287,20 @@ HV15 adds a real SBI foundation object for VM 0 / vCPU 0. It records and validat
 - `hv sbi console-test`: records and validates a legacy console-extension metadata request without implementing console service.
 
 Smoke proof: `./smoke/smoke-hv-sbi-foundation-v0.sh` writes `smoke/transcripts/latest-hv-sbi-foundation-v0.txt` and checks state transitions, counters, validation success, reset behavior, and rejection behavior.
+
+
+## HV16 Virtual Timer / SBI Timer Mediation Prerequisites commands
+
+HV16 adds executable virtual timer metadata connected to the HV15 SBI foundation path. These commands do not inject timer interrupts, do not execute guests, do not boot Linux, do not activate second-stage translation, and do not implement full SBI services.
+
+- `hv timer` / `hv-timer` / `hv timer status`: print virtual timer ownership, armed/pending state, compare value, counters, validation result, deterministic blockers, and non-claims.
+- `hv timer arm`: arm the virtual timer with the default behavior-test compare value through the SBI timer path.
+- `hv timer validate`: validate the current virtual timer object from live fields.
+- `hv timer blockers`: report deterministic blockers computed from live object fields.
+- `hv timer pending-test`: arm a timer and compute not-pending/pending results from numeric host tick and guest compare comparisons.
+- `hv timer sbi-set-test`: record a valid SBI timer set request through the HV15 SBI foundation and arm the virtual timer.
+- `hv timer invalid-test`: submit an invalid zero timer value through the HV15 path and prove rejection counters change.
+- `hv timer reset`: clear the virtual timer back to empty, not armed, and not pending.
+- `./smoke/smoke-hv-virtual-timer-v0.sh`: QEMU smoke proof for HV16 virtual timer behavior and non-claims.
+- `./scripts/validate-hyperzig.sh`: includes the HV16 smoke in the required validation ladder.
+- `zig build validate-hyperzig`: runs the canonical validator after building.

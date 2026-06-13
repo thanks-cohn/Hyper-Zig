@@ -14,6 +14,7 @@ const stage2_table = @import("stage2_table.zig");
 const boot_package = @import("boot_package.zig");
 const guest_dtb = @import("guest_dtb.zig");
 const sbi = @import("sbi.zig");
+const virtual_timer = @import("virtual_timer.zig");
 
 pub fn init() void {
     vm.init();
@@ -30,6 +31,7 @@ pub fn init() void {
     boot_package.init(vm.object().id);
     guest_dtb.init(vm.object().id);
     sbi.init(vm.object().id, vcpu.object().id);
+    virtual_timer.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -55,9 +57,10 @@ pub fn printStatus() void {
     boot_package.printState();
     guest_dtb.printState();
     sbi.printState();
+    virtual_timer.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
-    uart.write("hv: virtual_timer=MISSING\r\n");
+
     uart.write("hv: virtual_console=MISSING\r\n");
     uart.write("hv: sbi_layer=foundation-metadata-only\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
@@ -348,6 +351,7 @@ pub fn printInspect() void {
     boot_package.printState();
     guest_dtb.printState();
     sbi.printState();
+    virtual_timer.printState();
 }
 
 pub fn printSbi() void { sbi.printStatusCommand(); }
@@ -357,6 +361,15 @@ pub fn blockersSbi() void { sbi.printBlockersCommand(); }
 pub fn baseTestSbi() void { sbi.printBaseTestCommand(); }
 pub fn timerTestSbi() void { sbi.printTimerTestCommand(); }
 pub fn consoleTestSbi() void { sbi.printConsoleTestCommand(); }
+
+pub fn printVirtualTimer() void { virtual_timer.printStatusCommand(); }
+pub fn armVirtualTimer() void { virtual_timer.printArmCommand(); }
+pub fn validateVirtualTimer() void { virtual_timer.printValidateCommand(); }
+pub fn blockersVirtualTimer() void { virtual_timer.printBlockersCommand(); }
+pub fn pendingTestVirtualTimer() void { virtual_timer.printPendingTestCommand(); }
+pub fn sbiSetTestVirtualTimer() void { virtual_timer.printSbiSetTestCommand(); }
+pub fn invalidTestVirtualTimer() void { virtual_timer.printInvalidTestCommand(); }
+pub fn resetVirtualTimer() void { virtual_timer.printResetCommand(); }
 
 pub fn printObjects() void {
     printInspect();

@@ -303,3 +303,14 @@ Next milestone after HV12: HV13 Guest Boot Package Contract, still without Linux
 - **Transcript:** `smoke/transcripts/latest-hv-sbi-foundation-v0.txt`.
 - **Intentionally missing features:** Linux guest support, guest execution, H-extension proof, hgatp writes, active second-stage translation, and actual SBI base/timer/console service implementation.
 - **Next dependency:** later virtual timer/SBI mediation prerequisites before Linux guest boot can be attempted honestly.
+
+
+## HV16 Virtual Timer / SBI Timer Mediation Prerequisites
+
+- **Purpose:** Add executable virtual timer metadata connected to the HV15 SBI foundation so future SBI timer calls can be mediated honestly.
+- **Actual capability proven:** The virtual timer tracks owner VM/vCPU, empty/armed/expired state, host tick snapshot, guest compare value, pending interrupt metadata, valid/rejected/query/expiration counters, last SBI timer request metadata, validation result, deterministic blockers, and reset behavior. Pending state is computed from numeric tick/compare logic.
+- **Key commands added:** `hv timer`, `hv-timer`, `hv timer status`, `hv timer arm`, `hv timer validate`, `hv timer blockers`, `hv timer pending-test`, `hv timer sbi-set-test`, `hv timer invalid-test`, `hv timer reset`.
+- **Smoke test file:** `smoke/smoke-hv-virtual-timer-v0.sh`.
+- **Transcript:** `smoke/transcripts/latest-hv-virtual-timer-v0.txt`.
+- **Intentionally missing features:** Linux guest support, guest execution, active second-stage translation, `hgatp` writes, real timer interrupt injection, H-extension support claims, and full SBI service implementation.
+- **Next dependency:** SBI console mediation, binary FDT, or controlled active guest-entry prerequisites.

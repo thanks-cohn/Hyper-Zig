@@ -35,6 +35,7 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv-boot-package-v0.sh"
     "smoke/smoke-hv-dtb-contract-v0.sh"
     "smoke/smoke-hv-sbi-foundation-v0.sh"
+    "smoke/smoke-hv-virtual-timer-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -127,6 +128,7 @@ run_smoke() {
         smoke-hv-boot-package-v0) transcript="$ROOT/smoke/transcripts/latest-hv-boot-package-v0.txt" ;;
         smoke-hv-dtb-contract-v0) transcript="$ROOT/smoke/transcripts/latest-hv-dtb-contract-v0.txt" ;;
         smoke-hv-sbi-foundation-v0) transcript="$ROOT/smoke/transcripts/latest-hv-sbi-foundation-v0.txt" ;;
+        smoke-hv-virtual-timer-v0) transcript="$ROOT/smoke/transcripts/latest-hv-virtual-timer-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"
@@ -228,6 +230,7 @@ HV12_STATUS="$(smoke_status_for smoke/smoke-hv-stage2-table-v0.sh)"
 HV13_STATUS="$(smoke_status_for smoke/smoke-hv-boot-package-v0.sh)"
 HV14_STATUS="$(smoke_status_for smoke/smoke-hv-dtb-contract-v0.sh)"
 HV15_STATUS="$(smoke_status_for smoke/smoke-hv-sbi-foundation-v0.sh)"
+HV16_STATUS="$(smoke_status_for smoke/smoke-hv-virtual-timer-v0.sh)"
 OVERALL="PASS"
 REASON="All required checks passed; optional missing items are reported without being counted as PASS."
 if [[ "$(status_for check-zig-version)" != "PASS" ]]; then
@@ -241,8 +244,8 @@ elif [[ $FAIL_COUNT -ne 0 ]]; then
     REASON="One or more required checks or discovered smoke tests failed; inspect blockers and logs."
 fi
 
-CURRENT_MILESTONE="HV15 SBI foundation proven when required smoke passes; no Linux boot, no guest execution, no active second-stage translation, no SBI services"
-NEXT_MILESTONE="HV16 virtual timer/SBI mediation prerequisites without Linux support claim"
+CURRENT_MILESTONE="HV16 virtual timer/SBI mediation prerequisites proven when required smoke passes; no Linux boot, no guest execution, no active second-stage translation, no timer interrupt injection"
+NEXT_MILESTONE="SBI console mediation, binary FDT, or controlled active guest-entry prerequisites without Linux support claim"
 
 {
 cat <<SUMMARY
@@ -273,6 +276,7 @@ HV12 stage2 software table smoke: $HV12_STATUS
 HV13 guest boot package smoke: $HV13_STATUS
 HV14 DTB contract smoke: $HV14_STATUS
 HV15 SBI foundation smoke: $HV15_STATUS
+HV16 virtual timer smoke: $HV16_STATUS
 HV0 PASS: $HV0_STATUS
 HV1 PASS: $HV1_STATUS
 HV2 PASS: $HV2_STATUS
@@ -289,6 +293,7 @@ HV12 stage2 software table PASS: $HV12_STATUS
 HV13 guest boot package PASS: $HV13_STATUS
 HV14 DTB contract PASS: $HV14_STATUS
 HV15 SBI foundation PASS: $HV15_STATUS
+HV16 virtual timer PASS: $HV16_STATUS
 VM/vCPU model implemented
 vCPU lifecycle implemented only if smoke passes: $HV3_STATUS
 guest memory object implemented only if smoke passes: $HV4_STATUS
@@ -304,8 +309,8 @@ guest image format: tiny-flat-v0
 guest memory backing: pmm-bitmap-v0
 guest execution still not supported
 Linux guest still not supported
-current milestone: HV15 SBI foundation
-next milestone: HV16 virtual timer/SBI mediation prerequisites
+current milestone: HV16 virtual timer/SBI mediation prerequisites
+next milestone: SBI console mediation, binary FDT, or controlled active guest-entry prerequisites
 Overall readiness: $OVERALL
 Reason: $REASON
 
@@ -394,6 +399,7 @@ printf '  - HV12 stage2 software table: %s\n' "$ROOT/smoke/transcripts/latest-hv
 printf '  - HV13 guest boot package: %s\n' "$ROOT/smoke/transcripts/latest-hv-boot-package-v0.txt"
 printf '  - HV14 DTB contract: %s\n' "$ROOT/smoke/transcripts/latest-hv-dtb-contract-v0.txt"
 printf '  - HV15 SBI foundation: %s\n' "$ROOT/smoke/transcripts/latest-hv-sbi-foundation-v0.txt"
+printf '  - HV16 virtual timer: %s\n' "$ROOT/smoke/transcripts/latest-hv-virtual-timer-v0.txt"
 printf '\nCompleted milestones/evidence:\n'
 if [[ ${#COMPLETED[@]} -eq 0 ]]; then printf '  - none\n'; else printf '  - %s\n' "${COMPLETED[@]}"; fi
 printf '\nMissing optional smoke tests (MISSING is not PASS):\n'
