@@ -28,7 +28,7 @@ import os, selectors, subprocess, sys, time
 transcript=sys.argv[1]; cmd=sys.argv[2:]
 commands=[
  "hv bootpkg", "hv bootpkg blockers", "hv bootpkg validate", "hv bootpkg attach-kernel",
- "hv bootpkg set-cmdline root=/dev/ram0 console=hvc0 earlycon", "hv bootpkg set-cmdline " + ("x"*120),
+ "hv bootpkg set-cmdline root=/dev/ram0 console=hvc0 earlycon", "hv bootpkg set-cmdline " + ("x"*105),
  "hv bootpkg set-entry", "hv bootpkg attach-initrd", "hv bootpkg attach-dtb", "hv bootpkg validate",
  "hv-bootpkg", "hv bootpkg overlap-test", "hv bootpkg bounds-test", "hv bootpkg reset", "hv bootpkg", "shutdown"]
 proc=subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -69,14 +69,16 @@ python3 - "$TRANSCRIPT" <<'PYCHECK' | tee -a "$SMOKE_LOG"
 import sys
 from pathlib import Path
 text=Path(sys.argv[1]).read_text(errors='replace')
-cmds=["hv bootpkg", "hv bootpkg blockers", "hv bootpkg validate", "hv bootpkg attach-kernel", "hv bootpkg set-cmdline root=/dev/ram0 console=hvc0 earlycon", "hv bootpkg set-cmdline " + ("x"*120), "hv bootpkg set-entry", "hv bootpkg attach-initrd", "hv bootpkg attach-dtb", "hv bootpkg validate", "hv-bootpkg", "hv bootpkg overlap-test", "hv bootpkg bounds-test", "hv bootpkg reset", "hv bootpkg"]
+cmds=["hv bootpkg", "hv bootpkg blockers", "hv bootpkg validate", "hv bootpkg attach-kernel", "hv bootpkg set-cmdline root=/dev/ram0 console=hvc0 earlycon", "hv bootpkg set-cmdline " + ("x"*105), "hv bootpkg set-entry", "hv bootpkg attach-initrd", "hv bootpkg attach-dtb", "hv bootpkg validate", "hv-bootpkg", "hv bootpkg overlap-test", "hv bootpkg bounds-test", "hv bootpkg reset", "hv bootpkg"]
 blocks=[]
+cursor=0
 for i,c in enumerate(cmds):
-    marker="zign01d> "+c
-    start=text.find(marker)
-    if start<0: raise SystemExit(f"missing command echo: {c}")
-    end=text.find("zign01d> ", start+len(marker))
-    blocks.append(text[start:] if end<0 else text[start:end])
+ marker="zign01d> "+c
+ start=text.find(marker, cursor)
+ if start<0: raise SystemExit(f"missing command echo after offset {cursor}: {c}")
+ end=text.find("zign01d> ", start+len(marker))
+ blocks.append(text[start:] if end<0 else text[start:end])
+ cursor = len(text) if end < 0 else end
 def need(i, marker):
     if marker not in blocks[i]: raise SystemExit(f"missing in {cmds[i]}: {marker}\n---block---\n{blocks[i]}")
     print(f"PASS {cmds[i]} contains {marker}")
