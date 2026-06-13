@@ -140,6 +140,7 @@ Run individual milestone proofs:
 ./smoke/smoke-hv-boot-package-v0.sh
 ./smoke/smoke-hv-dtb-contract-v0.sh
 ./smoke/smoke-hv-sbi-foundation-v0.sh
+./smoke/smoke-hv-virtual-timer-v0.sh
 ```
 
 Inspect proof transcripts:
@@ -161,6 +162,7 @@ cat smoke/transcripts/latest-hv-stage2-table-v0.txt
 cat smoke/transcripts/latest-hv-boot-package-v0.txt
 cat smoke/transcripts/latest-hv-dtb-contract-v0.txt
 cat smoke/transcripts/latest-hv-sbi-foundation-v0.txt
+cat smoke/transcripts/latest-hv-virtual-timer-v0.txt
 ```
 
 Inspect validation evidence:
@@ -193,6 +195,7 @@ Proven when validation passes:
 | HV13 | Done | Guest Boot Package Contract for kernel/initrd/DTB/cmdline metadata readiness; does not boot Linux or execute guests. |
 | HV14 | Done | Guest DTB Contract / Device Tree Payload Foundation for structured DTB payload, node, bootargs, initrd, and memory metadata; does not boot Linux or execute guests. |
 | HV15 | Done | SBI Foundation for metadata-only SBI request recording, validation, reset, counters, and base/timer/console extension capability metadata; does not implement SBI services, boot Linux, or execute guests. |
+| HV16 | Done | Virtual Timer / SBI Timer Mediation Prerequisites: virtual timer ownership, compare, pending-state, counters, blockers, reset, and HV15 SBI timer request integration; does not inject timer interrupts, boot Linux, execute guests, or activate second-stage translation. |
 
 ## What Hyper-Zig can do today
 
@@ -212,12 +215,17 @@ Hyper-Zig can:
 - Prepare and validate a guest boot package object that records VM ownership, guest-memory bounds, HV6 tiny-image kernel metadata, entry GPA, optional initrd/DTB metadata, command line, readiness blockers, numeric bounds checks, and numeric overlap checks.
 - Build and inspect an HV14 structured guest DTB contract from the HV13 boot package, including DTB payload GPA/size, bootargs copied from HV13, guest memory node metadata, CPU node metadata, chosen node metadata, initrd start/end metadata when present, console path metadata, explicit timer/interrupt-controller non-claims, readiness validation, deterministic blockers, reset behavior, numeric bounds rejection, and numeric kernel/initrd overlap rejection.
 - Record and validate HV15 metadata-only SBI-shaped requests for the base, timer, and legacy console extensions, including owner VM/vCPU metadata, argument registers, return/error fields, request counters, validation counters, rejection counters, reset behavior, and extension capability lookup metadata.
+- Model an HV16 virtual timer object connected to the HV15 SBI timer path, including owner IDs, armed state, host tick snapshot, guest compare value, numeric pending computation, valid/rejected/request/query/expiration counters, deterministic blockers, validation, and reset.
 - Produce logs and transcripts that prove the above behavior.
 
 
-## Current milestone: HV15 SBI Foundation
+## Current milestone: HV16 Virtual Timer / SBI Timer Mediation Prerequisites
 
-HV15 adds metadata-only SBI request recording and validation infrastructure for future guest-to-hypervisor interaction. It exposes the behavior through `hv sbi` commands and proves it with `./smoke/smoke-hv-sbi-foundation-v0.sh`. It does not implement SBI services, Linux guest support, guest execution, H-extension support, hgatp writes, or active second-stage translation.
+HV16 adds executable virtual timer metadata for future SBI timer mediation. It exposes `hv timer` commands for status, arming, validation, deterministic blockers, pending comparison checks, SBI timer-set request tests through the HV15 foundation path, invalid request rejection, and reset. It proves behavior with `./smoke/smoke-hv-virtual-timer-v0.sh`.
+
+Hyper-Zig still does not boot Linux, execute guests, activate hardware second-stage translation, write `hgatp`, inject real timer interrupts into a running guest, claim H-extension support, or claim full SBI service implementation. HV16 prepares virtual timer and SBI timer mediation metadata for future Linux work only.
+
+Exact commands to start: `./scripts/check-zig-version.sh`, `zig build`, and `./scripts/validate-hyperzig.sh`. The next honest milestone should move toward SBI console mediation, binary FDT, or controlled active guest-entry prerequisites.
 
 Exact start commands:
 
