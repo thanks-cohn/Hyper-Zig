@@ -292,3 +292,14 @@ Next milestone after HV12: HV13 Guest Boot Package Contract, still without Linux
 - **Transcript:** `smoke/transcripts/latest-hv-dtb-contract-v0.txt`.
 - **Intentionally missing features:** Linux guest support, Buildroot/Ubuntu boot, guest execution, active second-stage translation, `hgatp` writes, H-extension support claims, SBI, binary FDT encoding, virtual timer, virtual interrupt controller, and virtio for Linux.
 - **Next dependency:** SBI foundation or controlled active guest-entry prerequisites, still without Linux support claims until separately implemented and smoke-proven.
+
+
+## HV15 SBI Foundation
+
+- **Purpose:** Add a real metadata-only SBI foundation for future guest/hypervisor request mediation.
+- **Actual capability proven:** `SbiFoundation` tracks VM/vCPU ownership, the last SBI extension/function, six argument registers, return value, error code, request counters, validation counters, reset counters, rejection counters, and base/timer/legacy-console capability metadata.
+- **Key commands added:** `hv sbi`, `hv-sbi`, `hv sbi status`, `hv sbi validate`, `hv sbi reset`, `hv sbi blockers`, `hv sbi base-test`, `hv sbi timer-test`, `hv sbi console-test`.
+- **Smoke test file:** `smoke/smoke-hv-sbi-foundation-v0.sh`.
+- **Transcript:** `smoke/transcripts/latest-hv-sbi-foundation-v0.txt`.
+- **Intentionally missing features:** Linux guest support, guest execution, H-extension proof, hgatp writes, active second-stage translation, and actual SBI base/timer/console service implementation.
+- **Next dependency:** later virtual timer/SBI mediation prerequisites before Linux guest boot can be attempted honestly.

@@ -13,6 +13,7 @@ const second_stage = @import("second_stage.zig");
 const stage2_table = @import("stage2_table.zig");
 const boot_package = @import("boot_package.zig");
 const guest_dtb = @import("guest_dtb.zig");
+const sbi = @import("sbi.zig");
 
 pub fn init() void {
     vm.init();
@@ -28,6 +29,7 @@ pub fn init() void {
     stage2_table.init(vm.object().id);
     boot_package.init(vm.object().id);
     guest_dtb.init(vm.object().id);
+    sbi.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -52,13 +54,14 @@ pub fn printStatus() void {
     stage2_table.printState();
     boot_package.printState();
     guest_dtb.printState();
+    sbi.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
     uart.write("hv: virtual_timer=MISSING\r\n");
     uart.write("hv: virtual_console=MISSING\r\n");
-    uart.write("hv: sbi_layer=MISSING\r\n");
+    uart.write("hv: sbi_layer=foundation-metadata-only\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV15 SBI foundation or controlled active guest-entry prerequisites (no Linux claim)\r\n");
+    uart.write("hv: next=HV16 virtual timer/SBI mediation prerequisites (no Linux claim)\r\n");
 }
 
 pub fn printCapability() void {
@@ -344,7 +347,16 @@ pub fn printInspect() void {
     second_stage.printState();
     boot_package.printState();
     guest_dtb.printState();
+    sbi.printState();
 }
+
+pub fn printSbi() void { sbi.printStatusCommand(); }
+pub fn validateSbi() void { sbi.printValidateCommand(); }
+pub fn resetSbi() void { sbi.printResetCommand(); }
+pub fn blockersSbi() void { sbi.printBlockersCommand(); }
+pub fn baseTestSbi() void { sbi.printBaseTestCommand(); }
+pub fn timerTestSbi() void { sbi.printTimerTestCommand(); }
+pub fn consoleTestSbi() void { sbi.printConsoleTestCommand(); }
 
 pub fn printObjects() void {
     printInspect();

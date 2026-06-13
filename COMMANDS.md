@@ -273,3 +273,17 @@ HV14 adds a real structured guest DTB contract object derived from the HV13 boot
 - `hv dtb reset`: clear the DTB contract back to empty/not-ready.
 
 Smoke proof: `./smoke/smoke-hv-dtb-contract-v0.sh` writes `smoke/transcripts/latest-hv-dtb-contract-v0.txt` and is included in `./scripts/validate-hyperzig.sh` and `zig build validate-hyperzig`.
+
+## HV15 SBI Foundation commands
+
+HV15 adds a real SBI foundation object for VM 0 / vCPU 0. It records and validates SBI-shaped requests, tracks argument registers, return/error values, request counters, validation counters, rejection counters, and extension capability metadata. It does **not** implement SBI services, Linux guest support, guest execution, hgatp writes, or active second-stage translation.
+
+- `hv sbi` / `hv-sbi` / `hv sbi status`: prints SBI foundation state and base/timer/legacy-console extension metadata.
+- `hv sbi validate`: validates the currently recorded SBI request and rejects if no request has been recorded.
+- `hv sbi reset`: clears recorded request state and counters while incrementing the SBI reset counter.
+- `hv sbi blockers`: validates current state and prints the current validation blocker.
+- `hv sbi base-test`: records and validates an SBI base-extension metadata request.
+- `hv sbi timer-test`: records and validates an SBI timer-extension metadata request without implementing a timer service.
+- `hv sbi console-test`: records and validates a legacy console-extension metadata request without implementing console service.
+
+Smoke proof: `./smoke/smoke-hv-sbi-foundation-v0.sh` writes `smoke/transcripts/latest-hv-sbi-foundation-v0.txt` and checks state transitions, counters, validation success, reset behavior, and rejection behavior.
