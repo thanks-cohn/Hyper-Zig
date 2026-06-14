@@ -1,23 +1,17 @@
 const std = @import("std");
 
 const hyperzig_status_text =
-    \Hyper-Zig developer status
-    \  current project: Hyper-Zig
-    \  Zig target: 0.14.x
-    \  current proven milestones: HV0 through HV23 when smoke validation passes
-    \  current milestone: HV23 Guest Entry Assembly Preparation Foundation (no Linux boot, guest execution, guest mode entry, trap return, hgatp write, active stage2, or printk claim)
-    \  canonical validation command: ./scripts/validate-hyperzig.sh
-    \  no Linux guest support yet
-    \  no guest execution yet
-    \  no guest mode entry yet; HV23 prepares and validates a software-only entry-stub descriptor derived from HV22 guarded trap-plan metadata
-    \  no active second-stage translation yet; HV23 records stage2 metadata/table readiness only and keeps active translation forbidden
-    \  VM/vCPU through HV23 guest-entry assembly preparation foundations are smoke-proven when validation passes
-    \  next: read docs/hypervisor/DEVELOPER_START_HERE.md
-    \
-;
- HV7 prepares guest-entry metadata, HV8 records simulated exit metadata, HV9 arms no-execute run-attempt metadata, and HV10 builds a hardware-gated execution preparation layer only
-    \\  no active second-stage translation yet; HV11 models metadata and HV12 builds a software-only page-table-like structure
-    \\  VM/vCPU model, vCPU lifecycle, guest-memory object, guest-address-space metadata, tiny-flat-v0 guest-image loader, guest-entry preparation, guest trap/exit metadata, controlled guest-run attempt safety gate, hardware-gated execution preparation, and second-stage translation metadata, the software-only stage2 table builder, and the guest boot package contract, guest DTB contract, and SBI foundation, virtual timer/SBI timer mediation prerequisites, and binary FDT encoder foundation, and Linux-shaped handoff package validation foundation and SBI console mediation foundation, and SBI dispatch integration foundation implemented and smoke-proven when validation passes
+    \\Hyper-Zig developer status
+    \\  current project: Hyper-Zig
+    \\  Zig target: 0.14.x
+    \\  current proven milestones: HV0 through HV23 when smoke validation passes
+    \\  current milestone: HV23 Guest Entry Assembly Preparation Foundation (no Linux boot, guest execution, guest mode entry, trap return, hgatp write, active stage2, or printk claim)
+    \\  canonical validation command: ./scripts/validate-hyperzig.sh
+    \\  no Linux guest support yet
+    \\  no guest execution yet
+    \\  no guest mode entry yet; HV23 prepares and validates a software-only entry-stub descriptor derived from HV22 guarded trap-plan metadata
+    \\  no active second-stage translation yet; HV23 records stage2 metadata/table readiness only and keeps active translation forbidden
+    \\  VM/vCPU through HV23 guest-entry assembly preparation foundations are smoke-proven when validation passes
     \\  next: read docs/hypervisor/DEVELOPER_START_HERE.md
     \\
 ;

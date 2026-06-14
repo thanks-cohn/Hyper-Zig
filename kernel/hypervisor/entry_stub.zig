@@ -77,7 +77,7 @@ fn firstBlocker() Error {
     return .none;
 }
 
-fn mix(x: usize, y: usize) usize { return (x ^% (y +% 0x9e37_79b9_7f4a_7c15)) *% 0xbf58_476d_1ce4_e5b9; }
+fn mix(x: usize, y: usize) usize { return (x ^ (y +% 0x9e37_79b9_7f4a_7c15)) *% 0xbf58_476d_1ce4_e5b9; }
 fn computeChecksum(p: EntryStub) usize { var h: usize = 0x4856_3233_4553_5455; h = mix(h, p.owner_vm_id); h = mix(h, p.owner_vcpu_id); h = mix(h, p.planned_pc); h = mix(h, p.planned_sp); h = mix(h, p.planned_a0); h = mix(h, p.planned_a1); h = mix(h, p.planned_a2); h = mix(h, p.status_metadata); h = mix(h, p.privilege_metadata); h = mix(h, p.trap_return_kind_metadata); h = mix(h, p.entry_mode_metadata); h = mix(h, p.stub_address); h = mix(h, p.stub_size); h = mix(h, p.guest_memory_base); h = mix(h, p.guest_memory_size); return if (h == 0) 1 else h; }
 const guarded_entry_stub_bytes = [_]u8{ 0x48, 0x56, 0x32, 0x33, 0x45, 0x4e, 0x54, 0x52, 0x59, 0x53, 0x54, 0x55, 0x42, 0x00, 0x00, 0x01 };
 
