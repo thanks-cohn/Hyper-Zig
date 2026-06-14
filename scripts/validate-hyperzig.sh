@@ -41,6 +41,7 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv-sbi-console-v0.sh"
     "smoke/smoke-hv-sbi-dispatch-v0.sh"
     "smoke/smoke-hv-guest-context-v0.sh"
+    "smoke/smoke-hv-trap-plan-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -139,6 +140,7 @@ run_smoke() {
         smoke-hv-sbi-console-v0) transcript="$ROOT/smoke/transcripts/latest-hv-sbi-console-v0.txt" ;;
         smoke-hv-sbi-dispatch-v0) transcript="$ROOT/smoke/transcripts/latest-hv-sbi-dispatch-v0.txt" ;;
         smoke-hv-guest-context-v0) transcript="$ROOT/smoke/transcripts/latest-hv-guest-context-v0.txt" ;;
+        smoke-hv-trap-plan-v0) transcript="$ROOT/smoke/transcripts/latest-hv-trap-plan-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"

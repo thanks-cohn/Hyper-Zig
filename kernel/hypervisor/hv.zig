@@ -20,6 +20,7 @@ const linux_handoff = @import("linux_handoff.zig");
 const sbi_console = @import("sbi_console.zig");
 const sbi_dispatch = @import("sbi_dispatch.zig");
 const guest_context = @import("guest_context.zig");
+const trap_plan = @import("trap_plan.zig");
 
 pub fn init() void {
     vm.init();
@@ -42,6 +43,7 @@ pub fn init() void {
     sbi_console.init(vm.object().id, vcpu.object().id);
     sbi_dispatch.init(vm.object().id, vcpu.object().id);
     guest_context.init(vm.object().id, vcpu.object().id);
+    trap_plan.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -74,6 +76,7 @@ pub fn printStatus() void {
     sbi_console.printState();
     sbi_dispatch.printState();
     guest_context.printStatusCommand();
+    trap_plan.printStatusCommand();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
@@ -82,6 +85,20 @@ pub fn printStatus() void {
     uart.write("hv: virtio_for_linux=MISSING\r\n");
     uart.write("hv: next=controlled active guest-entry prerequisites or SBI dispatch integration (no Linux boot claim)\r\n");
 }
+
+pub fn printTrapPlan() void { trap_plan.printStatusCommand(); }
+pub fn prepareTrapPlan() void { trap_plan.printPrepareCommand(); }
+pub fn validateTrapPlan() void { trap_plan.printValidateCommand(); }
+pub fn blockersTrapPlan() void { trap_plan.printBlockersCommand(); }
+pub fn registersTrapPlan() void { trap_plan.printRegistersCommand(); }
+pub fn gatesTrapPlan() void { trap_plan.printGatesCommand(); }
+pub fn attemptTrapPlan() void { trap_plan.printAttemptCommand(); }
+pub fn requireContextTestTrapPlan() void { trap_plan.printRequireContextTestCommand(); }
+pub fn pcBoundsTestTrapPlan() void { trap_plan.printPcBoundsTestCommand(); }
+pub fn spBoundsTestTrapPlan() void { trap_plan.printSpBoundsTestCommand(); }
+pub fn fdtBoundsTestTrapPlan() void { trap_plan.printFdtBoundsTestCommand(); }
+pub fn activeStage2TestTrapPlan() void { trap_plan.printActiveStage2TestCommand(); }
+pub fn resetTrapPlan() void { trap_plan.printResetCommand(); }
 
 pub fn printCapability() void {
     capability.print();

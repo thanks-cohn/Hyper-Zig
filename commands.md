@@ -113,3 +113,27 @@ HV3 adds real typed lifecycle state for the boot vCPU only. These commands mutat
   hv: linux_guest=not-supported-yet
   ```
 - **What it does not imply:** reset does not reset or create guest memory because guest memory is still missing.
+
+## HV22 Guarded Trap-Return Preparation commands
+
+HV22 adds a software-only guarded trap-return plan object derived from the HV21 guest context. These commands do not enter guest mode, execute guest code, write `hgatp`, activate second-stage translation, or execute `sret`/`hret`/`mret`.
+
+- `hv trap-plan` / `hv-trap-plan` / `hv trap-plan status`: print the trap-plan state, counters, blockers, gates, and non-claims.
+- `hv trap-plan prepare`: prepare HV21 guest context if needed, derive the plan registers and gates, and validate the plan.
+- `hv trap-plan validate`: validate the current plan and mutate validation/rejection counters.
+- `hv trap-plan blockers`: print deterministic blockers from current trap-plan state.
+- `hv trap-plan registers`: print planned `pc`, `sp`, `a0`, `a1`, `a2`, status, privilege, trap-return kind, and entry-mode metadata.
+- `hv trap-plan gates`: print stage2, hgatp, H-extension, execution-gate, run-attempt-gate, and SBI dispatch readiness metadata.
+- `hv trap-plan attempt`: model a guarded entry attempt and safely deny it without executing a trap return or guest instruction.
+- `hv trap-plan require-context-test`: prove rejection when the HV21 context is missing.
+- `hv trap-plan pc-bounds-test`: prove rejection when planned PC is outside guest memory.
+- `hv trap-plan sp-bounds-test`: prove rejection when planned SP is outside guest memory.
+- `hv trap-plan fdt-bounds-test`: prove rejection when planned FDT register `a1` is outside guest memory.
+- `hv trap-plan active-stage2-test`: prove rejection when active-stage2 metadata is falsely marked active.
+- `hv trap-plan reset`: clear the plan to empty while incrementing the reset counter.
+
+## HV22 validation entries
+
+- `./smoke/smoke-hv-trap-plan-v0.sh`: behavior-based HV22 smoke proof with generated transcript at `smoke/transcripts/latest-hv-trap-plan-v0.txt`.
+- `./scripts/validate-hyperzig.sh`: now includes `smoke/smoke-hv-trap-plan-v0.sh` in the required hypervisor validation ladder.
+- `zig build validate-hyperzig`: runs the same validation ladder through `build.zig`.
