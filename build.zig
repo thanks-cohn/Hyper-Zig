@@ -4,8 +4,8 @@ const hyperzig_status_text =
     \\Hyper-Zig developer status
     \\  current project: Hyper-Zig
     \\  Zig target: 0.14.x
-    \\  current proven milestones: HV0 through HV20 when smoke validation passes
-    \\  current milestone: HV20 SBI Dispatch Integration Foundation (no Linux boot, guest execution, full SBI, or printk claim)
+    \\  current proven milestones: HV0 through HV21 when smoke validation passes
+    \\  current milestone: HV21 Guest Context Switch Preparation Foundation (no Linux boot, guest execution, guest entry, hgatp write, or printk claim)
     \\  canonical validation command: ./scripts/validate-hyperzig.sh
     \\  no Linux guest support yet
     \\  no guest execution yet

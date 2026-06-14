@@ -40,6 +40,7 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv-linux-handoff-v0.sh"
     "smoke/smoke-hv-sbi-console-v0.sh"
     "smoke/smoke-hv-sbi-dispatch-v0.sh"
+    "smoke/smoke-hv-guest-context-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -137,6 +138,7 @@ run_smoke() {
         smoke-hv-linux-handoff-v0) transcript="$ROOT/smoke/transcripts/latest-hv-linux-handoff-v0.txt" ;;
         smoke-hv-sbi-console-v0) transcript="$ROOT/smoke/transcripts/latest-hv-sbi-console-v0.txt" ;;
         smoke-hv-sbi-dispatch-v0) transcript="$ROOT/smoke/transcripts/latest-hv-sbi-dispatch-v0.txt" ;;
+        smoke-hv-guest-context-v0) transcript="$ROOT/smoke/transcripts/latest-hv-guest-context-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"
@@ -243,6 +245,7 @@ HV17_STATUS="$(smoke_status_for smoke/smoke-hv-binary-fdt-v0.sh)"
 HV18_STATUS="$(smoke_status_for smoke/smoke-hv-linux-handoff-v0.sh)"
 HV19_STATUS="$(smoke_status_for smoke/smoke-hv-sbi-console-v0.sh)"
 HV20_STATUS="$(smoke_status_for smoke/smoke-hv-sbi-dispatch-v0.sh)"
+HV21_STATUS="$(smoke_status_for smoke/smoke-hv-guest-context-v0.sh)"
 OVERALL="PASS"
 REASON="All required checks passed; optional missing items are reported without being counted as PASS."
 if [[ "$(status_for check-zig-version)" != "PASS" ]]; then
@@ -256,8 +259,8 @@ elif [[ $FAIL_COUNT -ne 0 ]]; then
     REASON="One or more required checks or discovered smoke tests failed; inspect blockers and logs."
 fi
 
-CURRENT_MILESTONE="HV20 SBI Dispatch Integration Foundation proven when required smoke passes; no Linux boot, no guest execution, no active second-stage translation, no printk claim"
-NEXT_MILESTONE="controlled guest-entry preconditions, trap-return preparation, or first guest instruction infrastructure without Linux support claim"
+CURRENT_MILESTONE="HV21 Guest Context Switch Preparation Foundation proven when required smoke passes; no Linux boot, no guest execution, no active second-stage translation, no hgatp write, no printk claim"
+NEXT_MILESTONE="controlled trap-return preparation, guarded guest-entry attempt infrastructure, or active stage2 activation prerequisites without Linux support claim"
 
 {
 cat <<SUMMARY
@@ -293,6 +296,7 @@ HV17 binary FDT smoke: $HV17_STATUS
 HV18 Linux handoff smoke: $HV18_STATUS
 HV19 SBI console mediation smoke: $HV19_STATUS
 HV20 SBI dispatch integration smoke: $HV20_STATUS
+HV21 guest context preparation smoke: $HV21_STATUS
 HV0 PASS: $HV0_STATUS
 HV1 PASS: $HV1_STATUS
 HV2 PASS: $HV2_STATUS
@@ -314,6 +318,7 @@ HV17 binary FDT PASS: $HV17_STATUS
 HV18 Linux handoff PASS: $HV18_STATUS
 HV19 SBI console mediation PASS: $HV19_STATUS
 HV20 SBI dispatch integration PASS: $HV20_STATUS
+HV21 guest context preparation PASS: $HV21_STATUS
 VM/vCPU model implemented
 vCPU lifecycle implemented only if smoke passes: $HV3_STATUS
 guest memory object implemented only if smoke passes: $HV4_STATUS
@@ -329,8 +334,9 @@ guest image format: tiny-flat-v0
 guest memory backing: pmm-bitmap-v0
 guest execution still not supported
 Linux guest still not supported
-current milestone: HV20 SBI Dispatch Integration Foundation
-next milestone: controlled guest-entry preconditions, trap-return preparation, or first guest instruction infrastructure
+HV21 prepares a software guest context only; no guest entry, no trap return, no hgatp write
+current milestone: HV21 Guest Context Switch Preparation Foundation
+next milestone: controlled trap-return preparation, guarded guest-entry attempt infrastructure, or active stage2 activation prerequisites
 Overall readiness: $OVERALL
 Reason: $REASON
 
@@ -424,6 +430,7 @@ printf '  - HV17 binary FDT: %s\n' "$ROOT/smoke/transcripts/latest-hv-binary-fdt
 printf '  - HV18 Linux handoff: %s\n' "$ROOT/smoke/transcripts/latest-hv-linux-handoff-v0.txt"
 printf '  - HV19 SBI console mediation: %s\n' "$ROOT/smoke/transcripts/latest-hv-sbi-console-v0.txt"
 printf '  - HV20 SBI dispatch integration: %s\n' "$ROOT/smoke/transcripts/latest-hv-sbi-dispatch-v0.txt"
+printf '  - HV21 guest context preparation: %s\n' "$ROOT/smoke/transcripts/latest-hv-guest-context-v0.txt"
 printf '\nCompleted milestones/evidence:\n'
 if [[ ${#COMPLETED[@]} -eq 0 ]]; then printf '  - none\n'; else printf '  - %s\n' "${COMPLETED[@]}"; fi
 printf '\nMissing optional smoke tests (MISSING is not PASS):\n'

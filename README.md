@@ -78,32 +78,32 @@ cd Hyper-Zig
 ```
 
 
-## Current milestone: HV20 SBI Dispatch Integration Foundation
+## Current milestone: HV21 Guest Context Switch Preparation Foundation
 
-Hyper-Zig currently smoke-proves HV0 through HV20 when the full validation ladder passes. HV20 adds a real SBI dispatch integration layer that accepts structured modeled SBI request metadata, validates and classifies it, and routes it into the existing HV15 SBI foundation, HV16 virtual timer foundation, and HV19 SBI console mediation foundation. This is foundation routing only: it records dispatch metadata and proves downstream subsystem mutation without claiming Linux boot, guest execution, active second-stage translation, full SBI services, timer interrupt injection, or printk support.
+Hyper-Zig currently smoke-proves HV0 through HV21 when the full validation ladder passes. HV21 adds a real guest context preparation subsystem that assembles the final software context object required before a future controlled guest-entry attempt. It derives `pc`, `sp`, Linux-style argument register metadata, guest memory bounds, FDT/initrd ranges, stage2 readiness, and SBI dispatch readiness from the existing HV7, HV11/HV12, HV18, and HV20 subsystems.
 
 What Hyper-Zig can do today:
 
 - Boot the diagnostic RISC-V kernel under QEMU with Zig 0.14.x.
-- Exercise the existing VM/vCPU, guest-memory, guest-address-space, tiny guest-image, guest-entry metadata, guest-exit metadata, guest-run gate, second-stage metadata, software stage2 table, guest boot package, DTB contract, SBI foundation, virtual timer foundation, binary FDT encoder, HV18 handoff validation, HV19 SBI console mediation, and HV20 SBI dispatch command paths.
-- Build and validate a minimal binary FDT buffer with `hv fdt build` after preparing HV13/HV14 prerequisites.
-- Assemble and validate a Linux-shaped handoff package with `hv handoff prepare` and `hv handoff validate`.
-- Route modeled SBI base, timer, legacy console putchar, and legacy console getchar request metadata through `hv sbi-dispatch base-test`, `hv sbi-dispatch timer-test`, `hv sbi-dispatch console-putchar-test`, and `hv sbi-dispatch console-getchar-test`.
-- Prove the dispatcher mutates downstream state: HV15 SBI request counters, HV16 virtual timer metadata/counters, and HV19 console output/getchar metadata.
+- Exercise the existing VM/vCPU, guest-memory, guest-address-space, tiny guest-image, guest-entry metadata, guest-exit metadata, guest-run gate, guest execution preparation gate, second-stage metadata, software stage2 table, guest boot package, DTB contract, SBI foundation, virtual timer foundation, binary FDT encoder, HV18 handoff validation, HV19 SBI console mediation, HV20 SBI dispatch, and HV21 guest context command paths.
+- Prepare and validate a software guest context frame with owner VM/vCPU IDs, `pc`, `sp`, `a0`, `a1`, reserved `a2`, status metadata, privilege metadata, handoff-derived kernel/FDT/initrd ranges, guest memory bounds, readiness flags, counters, deterministic blockers, and last-error reporting.
+- Reject malformed or incomplete context state through behavior-tested command paths.
 
 What Hyper-Zig cannot do today:
 
-- HV20 does not boot Linux.
-- HV20 does not provide Linux guest support.
-- HV20 does not execute guests.
-- HV20 does not activate hardware second-stage translation.
-- HV20 does not write `hgatp`.
-- HV20 does not claim H-extension support.
-- HV20 does not provide full SBI services.
-- HV20 does not inject real timer interrupts.
-- HV20 does not provide Buildroot, Ubuntu, or Alpine boot support.
-- HV20 does not prove Linux accepts the FDT.
-- HV20 does not prove `printk` or a real Linux console works.
+- HV21 does not boot Linux.
+- HV21 does not provide Linux guest support.
+- HV21 does not execute guests.
+- HV21 does not enter guest mode.
+- HV21 does not perform `sret`, `hret`, `mret`, or any trap return into a guest.
+- HV21 does not activate hardware second-stage translation.
+- HV21 does not write `hgatp`.
+- HV21 does not claim H-extension support.
+- HV21 does not provide full SBI services.
+- HV21 does not inject real timer interrupts.
+- HV21 does not provide Buildroot, BusyBox, Alpine, Ubuntu, or other distro boot support.
+- HV21 does not prove Linux accepts the FDT.
+- HV21 does not prove `printk` or a real Linux console works.
 
 Exact commands to start:
 
@@ -117,18 +117,18 @@ qemu-system-riscv64 -machine virt -cpu rv64 -smp 1 -m 128M -nographic -monitor n
 Inside the shell, use:
 
 ```text
-hv sbi-dispatch
-hv-dispatch
-hv sbi-dispatch status
-hv sbi-dispatch base-test
-hv sbi-dispatch timer-test
-hv sbi-dispatch console-putchar-test
-hv sbi-dispatch console-getchar-test
-hv sbi-dispatch unknown-test
-hv sbi-dispatch unsupported-function-test
-hv sbi-dispatch validate
-hv sbi-dispatch blockers
-hv sbi-dispatch reset
+hv context
+hv-context
+hv context status
+hv context prepare
+hv context validate
+hv context blockers
+hv context registers
+hv context ranges
+hv context require-handoff-test
+hv context require-fdt-test
+hv context bounds-test
+hv context reset
 ```
 
 Exact commands to validate:
@@ -136,12 +136,12 @@ Exact commands to validate:
 ```bash
 ./scripts/check-zig-version.sh
 zig build
-./smoke/smoke-hv-sbi-dispatch-v0.sh
+./smoke/smoke-hv-guest-context-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 ```
 
-The next milestone should move toward controlled guest-entry preconditions, trap-return preparation, or first guest instruction infrastructure without claiming Linux support until behavior is proven.
+The next milestone should move toward controlled trap-return preparation, guarded guest-entry attempt infrastructure, or active stage2 activation prerequisites without claiming Linux support, Linux boot, guest execution, active second-stage translation, or printk support until behavior is proven.
 
 ### Verify the toolchain
 
