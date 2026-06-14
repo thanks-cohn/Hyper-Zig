@@ -37,9 +37,9 @@ The intended end state is a real Zig/RISC-V hypervisor path toward Linux guests.
 
 ## Current Status
 
-Current milestone: **HV23 Guest Entry Assembly Preparation Foundation**
+Current milestone: **HV24 H-Extension Discovery and Hypervisor CSR Safety Foundation**
 
-Hyper-Zig currently smoke-proves HV0 through HV23 when the full validation ladder passes.
+Hyper-Zig currently smoke-proves HV0 through HV24 when the full validation ladder passes.
 
 Today Hyper-Zig can:
 
@@ -57,6 +57,7 @@ Today Hyper-Zig can:
 - Model SBI foundation, SBI console mediation, SBI dispatch, and virtual timer prerequisites.
 - Build Linux-shaped handoff validation objects.
 - Prepare guarded trap-return and entry-stub metadata.
+- Discover and validate an H-extension CSR safety object that blocks unsafe hypervisor CSR reads when no safe probe path exists.
 - Produce logs and transcripts that prove the behavior above.
 
 Today Hyper-Zig does **not**:
@@ -68,7 +69,7 @@ Today Hyper-Zig does **not**:
 - Execute `sret`, `hret`, or `mret` into a guest.
 - Activate hardware second-stage translation.
 - Write `hgatp`.
-- Claim RISC-V H-extension support.
+- Claim RISC-V H-extension support unless a safe executed detection path proves it.
 - Provide full SBI services.
 - Inject real timer interrupts into a running guest.
 - Boot Buildroot, BusyBox, Alpine, Ubuntu, or any other Linux distribution.
@@ -165,41 +166,35 @@ qemu-system-riscv64 \
 >
 > Do not leave it as a placeholder path such as `/path/to/zig-0.14.x/zig`.
 
-## HV23 Entry-Stub Commands
+## HV24 H-Extension Discovery Commands
 
 Inside the diagnostic shell, the current milestone exposes these command paths:
 
 ```text
-hv entry-stub
-hv-entry-stub
-hv entry-stub status
-hv entry-stub prepare
-hv entry-stub validate
-hv entry-stub blockers
-hv entry-stub registers
-hv entry-stub gates
-hv entry-stub descriptor
-hv entry-stub checksum
-hv entry-stub attempt
-hv entry-stub require-plan-test
-hv entry-stub pc-bounds-test
-hv entry-stub sp-bounds-test
-hv entry-stub fdt-bounds-test
-hv entry-stub active-stage2-test
-hv entry-stub reset
+hv h-ext
+hv-hext
+hv h-ext status
+hv h-ext discover
+hv h-ext validate
+hv h-ext blockers
+hv h-ext csr-table
+hv h-ext safety
+hv h-ext fake-detected-test
+hv h-ext unsafe-probe-test
+hv h-ext reset
 ```
 
-Validate HV23 directly:
+Validate HV24 directly:
 
 ```bash
 ./scripts/check-zig-version.sh
 zig build
-./smoke/smoke-hv-entry-stub-v0.sh
+./smoke/smoke-hv-h-extension-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 ```
 
-HV23 consumes the HV22 guarded trap-return plan and derives a validated software-only guest entry-stub preparation object. It records owner VM/vCPU IDs, planned `pc`, `sp`, `a0`, `a1`, `a2`, status and privilege metadata, trap-return kind metadata, entry-mode metadata, stub address/size/checksum metadata, guest memory bounds, stage-2 readiness metadata, active-stage2 and `hgatp` forbidden flags, H-extension unknown/not-claimed state, execution gate state, SBI dispatch readiness, counters, deterministic blockers, rejection paths, reset behavior, and a guarded attempt that is always safely denied.
+HV24 creates, discovers, validates, rejects, and resets a hypervisor capability discovery object for VM 0 / vCPU 0. It records owner IDs, discovery state, detection mode, safe-detection policy, unsafe CSR-read prohibition, H-extension status and claim state, tracked hypervisor CSR read statuses, `hgatp` write status, CSR counters, build/validate/reject/reset counters, deterministic blockers, and last error. If no proven safe hypervisor CSR probe/fault-recovery path exists, HV24 deliberately avoids direct H-CSR reads, reports `h_extension_status=unknown`, keeps `h_extension_claim=not-claimed`, marks H-CSR reads as safety-blocked, and exposes `reason=no-safe-h-csr-probe`. HV24 does not boot Linux, execute guests, enter guest mode, execute a trap return, activate second-stage translation, write `hgatp`, claim H-extension support without safe detection, or prove printk works. It prepares the safety and discovery layer needed before later `hgatp` payload preparation or active stage-2 work. The next milestone should move toward hgatp payload construction, active stage2 activation prerequisites, guarded first-instruction infrastructure, or real trap-entry/trap-return assembly preparation while preserving all non-claims.
 
 ## Validation and Proof Commands
 
@@ -262,7 +257,7 @@ When validation passes, the implemented hypervisor milestones have been proven b
 | HV14 | Done | Guest DTB contract and device-tree payload foundation. |
 | HV15 | Done | Metadata-only SBI foundation. |
 | HV16 | Done | Virtual timer and SBI timer mediation prerequisites. |
-| HV17+ | Done through HV23 | FDT, Linux-shaped handoff, SBI console/dispatch, guest context, trap-plan, and entry-stub preparation foundations. |
+| HV17+ | Done through HV24 | FDT, Linux-shaped handoff, SBI console/dispatch, guest context, trap-plan, entry-stub preparation, and H-extension CSR safety foundations. |
 
 ## What Comes Next
 
@@ -308,4 +303,4 @@ The goal is to build a readable, verifiable hypervisor path in Zig:
 
 ## Historical Notes
 
-Older milestone writeups for HV7 through HV16 described important steps in the ladder, but they are now superseded by the HV23 status above. The implementation history remains visible through tags, transcripts, validation logs, and milestone documentation. The README now keeps the front door focused on what Hyper-Zig is, why it matters, how to run it, what is proven today, and what remains unclaimed.
+Older milestone writeups for HV7 through HV16 described important steps in the ladder, but they are now superseded by the HV24 status above. The implementation history remains visible through tags, transcripts, validation logs, and milestone documentation. The README now keeps the front door focused on what Hyper-Zig is, why it matters, how to run it, what is proven today, and what remains unclaimed.
