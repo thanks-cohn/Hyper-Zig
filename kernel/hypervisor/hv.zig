@@ -21,6 +21,7 @@ const sbi_console = @import("sbi_console.zig");
 const sbi_dispatch = @import("sbi_dispatch.zig");
 const guest_context = @import("guest_context.zig");
 const trap_plan = @import("trap_plan.zig");
+const entry_stub = @import("entry_stub.zig");
 
 pub fn init() void {
     vm.init();
@@ -44,6 +45,7 @@ pub fn init() void {
     sbi_dispatch.init(vm.object().id, vcpu.object().id);
     guest_context.init(vm.object().id, vcpu.object().id);
     trap_plan.init(vm.object().id, vcpu.object().id);
+    entry_stub.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -77,6 +79,7 @@ pub fn printStatus() void {
     sbi_dispatch.printState();
     guest_context.printStatusCommand();
     trap_plan.printStatusCommand();
+    entry_stub.printStatusCommand();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
@@ -85,6 +88,23 @@ pub fn printStatus() void {
     uart.write("hv: virtio_for_linux=MISSING\r\n");
     uart.write("hv: next=controlled active guest-entry prerequisites or SBI dispatch integration (no Linux boot claim)\r\n");
 }
+
+
+pub fn printEntryStub() void { entry_stub.printStatusCommand(); }
+pub fn prepareEntryStub() void { entry_stub.printPrepareCommand(); }
+pub fn validateEntryStub() void { entry_stub.printValidateCommand(); }
+pub fn blockersEntryStub() void { entry_stub.printBlockersCommand(); }
+pub fn registersEntryStub() void { entry_stub.printRegistersCommand(); }
+pub fn gatesEntryStub() void { entry_stub.printGatesCommand(); }
+pub fn descriptorEntryStub() void { entry_stub.printDescriptorCommand(); }
+pub fn checksumEntryStub() void { entry_stub.printChecksumCommand(); }
+pub fn attemptEntryStub() void { entry_stub.printAttemptCommand(); }
+pub fn requirePlanTestEntryStub() void { entry_stub.printRequirePlanTestCommand(); }
+pub fn pcBoundsTestEntryStub() void { entry_stub.printPcBoundsTestCommand(); }
+pub fn spBoundsTestEntryStub() void { entry_stub.printSpBoundsTestCommand(); }
+pub fn fdtBoundsTestEntryStub() void { entry_stub.printFdtBoundsTestCommand(); }
+pub fn activeStage2TestEntryStub() void { entry_stub.printActiveStage2TestCommand(); }
+pub fn resetEntryStub() void { entry_stub.printResetCommand(); }
 
 pub fn printTrapPlan() void { trap_plan.printStatusCommand(); }
 pub fn prepareTrapPlan() void { trap_plan.printPrepareCommand(); }

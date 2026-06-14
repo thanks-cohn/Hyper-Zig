@@ -414,3 +414,29 @@ Validation entries added by HV21:
 - `./smoke/smoke-hv-guest-context-v0.sh`: behavior smoke for HV21; generates `smoke/transcripts/latest-hv-guest-context-v0.txt` from actual QEMU shell commands.
 - `./scripts/validate-hyperzig.sh`: includes HV21 as a required smoke milestone and reports its transcript path.
 - `zig build validate-hyperzig`: invokes the canonical validation script including HV21.
+
+## HV23 Guest Entry Assembly Preparation commands
+
+HV23 adds a software-only guest-entry assembly preparation object derived from the HV22 guarded trap-return plan. These commands build, validate, inspect, reject, attempt safely, and reset entry-stub preparation metadata only. They do not boot Linux, execute guests, enter guest mode, execute a trap return, write `hgatp`, activate second-stage translation, or claim H-extension support.
+
+- `hv entry-stub` / `hv-entry-stub` / `hv entry-stub status`: print entry-stub state, counters, blockers, gates, and non-claims.
+- `hv entry-stub prepare`: prepare HV22 trap-plan prerequisites if needed, derive planned PC/SP/a0/a1/a2 and gate metadata, compute the software-only entry-stub descriptor checksum, and validate the object.
+- `hv entry-stub validate`: validate the current entry-stub plan and mutate validation/rejection counters.
+- `hv entry-stub blockers`: print deterministic blockers from current entry-stub state.
+- `hv entry-stub registers`: print derived planned registers and status/privilege/trap-return/entry-mode metadata.
+- `hv entry-stub gates`: print stage2 readiness, active-stage2 forbidden, hgatp forbidden, H-extension unknown, execution-gate, run-attempt-gate, and SBI dispatch metadata.
+- `hv entry-stub descriptor`: print software-only entry-stub address, size, kind, and checksum metadata.
+- `hv entry-stub checksum`: recompute and print the deterministic entry-stub checksum from derived fields.
+- `hv entry-stub attempt`: model a guarded entry-stub attempt and safely deny it without executing a stub, trap return, or guest instruction.
+- `hv entry-stub require-plan-test`: prove rejection when the HV22 trap plan is missing.
+- `hv entry-stub pc-bounds-test`: prove rejection when planned PC is outside guest memory.
+- `hv entry-stub sp-bounds-test`: prove rejection when planned SP is outside guest memory.
+- `hv entry-stub fdt-bounds-test`: prove rejection when planned FDT register `a1` is outside guest memory.
+- `hv entry-stub active-stage2-test`: prove rejection when active-stage2 metadata is falsely marked active.
+- `hv entry-stub reset`: clear the entry-stub object to empty while incrementing the reset counter.
+
+## HV23 validation entries
+
+- `./smoke/smoke-hv-entry-stub-v0.sh`: behavior-based HV23 smoke proof with generated transcript at `smoke/transcripts/latest-hv-entry-stub-v0.txt`.
+- `./scripts/validate-hyperzig.sh`: includes `smoke/smoke-hv-entry-stub-v0.sh` in the required hypervisor validation ladder.
+- `zig build validate-hyperzig`: runs the same validation ladder through `build.zig`.

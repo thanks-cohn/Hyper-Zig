@@ -42,6 +42,7 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv-sbi-dispatch-v0.sh"
     "smoke/smoke-hv-guest-context-v0.sh"
     "smoke/smoke-hv-trap-plan-v0.sh"
+    "smoke/smoke-hv-entry-stub-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -141,6 +142,7 @@ run_smoke() {
         smoke-hv-sbi-dispatch-v0) transcript="$ROOT/smoke/transcripts/latest-hv-sbi-dispatch-v0.txt" ;;
         smoke-hv-guest-context-v0) transcript="$ROOT/smoke/transcripts/latest-hv-guest-context-v0.txt" ;;
         smoke-hv-trap-plan-v0) transcript="$ROOT/smoke/transcripts/latest-hv-trap-plan-v0.txt" ;;
+        smoke-hv-entry-stub-v0) transcript="$ROOT/smoke/transcripts/latest-hv-entry-stub-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"
@@ -248,6 +250,8 @@ HV18_STATUS="$(smoke_status_for smoke/smoke-hv-linux-handoff-v0.sh)"
 HV19_STATUS="$(smoke_status_for smoke/smoke-hv-sbi-console-v0.sh)"
 HV20_STATUS="$(smoke_status_for smoke/smoke-hv-sbi-dispatch-v0.sh)"
 HV21_STATUS="$(smoke_status_for smoke/smoke-hv-guest-context-v0.sh)"
+HV22_STATUS="$(smoke_status_for smoke/smoke-hv-trap-plan-v0.sh)"
+HV23_STATUS="$(smoke_status_for smoke/smoke-hv-entry-stub-v0.sh)"
 OVERALL="PASS"
 REASON="All required checks passed; optional missing items are reported without being counted as PASS."
 if [[ "$(status_for check-zig-version)" != "PASS" ]]; then
@@ -261,8 +265,8 @@ elif [[ $FAIL_COUNT -ne 0 ]]; then
     REASON="One or more required checks or discovered smoke tests failed; inspect blockers and logs."
 fi
 
-CURRENT_MILESTONE="HV21 Guest Context Switch Preparation Foundation proven when required smoke passes; no Linux boot, no guest execution, no active second-stage translation, no hgatp write, no printk claim"
-NEXT_MILESTONE="controlled trap-return preparation, guarded guest-entry attempt infrastructure, or active stage2 activation prerequisites without Linux support claim"
+CURRENT_MILESTONE="HV23 Guest Entry Assembly Preparation Foundation proven when required smoke passes; no Linux boot, no guest execution, no guest mode entry, no trap return, no active second-stage translation, no hgatp write, no printk claim"
+NEXT_MILESTONE="active stage2 activation prerequisites, guarded first-instruction infrastructure, or real trap-entry/trap-return assembly preparation without Linux support claim"
 
 {
 cat <<SUMMARY
@@ -299,6 +303,8 @@ HV18 Linux handoff smoke: $HV18_STATUS
 HV19 SBI console mediation smoke: $HV19_STATUS
 HV20 SBI dispatch integration smoke: $HV20_STATUS
 HV21 guest context preparation smoke: $HV21_STATUS
+HV22 guarded trap-return plan smoke: $HV22_STATUS
+HV23 guest entry assembly preparation smoke: $HV23_STATUS
 HV0 PASS: $HV0_STATUS
 HV1 PASS: $HV1_STATUS
 HV2 PASS: $HV2_STATUS
@@ -321,6 +327,8 @@ HV18 Linux handoff PASS: $HV18_STATUS
 HV19 SBI console mediation PASS: $HV19_STATUS
 HV20 SBI dispatch integration PASS: $HV20_STATUS
 HV21 guest context preparation PASS: $HV21_STATUS
+HV22 guarded trap-return plan PASS: $HV22_STATUS
+HV23 guest entry assembly preparation PASS: $HV23_STATUS
 VM/vCPU model implemented
 vCPU lifecycle implemented only if smoke passes: $HV3_STATUS
 guest memory object implemented only if smoke passes: $HV4_STATUS
@@ -336,9 +344,9 @@ guest image format: tiny-flat-v0
 guest memory backing: pmm-bitmap-v0
 guest execution still not supported
 Linux guest still not supported
-HV21 prepares a software guest context only; no guest entry, no trap return, no hgatp write
-current milestone: HV21 Guest Context Switch Preparation Foundation
-next milestone: controlled trap-return preparation, guarded guest-entry attempt infrastructure, or active stage2 activation prerequisites
+HV23 prepares a software-only entry-stub descriptor only; no guest entry, no trap return, no hgatp write
+current milestone: HV23 Guest Entry Assembly Preparation Foundation
+next milestone: active stage2 activation prerequisites, guarded first-instruction infrastructure, or real trap-entry/trap-return assembly preparation
 Overall readiness: $OVERALL
 Reason: $REASON
 
@@ -371,6 +379,8 @@ HV2/HV3/HV4/HV5 file map:
   - smoke/smoke-hv-stage2-table-v0.sh
   - smoke/smoke-hv-boot-package-v0.sh
   - smoke/smoke-hv-dtb-contract-v0.sh
+  - smoke/smoke-hv-trap-plan-v0.sh
+  - smoke/smoke-hv-entry-stub-v0.sh
   - docs/hypervisor/HV2_VM_VCPU_MODEL.md
 Exact command to rerun validation:
   - ./scripts/validate-hyperzig.sh
@@ -433,6 +443,8 @@ printf '  - HV18 Linux handoff: %s\n' "$ROOT/smoke/transcripts/latest-hv-linux-h
 printf '  - HV19 SBI console mediation: %s\n' "$ROOT/smoke/transcripts/latest-hv-sbi-console-v0.txt"
 printf '  - HV20 SBI dispatch integration: %s\n' "$ROOT/smoke/transcripts/latest-hv-sbi-dispatch-v0.txt"
 printf '  - HV21 guest context preparation: %s\n' "$ROOT/smoke/transcripts/latest-hv-guest-context-v0.txt"
+printf '  - HV22 guarded trap-return plan: %s\n' "$ROOT/smoke/transcripts/latest-hv-trap-plan-v0.txt"
+printf '  - HV23 guest entry assembly preparation: %s\n' "$ROOT/smoke/transcripts/latest-hv-entry-stub-v0.txt"
 printf '\nCompleted milestones/evidence:\n'
 if [[ ${#COMPLETED[@]} -eq 0 ]]; then printf '  - none\n'; else printf '  - %s\n' "${COMPLETED[@]}"; fi
 printf '\nMissing optional smoke tests (MISSING is not PASS):\n'
