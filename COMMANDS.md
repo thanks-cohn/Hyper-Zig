@@ -459,3 +459,16 @@ HV24 validation entries:
 - `./smoke/smoke-hv-h-extension-v0.sh`: behavior-based HV24 smoke proof with generated transcript at `smoke/transcripts/latest-hv-h-extension-v0.txt`.
 - `./scripts/validate-hyperzig.sh`: includes `smoke/smoke-hv-h-extension-v0.sh` in the required hypervisor validation ladder.
 - `zig build validate-hyperzig`: runs the same validation ladder through `build.zig`.
+
+
+## HV25 HGATP Candidate and Stage2 Activation Plan commands
+
+HV25 adds software-only HGATP candidate payload construction and a stage2 activation-plan object. These commands derive state from VM/vCPU, guest memory, guest address-space, second-stage metadata, software stage2 tables, H-extension discovery, and CSR safety state. They do not write `hgatp`, activate second-stage translation, enter guest mode, execute guest instructions, or claim Linux support.
+
+HGATP candidate commands: `hv hgatp`, `hv-hgatp`, `hv hgatp status`, `hv hgatp build`, `hv hgatp validate`, `hv hgatp blockers`, `hv hgatp fields`, `hv hgatp candidate`, `hv hgatp checksum`, `hv hgatp reset`.
+
+Stage2 plan commands: `hv stage2-plan`, `hv-stage2-plan`, `hv stage2-plan status`, `hv stage2-plan build`, `hv stage2-plan validate`, `hv stage2-plan blockers`, `hv stage2-plan next`, `hv stage2-plan checksum`, `hv stage2-plan reset`.
+
+Invariant commands: `hv hgatp invariant-lifecycle-test`, `hv hgatp invariant-derivation-test`, `hv hgatp invariant-corruption-test`, `hv stage2-plan invariant-lifecycle-test`, `hv stage2-plan invariant-consumption-test`, `hv stage2-plan invariant-corruption-test`, `hv hv25 invariant-all`.
+
+Negative invariant commands cover missing H-extension, invalid mode, PPN alignment, VMID bounds, write-attempt, active-stage2, missing HGATP, missing stage2 metadata, missing table metadata, and missing CSR safety paths.
