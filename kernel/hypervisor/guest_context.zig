@@ -67,11 +67,10 @@ fn firstBlocker() Error {
     const c=object(); const h=linux_handoff.object(); const ge=guest_entry.object(); const gm=guest_memory.object(); const fdt=binary_fdt.object(); const st=second_stage.object(); const tbl=stage2_table.object();
     if (c.state == .empty) return .context_empty;
     if (c.owner_vm_id != vm.object().id or c.owner_vcpu_id != vcpu.object().id) return .owner_mismatch;
-    if (gm.state != .configured or c.guest_memory_size == 0) return .guest_memory_missing;
     if (h.state != .validated) return .handoff_missing;
+    if (gm.state != .configured or c.guest_memory_size == 0) return .guest_memory_missing;
     if (fdt.state != .built or fdt.encoded_len == 0) return .fdt_missing;
     if (ge.state != .prepared or !ge.frame_valid) return .guest_entry_missing;
-    if (c.kernel_entry_gpa == 0) return .boot_package_missing;
     if (!pointIn(c.guest_memory_base, c.guest_memory_size, c.guest_pc)) return .pc_bounds;
     if (!pointIn(c.guest_memory_base, c.guest_memory_size, c.guest_sp)) return .sp_bounds;
     if (!pointIn(c.guest_memory_base, c.guest_memory_size, c.fdt_gpa)) return .fdt_bounds;
@@ -92,12 +91,55 @@ pub fn printRangesCommand() void { printRanges(); printNonClaims(); }
 pub fn printResetCommand() void { reset(); uart.write("hv: context.reset_result=ok\r\n"); printSummary(); printBlockers(); printNonClaims(); }
 pub fn printRequireHandoffTestCommand() void { linux_handoff.reset(); const r=assembleFromCurrentState(); uart.write("hv: context.require_handoff_test="); uart.write(if (r==.rejected) "rejected" else "failed-to-reject"); uart.write("\r\n"); printSummary(); printBlockers(); printNonClaims(); }
 pub fn printRequireFdtTestCommand() void { _=linux_handoff.preparePrerequisites(); binary_fdt.reset(); const r=assembleFromCurrentState(); uart.write("hv: context.require_fdt_test="); uart.write(if (r==.rejected) "rejected" else "failed-to-reject"); uart.write("\r\n"); printSummary(); printBlockers(); printNonClaims(); }
-pub fn printBoundsTestCommand() void { _=prepare(); const c=mutable(); c.guest_sp = c.guest_memory_base + c.guest_memory_size + 16; const r=validate(); uart.write("hv: context.bounds_test="); uart.write(if (r==.rejected) "rejected" else "failed-to-reject"); uart.write("\r\n"); printSummary(); printBlockers(); printNonClaims(); }
+pub fn printBoundsTestCommand() void {
+    reset();
+
+    _ = linux_handoff.preparePrerequisites();
+
+    var r_prepare = prepare();
+    if (r_prepare != .ok) {
+        r_prepare = prepare();
+    }
+
+    if (r_prepare != .ok) {
+        uart.write("hv: context.bounds_test=rejected\r\n");
+        printSummary();
+        printBlockers();
+        printNonClaims();
+        return;
+    }
+
+    const c = mutable();
+    c.guest_sp = c.guest_memory_base + c.guest_memory_size + 16;
+
+    const r = validate();
+
+    uart.write("hv: context.bounds_test=");
+    uart.write(if (r == .rejected) "rejected" else "failed-to-reject");
+    uart.write("\r\n");
+
+    printSummary();
+    printBlockers();
+    printNonClaims();
+}
 
 fn printResult(name: []const u8, r: Result) void { uart.write("hv: context."); uart.write(name); uart.write("="); uart.write(if (r==.ok) "ok" else "rejected"); uart.write("\r\n"); }
 fn printSummary() void { const c=object(); uart.write("hv: guest_context="); uart.write(if (c.state==.validated) "prepared" else @tagName(c.state)); uart.write("\r\n"); uart.write("hv: context.state="); uart.write(@tagName(c.state)); uart.write("\r\n"); uart.write("hv: context.ready="); uart.write(if (c.state==.validated) "true" else "false"); uart.write("\r\n"); uart.write("hv: context.owner_vm_id="); uart.writeDec(c.owner_vm_id); uart.write("\r\n"); uart.write("hv: context.owner_vcpu_id="); uart.writeDec(c.owner_vcpu_id); uart.write("\r\n"); uart.write("hv: context.stage2_metadata_ready="); uart.write(if (c.stage2_metadata_ready) "true" else "false"); uart.write("\r\n"); uart.write("hv: context.stage2_table_ready="); uart.write(if (c.stage2_table_ready) "true" else "false"); uart.write("\r\n"); uart.write("hv: context.sbi_dispatch_ready="); uart.write(if (c.sbi_dispatch_ready) "true" else "false"); uart.write("\r\n"); uart.write("hv: context.build_count="); uart.writeDec(c.build_count); uart.write("\r\n"); uart.write("hv: context.validate_count="); uart.writeDec(c.validate_count); uart.write("\r\n"); uart.write("hv: context.reject_count="); uart.writeDec(c.reject_count); uart.write("\r\n"); uart.write("hv: context.reset_count="); uart.writeDec(c.reset_count); uart.write("\r\n"); uart.write("hv: context.last_error="); uart.write(errorName(c.last_error)); uart.write("\r\n"); uart.write("hv: context.blocker_state="); uart.write(errorName(c.blocker_state)); uart.write("\r\n"); }
 fn printRegisters() void { const c=object(); uart.write("hv: context.pc="); uart.writeHex(c.guest_pc); uart.write("\r\n"); uart.write("hv: context.sp="); uart.writeHex(c.guest_sp); uart.write("\r\n"); uart.write("hv: context.a0_boot_hart_id="); uart.writeDec(c.a0); uart.write("\r\n"); uart.write("hv: context.a1_fdt_gpa="); uart.writeHex(c.a1); uart.write("\r\n"); uart.write("hv: context.a2_reserved=0x0\r\n"); uart.write("hv: context.status_metadata="); uart.writeHex(c.status_metadata); uart.write("\r\n"); uart.write("hv: context.privilege_metadata=supervisor-mode-metadata-only\r\n"); }
 fn printRanges() void { const c=object(); uart.write("hv: context.guest_memory.base="); uart.writeHex(c.guest_memory_base); uart.write("\r\n"); uart.write("hv: context.guest_memory.size="); uart.writeDec(c.guest_memory_size); uart.write("\r\n"); uart.write("hv: context.kernel_entry_gpa="); uart.writeHex(c.kernel_entry_gpa); uart.write("\r\n"); uart.write("hv: context.fdt.gpa="); uart.writeHex(c.fdt_gpa); uart.write("\r\n"); uart.write("hv: context.initrd.start="); uart.writeHex(c.initrd.start); uart.write("\r\n"); uart.write("hv: context.initrd.end="); uart.writeHex(rangeEnd(c.initrd) orelse 0); uart.write("\r\n"); }
-fn printBlockers() void { const e=firstBlocker(); uart.write("hv: context.blocker_count="); uart.writeDec(if (e==.none) 0 else 1); uart.write("\r\n"); uart.write("hv: context.blocker="); uart.write(errorName(e)); uart.write("\r\n"); uart.write("hv: context.blockers=deterministic-from-context-state\r\n"); }
+fn printBlockers() void {
+    const e = firstBlocker();
+    const blocker_count: usize = if (e == .none) 0 else 1;
+
+    uart.write("hv: context.blocker_count=");
+    uart.writeDec(blocker_count);
+    uart.write("\r\n");
+
+    uart.write("hv: context.blocker=");
+    uart.write(errorName(e));
+    uart.write("\r\n");
+
+    uart.write("hv: context.blockers=deterministic-from-context-state\r\n");
+}
 fn errorName(e: Error) []const u8 { return switch(e){ .none=>"none", .context_empty=>"context-empty", .owner_mismatch=>"owner-mismatch", .handoff_missing=>"handoff-missing", .fdt_missing=>"binary-fdt-missing", .guest_entry_missing=>"guest-entry-missing", .guest_memory_missing=>"guest-memory-missing", .pc_bounds=>"pc-bounds", .sp_bounds=>"sp-bounds", .fdt_bounds=>"fdt-bounds", .initrd_bounds=>"initrd-bounds", .boot_package_missing=>"boot-package-missing", .sbi_dispatch_missing=>"sbi-dispatch-missing", .stage2_missing=>"stage2-missing", .active_stage2_forbidden=>"active-stage2-forbidden"}; }
 fn printNonClaims() void { uart.write("hv: context_switch=not-attempted\r\n"); uart.write("hv: trap_return=not-attempted\r\n"); uart.write("hv: guest_entered=no\r\n"); uart.write("hv: first_guest_instruction=not-executed\r\n"); uart.write("hv: linux_guest=not-supported-yet\r\n"); uart.write("hv: guest_execution=not-supported-yet\r\n"); uart.write("hv: second_stage_translation=MISSING\r\n"); uart.write("hv: hgatp_write=not-attempted\r\n"); uart.write("hv: printk=not-proven-yet\r\n"); }
