@@ -137,3 +137,23 @@ HV22 adds a software-only guarded trap-return plan object derived from the HV21 
 - `./smoke/smoke-hv-trap-plan-v0.sh`: behavior-based HV22 smoke proof with generated transcript at `smoke/transcripts/latest-hv-trap-plan-v0.txt`.
 - `./scripts/validate-hyperzig.sh`: now includes `smoke/smoke-hv-trap-plan-v0.sh` in the required hypervisor validation ladder.
 - `zig build validate-hyperzig`: runs the same validation ladder through `build.zig`.
+
+## HV23 Guest Entry Assembly Preparation commands
+
+- `hv entry-stub` / `hv-entry-stub` / `hv entry-stub status`
+- `hv entry-stub prepare`
+- `hv entry-stub validate`
+- `hv entry-stub blockers`
+- `hv entry-stub registers`
+- `hv entry-stub gates`
+- `hv entry-stub descriptor`
+- `hv entry-stub checksum`
+- `hv entry-stub attempt`
+- `hv entry-stub require-plan-test`
+- `hv entry-stub pc-bounds-test`
+- `hv entry-stub sp-bounds-test`
+- `hv entry-stub fdt-bounds-test`
+- `hv entry-stub active-stage2-test`
+- `hv entry-stub reset`
+
+Smoke proof: `./smoke/smoke-hv-entry-stub-v0.sh`. Canonical validation: `./scripts/validate-hyperzig.sh` and `zig build validate-hyperzig`.

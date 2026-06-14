@@ -78,34 +78,34 @@ cd Hyper-Zig
 ```
 
 
-## Current milestone: HV22 Guarded Trap-Return Preparation Foundation
+## Current milestone: HV23 Guest Entry Assembly Preparation Foundation
 
-Hyper-Zig currently smoke-proves HV0 through HV22 when the full validation ladder passes. HV22 adds a real software-only guarded trap-return preparation subsystem. It consumes the HV21 guest context object and derives a final guarded trap-return plan with owner VM/vCPU IDs, planned `pc`, `sp`, `a0`, `a1`, `a2`, status and privilege metadata, trap-return kind metadata, entry-mode metadata, guest memory bounds, stage2 metadata/table readiness, SBI dispatch readiness, gate state, counters, deterministic blockers, rejection paths, reset behavior, and a guarded attempt that is always safely denied.
+Hyper-Zig currently smoke-proves HV0 through HV23 when the full validation ladder passes. HV23 adds a real software-only guest-entry assembly preparation subsystem. It consumes the HV22 guarded trap-return plan and derives a validated entry-stub preparation object with owner VM/vCPU IDs, planned `pc`, `sp`, `a0`, `a1`, `a2`, status and privilege metadata, trap-return kind metadata, entry-mode metadata, software-only stub address/size/checksum metadata, guest memory bounds, stage2 metadata/table readiness, active-stage2 and `hgatp` forbidden flags, H-extension unknown/not-claimed state, execution/run-attempt gate state, SBI dispatch readiness, counters, deterministic blockers, rejection paths, reset behavior, and a guarded attempt that is always safely denied.
 
 What Hyper-Zig can do today:
 
 - Boot the diagnostic RISC-V kernel under QEMU with Zig 0.14.x.
-- Exercise the VM/vCPU, guest-memory, guest-address-space, tiny guest-image, guest-entry metadata, guest-exit metadata, guest-run gate, guest execution preparation gate, second-stage metadata, software stage2 table, guest boot package, DTB contract, SBI foundation, virtual timer foundation, binary FDT encoder, Linux-shaped handoff validation, SBI console mediation, SBI dispatch, HV21 guest context, and HV22 trap-plan command paths.
-- Prepare and validate the final guarded trap-return plan object required before a future controlled guest-entry attempt.
-- Reject missing context, malformed context, out-of-bounds PC, out-of-bounds SP, out-of-bounds FDT pointer, missing gates, missing SBI dispatch readiness, and falsely active stage2 metadata through behavior-tested command paths.
-- Model a guarded entry attempt that increments an attempt counter and returns `guarded_entry_attempt_result=safe-denied` without entering the guest.
+- Exercise the VM/vCPU, guest-memory, guest-address-space, tiny guest-image, guest-entry metadata, guest-exit metadata, guest-run gate, guest execution preparation gate, second-stage metadata, software stage2 table, guest boot package, DTB contract, SBI foundation, virtual timer foundation, binary FDT encoder, Linux-shaped handoff validation, SBI console mediation, SBI dispatch, HV21 guest context, HV22 trap-plan, and HV23 entry-stub command paths.
+- Prepare and validate the software-only entry-stub descriptor required before a future real guest-entry assembly path.
+- Reject missing trap plan, malformed plan, out-of-bounds PC, out-of-bounds SP, out-of-bounds FDT pointer, missing gates, missing SBI dispatch readiness, and falsely active stage2 metadata through behavior-tested command paths.
+- Model a guarded entry-stub attempt that increments an attempt counter and returns `guarded_entry_attempt_result=safe-denied` without entering the guest.
 
 What Hyper-Zig cannot do today:
 
-- HV22 does not boot Linux.
-- HV22 does not provide Linux guest support.
-- HV22 does not execute guests.
-- HV22 does not enter guest mode.
-- HV22 does not execute a trap return and does not perform `sret`, `hret`, or `mret`.
-- HV22 does not execute the first guest instruction.
-- HV22 does not activate hardware second-stage translation.
-- HV22 does not write `hgatp`.
-- HV22 does not claim H-extension support.
-- HV22 does not provide full SBI services.
-- HV22 does not inject real timer interrupts.
-- HV22 does not provide Buildroot, BusyBox, Alpine, Ubuntu, or other distro boot support.
-- HV22 does not prove Linux accepts the FDT.
-- HV22 does not prove `printk` or a real Linux console works.
+- HV23 does not boot Linux.
+- HV23 does not provide Linux guest support.
+- HV23 does not execute guests.
+- HV23 does not enter guest mode.
+- HV23 does not execute a trap return and does not perform `sret`, `hret`, or `mret`.
+- HV23 does not execute the first guest instruction.
+- HV23 does not activate hardware second-stage translation.
+- HV23 does not write `hgatp`.
+- HV23 does not claim H-extension support.
+- HV23 does not provide full SBI services.
+- HV23 does not inject real timer interrupts.
+- HV23 does not provide Buildroot, BusyBox, Alpine, Ubuntu, or other distro boot support.
+- HV23 does not prove Linux accepts the FDT.
+- HV23 does not prove `printk` or a real Linux console works.
 
 Exact commands to start:
 
@@ -119,21 +119,23 @@ qemu-system-riscv64 -machine virt -cpu rv64 -smp 1 -m 128M -nographic -monitor n
 Inside the shell, use:
 
 ```text
-hv trap-plan
-hv-trap-plan
-hv trap-plan status
-hv trap-plan prepare
-hv trap-plan validate
-hv trap-plan blockers
-hv trap-plan registers
-hv trap-plan gates
-hv trap-plan attempt
-hv trap-plan require-context-test
-hv trap-plan pc-bounds-test
-hv trap-plan sp-bounds-test
-hv trap-plan fdt-bounds-test
-hv trap-plan active-stage2-test
-hv trap-plan reset
+hv entry-stub
+hv-entry-stub
+hv entry-stub status
+hv entry-stub prepare
+hv entry-stub validate
+hv entry-stub blockers
+hv entry-stub registers
+hv entry-stub gates
+hv entry-stub descriptor
+hv entry-stub checksum
+hv entry-stub attempt
+hv entry-stub require-plan-test
+hv entry-stub pc-bounds-test
+hv entry-stub sp-bounds-test
+hv entry-stub fdt-bounds-test
+hv entry-stub active-stage2-test
+hv entry-stub reset
 ```
 
 Exact commands to validate:
@@ -141,12 +143,12 @@ Exact commands to validate:
 ```bash
 ./scripts/check-zig-version.sh
 zig build
-./smoke/smoke-hv-trap-plan-v0.sh
+./smoke/smoke-hv-entry-stub-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 ```
 
-The next milestone should move toward active stage2 activation prerequisites, guarded first-instruction infrastructure, or real trap-entry/trap-return assembly preparation while preserving the non-claims until separately implemented and smoke-proven.
+The next milestone should move toward active stage2 activation prerequisites, guarded first-instruction infrastructure, or real trap-entry/trap-return assembly preparation while preserving all non-claims until separately implemented and smoke-proven.
 
 ### Verify the toolchain
 
