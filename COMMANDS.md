@@ -392,3 +392,25 @@ HV20 adds a real dispatcher for modeled SBI request objects. The dispatcher rout
 - `./smoke/smoke-hv-sbi-dispatch-v0.sh`: behavior smoke for HV20; generates `smoke/transcripts/latest-hv-sbi-dispatch-v0.txt` from actual QEMU shell commands.
 - `./scripts/validate-hyperzig.sh`: now includes HV20 as a required smoke milestone and reports its transcript path.
 - `zig build validate-hyperzig`: continues to invoke the canonical validation script, now including HV20.
+
+
+## HV21 Guest Context Switch Preparation Foundation commands
+
+HV21 adds a real software guest context preparation object. It derives the future guest-entry register frame from existing guest-entry and Linux-shaped handoff metadata, checks stage2 metadata/table readiness and SBI dispatch readiness, and keeps all non-claims active. These commands do not boot Linux, execute a guest, enter guest mode, perform a trap return, activate second-stage translation, write `hgatp`, or prove printk.
+
+- `hv context` / `hv-context` / `hv context status`: print context state, readiness, counters, deterministic blocker state, and non-claims.
+- `hv context prepare`: build missing HV13-HV20 prerequisites through existing command paths where required, assemble the context frame, validate it, and print derived registers/ranges.
+- `hv context validate`: validate the current context and reject deterministic missing or malformed state.
+- `hv context blockers`: print blocker state derived from the current context and prerequisite subsystem state.
+- `hv context registers`: print derived `pc`, `sp`, Linux-style `a0` boot hart ID, `a1` FDT GPA, reserved `a2`, status metadata, and privilege metadata.
+- `hv context ranges`: print guest memory bounds, kernel entry GPA, FDT GPA, and initrd range recorded in the context.
+- `hv context require-handoff-test`: reset the HV18 handoff package and prove context validation rejects when handoff metadata is missing.
+- `hv context require-fdt-test`: reset the binary FDT and prove context validation rejects when FDT metadata is missing.
+- `hv context bounds-test`: corrupt a prepared context stack pointer and prove range validation rejects the malformed context.
+- `hv context reset`: clear context state to an empty object while preserving reset accounting.
+
+Validation entries added by HV21:
+
+- `./smoke/smoke-hv-guest-context-v0.sh`: behavior smoke for HV21; generates `smoke/transcripts/latest-hv-guest-context-v0.txt` from actual QEMU shell commands.
+- `./scripts/validate-hyperzig.sh`: includes HV21 as a required smoke milestone and reports its transcript path.
+- `zig build validate-hyperzig`: invokes the canonical validation script including HV21.

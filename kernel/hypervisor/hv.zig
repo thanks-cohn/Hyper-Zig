@@ -19,6 +19,7 @@ const binary_fdt = @import("binary_fdt.zig");
 const linux_handoff = @import("linux_handoff.zig");
 const sbi_console = @import("sbi_console.zig");
 const sbi_dispatch = @import("sbi_dispatch.zig");
+const guest_context = @import("guest_context.zig");
 
 pub fn init() void {
     vm.init();
@@ -40,6 +41,7 @@ pub fn init() void {
     linux_handoff.init(vm.object().id, vcpu.object().id);
     sbi_console.init(vm.object().id, vcpu.object().id);
     sbi_dispatch.init(vm.object().id, vcpu.object().id);
+    guest_context.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -71,6 +73,7 @@ pub fn printStatus() void {
     linux_handoff.printState();
     sbi_console.printState();
     sbi_dispatch.printState();
+    guest_context.printStatusCommand();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
@@ -408,6 +411,17 @@ pub fn consolePutcharTestSbiDispatch() void { sbi_dispatch.printConsolePutcharTe
 pub fn consoleGetcharTestSbiDispatch() void { sbi_dispatch.printConsoleGetcharTestCommand(); }
 pub fn unknownTestSbiDispatch() void { sbi_dispatch.printUnknownTestCommand(); }
 pub fn unsupportedFunctionTestSbiDispatch() void { sbi_dispatch.printUnsupportedFunctionTestCommand(); }
+
+pub fn printGuestContext() void { guest_context.printStatusCommand(); }
+pub fn prepareGuestContext() void { guest_context.printPrepareCommand(); }
+pub fn validateGuestContext() void { guest_context.printValidateCommand(); }
+pub fn blockersGuestContext() void { guest_context.printBlockersCommand(); }
+pub fn registersGuestContext() void { guest_context.printRegistersCommand(); }
+pub fn rangesGuestContext() void { guest_context.printRangesCommand(); }
+pub fn requireHandoffTestGuestContext() void { guest_context.printRequireHandoffTestCommand(); }
+pub fn requireFdtTestGuestContext() void { guest_context.printRequireFdtTestCommand(); }
+pub fn boundsTestGuestContext() void { guest_context.printBoundsTestCommand(); }
+pub fn resetGuestContext() void { guest_context.printResetCommand(); }
 
 pub fn printBinaryFdt() void { binary_fdt.printState(); }
 pub fn buildBinaryFdt() void { binary_fdt.printBuildCommand(); }
