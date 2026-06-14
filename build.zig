@@ -4,14 +4,14 @@ const hyperzig_status_text =
     \\Hyper-Zig developer status
     \\  current project: Hyper-Zig
     \\  Zig target: 0.14.x
-    \\  current proven milestones: HV0 through HV17 when smoke validation passes
-    \\  current milestone: HV17 binary FDT / Device Tree Blob Encoder Foundation (no Linux claim)
+    \\  current proven milestones: HV0 through HV18 when smoke validation passes
+    \\  current milestone: HV18 Linux Handoff Package Validation Foundation (no Linux boot claim)
     \\  canonical validation command: ./scripts/validate-hyperzig.sh
     \\  no Linux guest support yet
     \\  no guest execution yet
     \\  no guest instruction execution yet; HV7 prepares guest-entry metadata, HV8 records simulated exit metadata, HV9 arms no-execute run-attempt metadata, and HV10 builds a hardware-gated execution preparation layer only
     \\  no active second-stage translation yet; HV11 models metadata and HV12 builds a software-only page-table-like structure
-    \\  VM/vCPU model, vCPU lifecycle, guest-memory object, guest-address-space metadata, tiny-flat-v0 guest-image loader, guest-entry preparation, guest trap/exit metadata, controlled guest-run attempt safety gate, hardware-gated execution preparation, and second-stage translation metadata, the software-only stage2 table builder, and the guest boot package contract, guest DTB contract, and SBI foundation, virtual timer/SBI timer mediation prerequisites, and binary FDT encoder foundation implemented and smoke-proven when validation passes
+    \\  VM/vCPU model, vCPU lifecycle, guest-memory object, guest-address-space metadata, tiny-flat-v0 guest-image loader, guest-entry preparation, guest trap/exit metadata, controlled guest-run attempt safety gate, hardware-gated execution preparation, and second-stage translation metadata, the software-only stage2 table builder, and the guest boot package contract, guest DTB contract, and SBI foundation, virtual timer/SBI timer mediation prerequisites, and binary FDT encoder foundation, and Linux-shaped handoff package validation foundation implemented and smoke-proven when validation passes
     \\  next: read docs/hypervisor/DEVELOPER_START_HERE.md
     \\
 ;

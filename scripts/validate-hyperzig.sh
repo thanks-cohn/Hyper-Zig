@@ -37,6 +37,7 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv-sbi-foundation-v0.sh"
     "smoke/smoke-hv-virtual-timer-v0.sh"
     "smoke/smoke-hv-binary-fdt-v0.sh"
+    "smoke/smoke-hv-linux-handoff-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -131,6 +132,7 @@ run_smoke() {
         smoke-hv-sbi-foundation-v0) transcript="$ROOT/smoke/transcripts/latest-hv-sbi-foundation-v0.txt" ;;
         smoke-hv-virtual-timer-v0) transcript="$ROOT/smoke/transcripts/latest-hv-virtual-timer-v0.txt" ;;
         smoke-hv-binary-fdt-v0) transcript="$ROOT/smoke/transcripts/latest-hv-binary-fdt-v0.txt" ;;
+        smoke-hv-linux-handoff-v0) transcript="$ROOT/smoke/transcripts/latest-hv-linux-handoff-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"
