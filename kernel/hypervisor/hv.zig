@@ -18,6 +18,7 @@ const virtual_timer = @import("virtual_timer.zig");
 const binary_fdt = @import("binary_fdt.zig");
 const linux_handoff = @import("linux_handoff.zig");
 const sbi_console = @import("sbi_console.zig");
+const sbi_dispatch = @import("sbi_dispatch.zig");
 
 pub fn init() void {
     vm.init();
@@ -38,6 +39,7 @@ pub fn init() void {
     binary_fdt.init(vm.object().id);
     linux_handoff.init(vm.object().id, vcpu.object().id);
     sbi_console.init(vm.object().id, vcpu.object().id);
+    sbi_dispatch.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -64,9 +66,11 @@ pub fn printStatus() void {
     guest_dtb.printState();
     sbi.printState();
     virtual_timer.printState();
+    sbi_dispatch.printState();
     binary_fdt.printState();
     linux_handoff.printState();
     sbi_console.printState();
+    sbi_dispatch.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
@@ -361,6 +365,7 @@ pub fn printInspect() void {
     guest_dtb.printState();
     sbi.printState();
     virtual_timer.printState();
+    sbi_dispatch.printState();
     binary_fdt.printState();
 }
 
@@ -392,6 +397,17 @@ pub fn sbiSetTestVirtualTimer() void { virtual_timer.printSbiSetTestCommand(); }
 pub fn invalidTestVirtualTimer() void { virtual_timer.printInvalidTestCommand(); }
 pub fn resetVirtualTimer() void { virtual_timer.printResetCommand(); }
 
+
+pub fn printSbiDispatch() void { sbi_dispatch.printStatusCommand(); }
+pub fn validateSbiDispatch() void { sbi_dispatch.printValidateCommand(); }
+pub fn blockersSbiDispatch() void { sbi_dispatch.printBlockersCommand(); }
+pub fn resetSbiDispatch() void { sbi_dispatch.printResetCommand(); }
+pub fn baseTestSbiDispatch() void { sbi_dispatch.printBaseTestCommand(); }
+pub fn timerTestSbiDispatch() void { sbi_dispatch.printTimerTestCommand(); }
+pub fn consolePutcharTestSbiDispatch() void { sbi_dispatch.printConsolePutcharTestCommand(); }
+pub fn consoleGetcharTestSbiDispatch() void { sbi_dispatch.printConsoleGetcharTestCommand(); }
+pub fn unknownTestSbiDispatch() void { sbi_dispatch.printUnknownTestCommand(); }
+pub fn unsupportedFunctionTestSbiDispatch() void { sbi_dispatch.printUnsupportedFunctionTestCommand(); }
 
 pub fn printBinaryFdt() void { binary_fdt.printState(); }
 pub fn buildBinaryFdt() void { binary_fdt.printBuildCommand(); }
