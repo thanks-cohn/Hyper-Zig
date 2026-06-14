@@ -141,7 +141,23 @@ pub fn printState() void { printImplementedMarker(); printFields(); printNonClai
 pub fn printStatusCommand() void { printState(); }
 pub fn printValidateCommand() void { const r = dispatchLast(); printResult("validate_result", r); printFields(); printNonClaims(); }
 pub fn printResetCommand() void { reset(); uart.write("hv: sbi_dispatch.reset_result=ok\r\n"); printFields(); printNonClaims(); }
-pub fn printBlockersCommand() void { _ = dispatchLast(); uart.write("hv: sbi_dispatch.blocker_count="); uart.writeDec(if (object().blocker_state == .none) 0 else 1); uart.write("\r\n"); uart.write("hv: sbi_dispatch.blocker="); uart.write(if (object().blocker_state == .none) "none" else errorName(object().blocker_state)); uart.write("\r\n"); uart.write("hv: sbi_dispatch.blockers=deterministic-from-dispatcher-state\r\n"); printNonClaims(); }
+pub fn printBlockersCommand() void {
+    _ = dispatchLast();
+
+    const blocker_count: usize =
+        if (object().blocker_state == .none) 0 else 1;
+
+    uart.write("hv: sbi_dispatch.blocker_count=");
+    uart.writeDec(blocker_count);
+    uart.write("\r\n");
+
+    uart.write("hv: sbi_dispatch.blocker=");
+    uart.write(if (object().blocker_state == .none) "none" else errorName(object().blocker_state));
+    uart.write("\r\n");
+
+    uart.write("hv: sbi_dispatch.blockers=deterministic-from-dispatcher-state\r\n");
+    printNonClaims();
+}
 pub fn printBaseTestCommand() void { recordRequest(.{ .extension_id = base_extension_id, .function_id = 0, .args = [_]usize{0} ** 6 }); const r = dispatchLast(); printResult("base_test", r); printFields(); sbi.printStatusCommand(); printNonClaims(); }
 pub fn printTimerTestCommand() void { recordRequest(.{ .extension_id = timer_extension_id, .function_id = 0, .args = [_]usize{ 100, 0, 0, 0, 0, 0 } }); const r = dispatchLast(); printResult("timer_test", r); printFields(); virtual_timer.printStatusCommand(); printNonClaims(); }
 pub fn printConsolePutcharTestCommand() void { recordRequest(.{ .extension_id = console_extension_id, .function_id = 0, .args = [_]usize{ 90, 0, 0, 0, 0, 0 } }); const r = dispatchLast(); printResult("console_putchar_test", r); printFields(); sbi_console.printStatusCommand(); printNonClaims(); }
