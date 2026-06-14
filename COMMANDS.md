@@ -304,3 +304,24 @@ HV16 adds executable virtual timer metadata connected to the HV15 SBI foundation
 - `./smoke/smoke-hv-virtual-timer-v0.sh`: QEMU smoke proof for HV16 virtual timer behavior and non-claims.
 - `./scripts/validate-hyperzig.sh`: includes the HV16 smoke in the required validation ladder.
 - `zig build validate-hyperzig`: runs the canonical validator after building.
+
+## HV17 Binary FDT / Device Tree Blob Encoder Foundation commands
+
+HV17 adds an executable, byte-backed binary FDT encoder derived from the HV14 DTB contract. It writes an in-memory flattened-device-tree-shaped buffer, computes header offsets and sizes, interns property names into a string table, counts encoded nodes/properties, and exposes checksum proof. These commands do **not** boot Linux, do **not** execute guests, do **not** activate second-stage translation, do **not** write `hgatp`, and do **not** prove Linux accepts the FDT.
+
+- `hv fdt` / `hv-fdt` / `hv fdt status`: print FDT encoder state, encoded length, header fields, counters, copied bootargs, node metadata, checksum, and non-claims.
+- `hv fdt build`: require a ready HV14 DTB contract, encode the root, `/memory`, `/cpus`, `/cpus/cpu@0`, and `/chosen` nodes into the owned byte buffer, and reject missing prerequisites.
+- `hv fdt validate`: validate header consistency, block boundaries, total size, and minimum encoded counters from the byte-backed object.
+- `hv fdt header`: print FDT magic, total size, structure/string/reservation offsets, version fields, boot CPU ID, and block sizes.
+- `hv fdt nodes`: print encoded root, memory, CPU, chosen, bootargs, and initrd metadata flags.
+- `hv fdt strings`: print string-table size and property-name-table source.
+- `hv fdt checksum`: print encoded byte length and byte-sum checksum proof.
+- `hv fdt bounds-test`: execute a too-small-buffer rejection path.
+- `hv fdt missing-contract-test`: reset HV14 and prove the FDT build rejects a missing DTB contract.
+- `hv fdt reset`: clear the encoded buffer and return to empty/not-built state.
+
+HV17 smoke and validation entries:
+
+- `./smoke/smoke-hv-binary-fdt-v0.sh`: behavior smoke proof with transcript `smoke/transcripts/latest-hv-binary-fdt-v0.txt`.
+- `./scripts/validate-hyperzig.sh`: includes the HV17 smoke in the required validation ladder.
+- `zig build validate-hyperzig`: runs the canonical validation script through the Zig build target.
