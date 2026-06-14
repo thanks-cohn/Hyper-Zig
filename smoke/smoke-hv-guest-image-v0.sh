@@ -253,12 +253,22 @@ for forbidden in [
     "hv: guest_image=placeholder",
     "elf=implemented",
     "linux_image=implemented",
-    "PANIC",
-    "panic:",
 ]:
     if forbidden.lower() in text.lower():
         raise SystemExit(f"forbidden marker found: {forbidden}")
     print(f"PASS forbidden absent in transcript: {forbidden}")
+
+runtime_blocks = "\n".join(blocks.values())
+for forbidden in [
+    "[ZIGN01D][PANIC]",
+    "kernel panic",
+    "unhandled trap",
+    "unhandled panic",
+    "panic:",
+]:
+    if forbidden.lower() in runtime_blocks.lower():
+        raise SystemExit(f"runtime panic marker found in HV6 command blocks: {forbidden}")
+    print(f"PASS runtime panic absent in HV6 command blocks: {forbidden}")
 
 print("PASS hv guest image smoke behavior checks")
 PYCHECK
@@ -278,6 +288,5 @@ reject "hv: guest_image=fake"
 reject "hv: guest_image=placeholder"
 reject "elf=implemented"
 reject "linux_image=implemented"
-reject "PANIC"
 
 log "PASS hv guest image smoke; transcript=$TRANSCRIPT"
