@@ -71,7 +71,7 @@ need(3,'hv: handoff.bootargs=root=/dev/ram0 console=hvc0 earlycon'); need(3,'hv:
 for key in ['hv: handoff.kernel_load_gpa=','hv: handoff.kernel_entry_gpa=','hv: handoff.guest_pc=','hv: handoff.guest_sp=','hv: handoff.initrd.start=','hv: handoff.initrd.end=','hv: handoff.fdt.size=','hv: handoff.fdt.header.totalsize=','hv: handoff.fdt.checksum=']:
     assert num(3,key) >= 0
 assert num(3,'hv: handoff.fdt.size=') == num(3,'hv: handoff.fdt.header.totalsize=') and num(3,'hv: handoff.fdt.size=') > 0
-need(3,'hv: boot_package=ready'); need(3,'hv: dtb_contract=implemented'); need(3,'hv: fdt_encoder=foundation-binary-buffer')
+need(3,'hv: boot_package=implemented'); need(3,'hv: boot_package.state=ready'); need(3,'hv: boot_package.ready=true'); need(3,'hv: dtb_contract=implemented'); need(3,'hv: fdt_encoder=foundation-binary-buffer')
 need(4,'hv: handoff.kernel_load_gpa='); need(4,'hv: handoff.initrd.end='); need(5,'hv: linux_handoff=validated')
 need(6,'hv: handoff.validate_result=ok'); need(7,'hv: handoff.overlap_test=rejected'); need(7,'hv: handoff.last_error=range-overlap')
 need(8,'hv: handoff.bounds_test=rejected'); need(8,'hv: handoff.last_error=initrd-bounds')

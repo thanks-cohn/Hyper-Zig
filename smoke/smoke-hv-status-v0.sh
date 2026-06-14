@@ -125,7 +125,7 @@ for marker in \
     'hv: guest_entry=implemented' \
     'hv: guest_trap_return=MISSING' \
     'hv: second_stage_translation=MISSING' \
-    'hv: virtual_timer=MISSING' \
+    'hv: virtual_timer=foundation-metadata-only' \
     'hv: virtual_console=MISSING' \
     'hv: sbi_layer=foundation-metadata-only' \
     'hv: virtio_for_linux=MISSING'

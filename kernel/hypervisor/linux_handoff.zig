@@ -43,9 +43,51 @@ fn empty(owner: vm.VmId, owner_vcpu: vcpu.VcpuId, resets: usize) Package { retur
 pub fn reset() void { const p=mutable(); pkg = empty(p.owner_vm_id, p.owner_vcpu_id, p.reset_count + 1); initialized = true; }
 
 pub const Blockers = struct {
-    owner_mismatch: bool=false, guest_memory_missing: bool=false, guest_image_missing: bool=false, boot_package_missing: bool=false, dtb_contract_missing: bool=false, binary_fdt_missing: bool=false, kernel_bounds: bool=false, entry_bounds: bool=false, initrd_bounds: bool=false, fdt_bounds: bool=false, range_overlap: bool=false, pc_mismatch: bool=false, bootargs_missing: bool=false, guest_entry_missing: bool=false, sbi_missing: bool=false, virtual_timer_missing: bool=false, active_stage2_forbidden: bool=false, stage2_metadata_missing: bool=false,
-    fn any(self: Blockers) bool { return self.count() != 0; }
-    fn count(self: Blockers) usize { var n:usize=0; inline for (@typeInfo(Blockers).Struct.fields) |f| if (@field(self, f.name)) n += 1; return n; }
+    owner_mismatch: bool = false,
+    guest_memory_missing: bool = false,
+    guest_image_missing: bool = false,
+    boot_package_missing: bool = false,
+    dtb_contract_missing: bool = false,
+    binary_fdt_missing: bool = false,
+    kernel_bounds: bool = false,
+    entry_bounds: bool = false,
+    initrd_bounds: bool = false,
+    fdt_bounds: bool = false,
+    range_overlap: bool = false,
+    pc_mismatch: bool = false,
+    bootargs_missing: bool = false,
+    guest_entry_missing: bool = false,
+    sbi_missing: bool = false,
+    virtual_timer_missing: bool = false,
+    active_stage2_forbidden: bool = false,
+    stage2_metadata_missing: bool = false,
+
+    fn any(self: Blockers) bool {
+        return self.count() != 0;
+    }
+
+    fn count(self: Blockers) usize {
+        var n: usize = 0;
+        if (self.owner_mismatch) n += 1;
+        if (self.guest_memory_missing) n += 1;
+        if (self.guest_image_missing) n += 1;
+        if (self.boot_package_missing) n += 1;
+        if (self.dtb_contract_missing) n += 1;
+        if (self.binary_fdt_missing) n += 1;
+        if (self.kernel_bounds) n += 1;
+        if (self.entry_bounds) n += 1;
+        if (self.initrd_bounds) n += 1;
+        if (self.fdt_bounds) n += 1;
+        if (self.range_overlap) n += 1;
+        if (self.pc_mismatch) n += 1;
+        if (self.bootargs_missing) n += 1;
+        if (self.guest_entry_missing) n += 1;
+        if (self.sbi_missing) n += 1;
+        if (self.virtual_timer_missing) n += 1;
+        if (self.active_stage2_forbidden) n += 1;
+        if (self.stage2_metadata_missing) n += 1;
+        return n;
+    }
 };
 
 fn end(r: Range) ?usize { if (!r.present) return r.start; if (r.size == 0 or r.start > (~@as(usize,0)) - r.size) return null; return r.start + r.size; }
@@ -107,6 +149,36 @@ pub fn printBoundsTestCommand() void { _=preparePrerequisites(); const p=mutable
 fn result(name: []const u8, r: Result) void { uart.write("hv: handoff."); uart.write(name); uart.write("="); uart.write(if (r==.ok) "ok" else "rejected"); uart.write("\r\n"); }
 fn printSummary() void { const p=object(); uart.write("hv: linux_handoff="); uart.write(if (p.state==.validated) "validated" else if (p.state==.assembled) "assembled-not-ready" else "empty"); uart.write("\r\n"); uart.write("hv: handoff.state="); uart.write(@tagName(p.state)); uart.write("\r\n"); uart.write("hv: handoff.ready="); uart.write(if (p.state==.validated) "true" else "false"); uart.write("\r\n"); uart.write("hv: handoff.owner_vm_id="); uart.writeDec(p.owner_vm_id); uart.write("\r\n"); uart.write("hv: handoff.owner_vcpu_id="); uart.writeDec(p.owner_vcpu_id); uart.write("\r\n"); printRanges(); uart.write("hv: handoff.bootargs="); uart.write(p.bootargs[0..p.bootargs_len]); uart.write("\r\n"); uart.write("hv: handoff.guest_pc="); uart.writeHex(p.guest_pc); uart.write("\r\n"); uart.write("hv: handoff.guest_sp="); uart.writeHex(p.guest_sp); uart.write("\r\n"); uart.write("hv: handoff.fdt.header.magic="); uart.writeHex(p.fdt_magic); uart.write("\r\n"); uart.write("hv: handoff.fdt.header.totalsize="); uart.writeDec(p.fdt_totalsize); uart.write("\r\n"); uart.write("hv: handoff.fdt.header.version="); uart.writeDec(p.fdt_version); uart.write("\r\n"); uart.write("hv: handoff.fdt.header.size_dt_struct="); uart.writeDec(p.fdt_struct_size); uart.write("\r\n"); uart.write("hv: handoff.fdt.header.size_dt_strings="); uart.writeDec(p.fdt_strings_size); uart.write("\r\n"); uart.write("hv: handoff.fdt.checksum="); uart.writeHex(p.fdt_checksum); uart.write("\r\n"); uart.write("hv: handoff.prepare_count="); uart.writeDec(p.prepare_count); uart.write("\r\n"); uart.write("hv: handoff.validate_count="); uart.writeDec(p.validate_count); uart.write("\r\n"); uart.write("hv: handoff.reject_count="); uart.writeDec(p.reject_count); uart.write("\r\n"); uart.write("hv: handoff.reset_count="); uart.writeDec(p.reset_count); uart.write("\r\n"); uart.write("hv: handoff.last_error="); uart.write(errorName(p.last_error)); uart.write("\r\n"); }
 fn printRanges() void { const p=object(); uart.write("hv: handoff.guest_memory.base="); uart.writeHex(p.guest_memory_base); uart.write("\r\n"); uart.write("hv: handoff.guest_memory.size="); uart.writeDec(p.guest_memory_size); uart.write("\r\n"); uart.write("hv: handoff.guest_image.start="); uart.writeHex(p.guest_image_start); uart.write("\r\n"); uart.write("hv: handoff.guest_image.size="); uart.writeDec(p.guest_image_size); uart.write("\r\n"); uart.write("hv: handoff.kernel_load_gpa="); uart.writeHex(p.kernel_load_gpa); uart.write("\r\n"); uart.write("hv: handoff.kernel_entry_gpa="); uart.writeHex(p.kernel_entry_gpa); uart.write("\r\n"); uart.write("hv: handoff.initrd.start="); uart.writeHex(p.initrd.start); uart.write("\r\n"); uart.write("hv: handoff.initrd.end="); uart.writeHex((end(p.initrd) orelse 0)); uart.write("\r\n"); uart.write("hv: handoff.fdt.placement="); uart.write(@tagName(p.fdt_placement)); uart.write("\r\n"); uart.write("hv: handoff.fdt.gpa="); uart.writeHex(p.fdt.start); uart.write("\r\n"); uart.write("hv: handoff.fdt.size="); uart.writeDec(p.fdt.size); uart.write("\r\n"); }
-fn printBlockers() void { const b=computeBlockers(); uart.write("hv: handoff.blocker_count="); uart.writeDec(b.count()); uart.write("\r\n"); if (!b.any()) { uart.write("hv: handoff.blocker=none\r\n"); return; } inline for (@typeInfo(Blockers).Struct.fields) |f| if (@field(b, f.name)) { uart.write("hv: handoff.blocker="); uart.write(f.name); uart.write("\r\n"); } }
+fn printBlockers() void {
+    const b = computeBlockers();
+
+    uart.write("hv: handoff.blocker_count=");
+    uart.writeDec(b.count());
+    uart.write("\r\n");
+
+    if (!b.any()) {
+        uart.write("hv: handoff.blocker=none\r\n");
+        return;
+    }
+
+    if (b.owner_mismatch) uart.write("hv: handoff.blocker=owner_mismatch\r\n");
+    if (b.guest_memory_missing) uart.write("hv: handoff.blocker=guest_memory_missing\r\n");
+    if (b.guest_image_missing) uart.write("hv: handoff.blocker=guest_image_missing\r\n");
+    if (b.boot_package_missing) uart.write("hv: handoff.blocker=boot_package_missing\r\n");
+    if (b.dtb_contract_missing) uart.write("hv: handoff.blocker=dtb_contract_missing\r\n");
+    if (b.binary_fdt_missing) uart.write("hv: handoff.blocker=binary_fdt_missing\r\n");
+    if (b.kernel_bounds) uart.write("hv: handoff.blocker=kernel_bounds\r\n");
+    if (b.entry_bounds) uart.write("hv: handoff.blocker=entry_bounds\r\n");
+    if (b.initrd_bounds) uart.write("hv: handoff.blocker=initrd_bounds\r\n");
+    if (b.fdt_bounds) uart.write("hv: handoff.blocker=fdt_bounds\r\n");
+    if (b.range_overlap) uart.write("hv: handoff.blocker=range_overlap\r\n");
+    if (b.pc_mismatch) uart.write("hv: handoff.blocker=pc_mismatch\r\n");
+    if (b.bootargs_missing) uart.write("hv: handoff.blocker=bootargs_missing\r\n");
+    if (b.guest_entry_missing) uart.write("hv: handoff.blocker=guest_entry_missing\r\n");
+    if (b.sbi_missing) uart.write("hv: handoff.blocker=sbi_missing\r\n");
+    if (b.virtual_timer_missing) uart.write("hv: handoff.blocker=virtual_timer_missing\r\n");
+    if (b.active_stage2_forbidden) uart.write("hv: handoff.blocker=active_stage2_forbidden\r\n");
+    if (b.stage2_metadata_missing) uart.write("hv: handoff.blocker=stage2_metadata_missing\r\n");
+}
 fn errorName(e: Error) []const u8 { return switch(e){ .none=>"none", .owner_mismatch=>"owner-mismatch", .guest_memory_missing=>"guest-memory-missing", .guest_image_missing=>"guest-image-missing", .boot_package_missing=>"boot-package-missing", .dtb_contract_missing=>"dtb-contract-missing", .binary_fdt_missing=>"binary-fdt-missing", .kernel_bounds=>"kernel-bounds", .entry_bounds=>"entry-bounds", .initrd_bounds=>"initrd-bounds", .fdt_bounds=>"fdt-bounds", .range_overlap=>"range-overlap", .pc_mismatch=>"pc-mismatch", .bootargs_missing=>"bootargs-missing", .guest_entry_missing=>"guest-entry-missing", .sbi_missing=>"sbi-missing", .virtual_timer_missing=>"virtual-timer-missing", .active_stage2_forbidden=>"active-stage2-forbidden", .stage2_metadata_missing=>"stage2-metadata-missing"}; }
 fn printNonClaims() void { uart.write("hv: linux_guest=not-supported-yet\r\n"); uart.write("hv: guest_execution=not-supported-yet\r\n"); uart.write("hv: second_stage_translation=MISSING\r\n"); uart.write("hv: fdt_linux_acceptance=not-proven-yet\r\n"); uart.write("hv: handoff_execution=not-attempted\r\n"); uart.write("hv: guest_entered=no\r\n"); }
