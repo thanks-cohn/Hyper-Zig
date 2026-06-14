@@ -368,3 +368,27 @@ Validation additions:
 - `./smoke/smoke-hv-sbi-console-v0.sh`: behavior smoke for HV19; writes `smoke/transcripts/latest-hv-sbi-console-v0.txt` from executed QEMU shell commands.
 - `./scripts/validate-hyperzig.sh`: now includes the HV19 SBI console smoke in the required validation ladder.
 - `zig build validate-hyperzig`: runs the canonical validation script, including HV19, through the build graph.
+
+
+## HV20 SBI Dispatch Integration Foundation commands
+
+HV20 adds a real dispatcher for modeled SBI request objects. The dispatcher routes supported metadata into the existing HV15 SBI foundation, HV16 virtual timer foundation, and HV19 SBI console mediation foundation. These commands do not imply Linux boot, guest execution, active second-stage translation, H-extension support, full SBI services, timer interrupt injection, or printk support.
+
+### Shell commands
+
+- `hv sbi-dispatch` / `hv-dispatch` / `hv sbi-dispatch status`: print dispatcher owner, state, last request/result metadata, argument registers, target counters, validation/rejection counters, reset count, blockers, and non-claims.
+- `hv sbi-dispatch base-test`: route a modeled SBI base extension request into the HV15 SBI foundation and prove the HV15 request state/counters changed.
+- `hv sbi-dispatch timer-test`: route a modeled SBI timer request into the HV16 virtual timer mediation layer and prove timer metadata/counters changed.
+- `hv sbi-dispatch console-putchar-test`: route a modeled legacy console putchar request into HV19 console mediation and prove the output buffer changes.
+- `hv sbi-dispatch console-getchar-test`: route a modeled legacy console getchar request into HV19 console mediation and prove deterministic no-input metadata.
+- `hv sbi-dispatch unknown-test`: reject an unknown SBI extension ID and increment rejection/unknown counters through the dispatcher.
+- `hv sbi-dispatch unsupported-function-test`: reject an unsupported function ID for a known extension and increment rejection counters.
+- `hv sbi-dispatch validate`: dispatch the current request object or reject deterministically when no request is present.
+- `hv sbi-dispatch blockers`: print deterministic blocker state derived from dispatcher metadata.
+- `hv sbi-dispatch reset`: reset dispatcher state and counters back to an empty object while preserving reset accounting.
+
+### Scripts and validation entries
+
+- `./smoke/smoke-hv-sbi-dispatch-v0.sh`: behavior smoke for HV20; generates `smoke/transcripts/latest-hv-sbi-dispatch-v0.txt` from actual QEMU shell commands.
+- `./scripts/validate-hyperzig.sh`: now includes HV20 as a required smoke milestone and reports its transcript path.
+- `zig build validate-hyperzig`: continues to invoke the canonical validation script, now including HV20.
