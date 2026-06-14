@@ -78,29 +78,31 @@ cd Hyper-Zig
 ```
 
 
-## Current milestone: HV18 Linux Handoff Package Validation Foundation
+## Current milestone: HV19 SBI Console Mediation Foundation
 
-Hyper-Zig currently smoke-proves HV0 through HV18 when the validation ladder passes. HV18 adds a real, stateful Linux-shaped handoff validation package assembled from the existing guest image, HV13 boot package, HV14 DTB contract, HV17 binary FDT encoder, initrd metadata, bootargs, VM/vCPU ownership, guest-entry metadata, SBI foundation metadata, virtual-timer metadata, software stage2 metadata, and guest-memory bounds.
+Hyper-Zig currently smoke-proves HV0 through HV19 when the full validation ladder passes. HV19 adds a real SBI console mediation subsystem connected to the existing HV15 SBI foundation. The subsystem models legacy SBI console requests, records owner VM/vCPU metadata, validates extension/function IDs, appends putchar bytes to a byte-backed output buffer, computes byte-sums from buffered bytes, reports deterministic getchar no-input behavior, rejects invalid and overflow requests, exposes blockers, and resets back to an empty state.
 
 What Hyper-Zig can do today:
 
 - Boot the diagnostic RISC-V kernel under QEMU with Zig 0.14.x.
-- Exercise the existing VM/vCPU, guest-memory, guest-address-space, tiny guest-image, guest-entry metadata, guest-exit metadata, guest-run gate, second-stage metadata, software stage2 table, guest boot package, DTB contract, SBI foundation, virtual timer foundation, binary FDT encoder, and HV18 handoff validation command paths.
+- Exercise the existing VM/vCPU, guest-memory, guest-address-space, tiny guest-image, guest-entry metadata, guest-exit metadata, guest-run gate, second-stage metadata, software stage2 table, guest boot package, DTB contract, SBI foundation, virtual timer foundation, binary FDT encoder, HV18 handoff validation, and HV19 SBI console mediation command paths.
 - Build and validate a minimal binary FDT buffer with `hv fdt build` after preparing HV13/HV14 prerequisites.
-- Assemble and validate a Linux-shaped handoff package with `hv handoff prepare` and `hv handoff validate`, including kernel load/entry GPA, initrd range, FDT metadata/header summary, bootargs, guest PC/SP, owner VM/vCPU, deterministic blockers, counters, and reset behavior.
+- Assemble and validate a Linux-shaped handoff package with `hv handoff prepare` and `hv handoff validate`.
+- Model and mediate future legacy SBI console request metadata with `hv console putchar-test`, `hv console putstring-test`, `hv console getchar-test`, `hv console invalid-test`, `hv console overflow-test`, `hv console validate`, `hv console blockers`, `hv console buffer`, and `hv console reset`.
 
 What Hyper-Zig cannot do today:
 
-- HV18 does not boot Linux.
-- HV18 does not provide Linux guest support.
-- HV18 does not execute guests.
-- HV18 does not activate hardware second-stage translation.
-- HV18 does not write `hgatp`.
-- HV18 does not claim H-extension support.
-- HV18 does not provide full SBI services.
-- HV18 does not inject real timer interrupts.
-- HV18 does not provide Buildroot or Ubuntu boot support.
-- HV18 does not prove the FDT is accepted by Linux yet.
+- HV19 does not boot Linux.
+- HV19 does not provide Linux guest support.
+- HV19 does not execute guests.
+- HV19 does not activate hardware second-stage translation.
+- HV19 does not write `hgatp`.
+- HV19 does not claim H-extension support.
+- HV19 does not provide full SBI services.
+- HV19 does not inject real timer interrupts.
+- HV19 does not provide Buildroot or Ubuntu boot support.
+- HV19 does not prove Linux accepts the FDT.
+- HV19 does not prove `printk` or a real Linux console works.
 
 Exact commands to start:
 
@@ -114,17 +116,18 @@ qemu-system-riscv64 -machine virt -cpu rv64 -smp 1 -m 128M -nographic -monitor n
 Inside the shell, use:
 
 ```text
-hv handoff
-hv handoff prepare
-hv handoff ranges
-hv handoff summary
-hv handoff validate
-hv handoff blockers
-hv handoff overlap-test
-hv handoff bounds-test
-hv handoff missing-fdt-test
-hv handoff missing-bootpkg-test
-hv handoff reset
+hv console
+hv-console
+hv console status
+hv console putchar-test
+hv console putstring-test
+hv console getchar-test
+hv console invalid-test
+hv console overflow-test
+hv console validate
+hv console blockers
+hv console buffer
+hv console reset
 ```
 
 Exact commands to validate:
@@ -132,12 +135,12 @@ Exact commands to validate:
 ```bash
 ./scripts/check-zig-version.sh
 zig build
-./smoke/smoke-hv-linux-handoff-v0.sh
+./smoke/smoke-hv-sbi-console-v0.sh
 ./scripts/validate-hyperzig.sh
 zig build validate-hyperzig
 ```
 
-The next milestone should move toward SBI console mediation, controlled active guest-entry prerequisites, or first guest-instruction infrastructure without claiming Linux support until the behavior is proven.
+The next milestone should move toward controlled active guest-entry prerequisites, SBI dispatch integration, or first guest instruction infrastructure without claiming Linux support until behavior is proven.
 
 ### Verify the toolchain
 

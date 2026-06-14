@@ -17,6 +17,7 @@ const sbi = @import("sbi.zig");
 const virtual_timer = @import("virtual_timer.zig");
 const binary_fdt = @import("binary_fdt.zig");
 const linux_handoff = @import("linux_handoff.zig");
+const sbi_console = @import("sbi_console.zig");
 
 pub fn init() void {
     vm.init();
@@ -36,6 +37,7 @@ pub fn init() void {
     virtual_timer.init(vm.object().id, vcpu.object().id);
     binary_fdt.init(vm.object().id);
     linux_handoff.init(vm.object().id, vcpu.object().id);
+    sbi_console.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -64,13 +66,14 @@ pub fn printStatus() void {
     virtual_timer.printState();
     binary_fdt.printState();
     linux_handoff.printState();
+    sbi_console.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
-    uart.write("hv: virtual_console=MISSING\r\n");
+    uart.write("hv: virtual_console=foundation-mediation-only\r\n");
     uart.write("hv: sbi_layer=foundation-metadata-only\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV19 SBI console mediation or controlled guest-entry prerequisites (no Linux boot claim)\r\n");
+    uart.write("hv: next=controlled active guest-entry prerequisites or SBI dispatch integration (no Linux boot claim)\r\n");
 }
 
 pub fn printCapability() void {
@@ -368,6 +371,17 @@ pub fn blockersSbi() void { sbi.printBlockersCommand(); }
 pub fn baseTestSbi() void { sbi.printBaseTestCommand(); }
 pub fn timerTestSbi() void { sbi.printTimerTestCommand(); }
 pub fn consoleTestSbi() void { sbi.printConsoleTestCommand(); }
+
+pub fn printSbiConsole() void { sbi_console.printStatusCommand(); }
+pub fn validateSbiConsole() void { sbi_console.printValidateCommand(); }
+pub fn blockersSbiConsole() void { sbi_console.printBlockersCommand(); }
+pub fn putcharTestSbiConsole() void { sbi_console.printPutcharTestCommand(); }
+pub fn putstringTestSbiConsole() void { sbi_console.printPutstringTestCommand(); }
+pub fn getcharTestSbiConsole() void { sbi_console.printGetcharTestCommand(); }
+pub fn invalidTestSbiConsole() void { sbi_console.printInvalidTestCommand(); }
+pub fn overflowTestSbiConsole() void { sbi_console.printOverflowTestCommand(); }
+pub fn bufferSbiConsole() void { sbi_console.printBufferCommand(); }
+pub fn resetSbiConsole() void { sbi_console.printResetCommand(); }
 
 pub fn printVirtualTimer() void { virtual_timer.printStatusCommand(); }
 pub fn armVirtualTimer() void { virtual_timer.printArmCommand(); }

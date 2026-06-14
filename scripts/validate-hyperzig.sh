@@ -38,6 +38,7 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv-virtual-timer-v0.sh"
     "smoke/smoke-hv-binary-fdt-v0.sh"
     "smoke/smoke-hv-linux-handoff-v0.sh"
+    "smoke/smoke-hv-sbi-console-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -133,6 +134,7 @@ run_smoke() {
         smoke-hv-virtual-timer-v0) transcript="$ROOT/smoke/transcripts/latest-hv-virtual-timer-v0.txt" ;;
         smoke-hv-binary-fdt-v0) transcript="$ROOT/smoke/transcripts/latest-hv-binary-fdt-v0.txt" ;;
         smoke-hv-linux-handoff-v0) transcript="$ROOT/smoke/transcripts/latest-hv-linux-handoff-v0.txt" ;;
+        smoke-hv-sbi-console-v0) transcript="$ROOT/smoke/transcripts/latest-hv-sbi-console-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"
@@ -236,6 +238,8 @@ HV14_STATUS="$(smoke_status_for smoke/smoke-hv-dtb-contract-v0.sh)"
 HV15_STATUS="$(smoke_status_for smoke/smoke-hv-sbi-foundation-v0.sh)"
 HV16_STATUS="$(smoke_status_for smoke/smoke-hv-virtual-timer-v0.sh)"
 HV17_STATUS="$(smoke_status_for smoke/smoke-hv-binary-fdt-v0.sh)"
+HV18_STATUS="$(smoke_status_for smoke/smoke-hv-linux-handoff-v0.sh)"
+HV19_STATUS="$(smoke_status_for smoke/smoke-hv-sbi-console-v0.sh)"
 OVERALL="PASS"
 REASON="All required checks passed; optional missing items are reported without being counted as PASS."
 if [[ "$(status_for check-zig-version)" != "PASS" ]]; then
@@ -249,8 +253,8 @@ elif [[ $FAIL_COUNT -ne 0 ]]; then
     REASON="One or more required checks or discovered smoke tests failed; inspect blockers and logs."
 fi
 
-CURRENT_MILESTONE="HV17 binary FDT encoder foundation proven when required smoke passes; no Linux boot, no guest execution, no active second-stage translation, no FDT Linux acceptance claim"
-NEXT_MILESTONE="SBI console mediation, controlled active guest-entry prerequisites, or Linux image handoff validation without Linux support claim"
+CURRENT_MILESTONE="HV19 SBI Console Mediation Foundation proven when required smoke passes; no Linux boot, no guest execution, no active second-stage translation, no printk claim"
+NEXT_MILESTONE="controlled active guest-entry prerequisites, SBI dispatch integration, or first guest instruction infrastructure without Linux support claim"
 
 {
 cat <<SUMMARY
@@ -283,6 +287,8 @@ HV14 DTB contract smoke: $HV14_STATUS
 HV15 SBI foundation smoke: $HV15_STATUS
 HV16 virtual timer smoke: $HV16_STATUS
 HV17 binary FDT smoke: $HV17_STATUS
+HV18 Linux handoff smoke: $HV18_STATUS
+HV19 SBI console mediation smoke: $HV19_STATUS
 HV0 PASS: $HV0_STATUS
 HV1 PASS: $HV1_STATUS
 HV2 PASS: $HV2_STATUS
@@ -301,6 +307,8 @@ HV14 DTB contract PASS: $HV14_STATUS
 HV15 SBI foundation PASS: $HV15_STATUS
 HV16 virtual timer PASS: $HV16_STATUS
 HV17 binary FDT PASS: $HV17_STATUS
+HV18 Linux handoff PASS: $HV18_STATUS
+HV19 SBI console mediation PASS: $HV19_STATUS
 VM/vCPU model implemented
 vCPU lifecycle implemented only if smoke passes: $HV3_STATUS
 guest memory object implemented only if smoke passes: $HV4_STATUS
@@ -316,8 +324,8 @@ guest image format: tiny-flat-v0
 guest memory backing: pmm-bitmap-v0
 guest execution still not supported
 Linux guest still not supported
-current milestone: HV17 binary FDT / Device Tree Blob Encoder Foundation
-next milestone: SBI console mediation, controlled active guest-entry prerequisites, or Linux image handoff validation
+current milestone: HV19 SBI Console Mediation Foundation
+next milestone: controlled active guest-entry prerequisites, SBI dispatch integration, or first guest instruction infrastructure
 Overall readiness: $OVERALL
 Reason: $REASON
 
@@ -331,7 +339,7 @@ First-run developer guidance:
   - tail -n 200 logs/latest/validate-hyperzig.log
 
 Current milestone: $CURRENT_MILESTONE
-Next coding target: SBI console mediation, controlled active guest-entry prerequisites, or Linux image handoff validation
+Next coding target: controlled active guest-entry prerequisites, SBI dispatch integration, or first guest instruction infrastructure
 HV2/HV3/HV4/HV5 file map:
   - kernel/hypervisor/vm.zig
   - kernel/hypervisor/vcpu.zig
@@ -408,6 +416,8 @@ printf '  - HV14 DTB contract: %s\n' "$ROOT/smoke/transcripts/latest-hv-dtb-cont
 printf '  - HV15 SBI foundation: %s\n' "$ROOT/smoke/transcripts/latest-hv-sbi-foundation-v0.txt"
 printf '  - HV16 virtual timer: %s\n' "$ROOT/smoke/transcripts/latest-hv-virtual-timer-v0.txt"
 printf '  - HV17 binary FDT: %s\n' "$ROOT/smoke/transcripts/latest-hv-binary-fdt-v0.txt"
+printf '  - HV18 Linux handoff: %s\n' "$ROOT/smoke/transcripts/latest-hv-linux-handoff-v0.txt"
+printf '  - HV19 SBI console mediation: %s\n' "$ROOT/smoke/transcripts/latest-hv-sbi-console-v0.txt"
 printf '\nCompleted milestones/evidence:\n'
 if [[ ${#COMPLETED[@]} -eq 0 ]]; then printf '  - none\n'; else printf '  - %s\n' "${COMPLETED[@]}"; fi
 printf '\nMissing optional smoke tests (MISSING is not PASS):\n'
