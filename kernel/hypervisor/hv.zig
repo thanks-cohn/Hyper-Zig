@@ -16,6 +16,7 @@ const guest_dtb = @import("guest_dtb.zig");
 const sbi = @import("sbi.zig");
 const virtual_timer = @import("virtual_timer.zig");
 const binary_fdt = @import("binary_fdt.zig");
+const linux_handoff = @import("linux_handoff.zig");
 
 pub fn init() void {
     vm.init();
@@ -34,6 +35,7 @@ pub fn init() void {
     sbi.init(vm.object().id, vcpu.object().id);
     virtual_timer.init(vm.object().id, vcpu.object().id);
     binary_fdt.init(vm.object().id);
+    linux_handoff.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -61,13 +63,14 @@ pub fn printStatus() void {
     sbi.printState();
     virtual_timer.printState();
     binary_fdt.printState();
+    linux_handoff.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
     uart.write("hv: virtual_console=MISSING\r\n");
     uart.write("hv: sbi_layer=foundation-metadata-only\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV17 binary FDT encoder foundation (no Linux claim)\r\n");
+    uart.write("hv: next=HV19 SBI console mediation or controlled guest-entry prerequisites (no Linux boot claim)\r\n");
 }
 
 pub fn printCapability() void {
@@ -386,6 +389,18 @@ pub fn checksumBinaryFdt() void { binary_fdt.printChecksumCommand(); }
 pub fn boundsTestBinaryFdt() void { binary_fdt.printBoundsTestCommand(); }
 pub fn missingContractTestBinaryFdt() void { binary_fdt.printMissingContractTestCommand(); }
 pub fn resetBinaryFdt() void { binary_fdt.printResetCommand(); }
+
+pub fn printLinuxHandoff() void { linux_handoff.printState(); }
+pub fn prepareLinuxHandoff() void { linux_handoff.printPrepareCommand(); }
+pub fn validateLinuxHandoff() void { linux_handoff.printValidateCommand(); }
+pub fn blockersLinuxHandoff() void { linux_handoff.printBlockersCommand(); }
+pub fn rangesLinuxHandoff() void { linux_handoff.printRangesCommand(); }
+pub fn summaryLinuxHandoff() void { linux_handoff.printSummaryCommand(); }
+pub fn overlapTestLinuxHandoff() void { linux_handoff.printOverlapTestCommand(); }
+pub fn boundsTestLinuxHandoff() void { linux_handoff.printBoundsTestCommand(); }
+pub fn missingFdtTestLinuxHandoff() void { linux_handoff.printMissingFdtTestCommand(); }
+pub fn missingBootpkgTestLinuxHandoff() void { linux_handoff.printMissingBootpkgTestCommand(); }
+pub fn resetLinuxHandoff() void { linux_handoff.printResetCommand(); }
 
 pub fn printObjects() void {
     printInspect();

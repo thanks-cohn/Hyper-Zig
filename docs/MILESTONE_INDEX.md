@@ -323,3 +323,11 @@ Next milestone after HV12: HV13 Guest Boot Package Contract, still without Linux
 - **Smoke test:** `smoke/smoke-hv-binary-fdt-v0.sh`.
 - **Intentionally missing features:** Linux guest support, guest execution, active hardware second-stage translation, `hgatp` writes, H-extension support claim, full SBI services, timer interrupt injection, Buildroot boot, Ubuntu boot, and proof that Linux accepts the FDT.
 - **Next dependency:** SBI console mediation, controlled active guest-entry prerequisites, or Linux image handoff validation without claiming Linux support.
+
+## HV18 Linux Handoff Package Validation Foundation
+
+- **Purpose:** Assemble a Linux-shaped software handoff package from smoke-proven guest-image, boot-package, DTB contract, binary FDT, initrd, bootargs, VM/vCPU ownership, guest-entry, SBI/timer, software stage2 metadata, and guest-memory bounds.
+- **Commands:** `hv handoff`, `hv-handoff`, `hv handoff status`, `hv handoff prepare`, `hv handoff validate`, `hv handoff blockers`, `hv handoff ranges`, `hv handoff summary`, `hv handoff overlap-test`, `hv handoff bounds-test`, `hv handoff missing-fdt-test`, `hv handoff missing-bootpkg-test`, `hv handoff reset`.
+- **Smoke test:** `smoke/smoke-hv-linux-handoff-v0.sh`.
+- **Intentionally missing features:** Linux guest support, Linux boot, guest execution, active hardware second-stage translation, `hgatp` writes, H-extension support claim, full SBI services, timer interrupt injection, Buildroot boot, Ubuntu boot, and proof that Linux accepts the FDT.
+- **Next dependency:** SBI console mediation, controlled active guest-entry prerequisites, or first guest-instruction infrastructure.

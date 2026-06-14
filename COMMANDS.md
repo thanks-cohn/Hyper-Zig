@@ -325,3 +325,25 @@ HV17 smoke and validation entries:
 - `./smoke/smoke-hv-binary-fdt-v0.sh`: behavior smoke proof with transcript `smoke/transcripts/latest-hv-binary-fdt-v0.txt`.
 - `./scripts/validate-hyperzig.sh`: includes the HV17 smoke in the required validation ladder.
 - `zig build validate-hyperzig`: runs the canonical validation script through the Zig build target.
+
+## HV18 Linux Handoff Package Validation Foundation commands
+
+HV18 adds a stateful Linux-shaped handoff validation package. These commands assemble and validate metadata only; they do **not** boot Linux, execute a guest, write `hgatp`, activate second-stage translation, or prove Linux accepts the FDT.
+
+- `hv handoff`, `hv-handoff`, `hv handoff status`: print current handoff state, ranges, counters, blockers, and non-claims.
+- `hv handoff prepare`: execute the prerequisite ladder (guest memory/image, HV13 boot package, HV14 DTB contract, HV17 binary FDT, guest-entry metadata, SBI/timer metadata, software stage2 metadata) and assemble the handoff package.
+- `hv handoff validate`: validate the current handoff package from actual subsystem state.
+- `hv handoff blockers`: print computed readiness blockers.
+- `hv handoff ranges`: print guest-memory, kernel, initrd, and FDT handoff ranges.
+- `hv handoff summary`: print owner, ranges, FDT header summary, bootargs, guest PC/SP, counters, and readiness.
+- `hv handoff overlap-test`: mutate handoff metadata through Zig logic and prove overlap rejection.
+- `hv handoff bounds-test`: mutate handoff metadata through Zig logic and prove bounds rejection.
+- `hv handoff missing-fdt-test`: reset the HV17 FDT object and prove missing-FDT rejection.
+- `hv handoff missing-bootpkg-test`: reset the HV13 boot package and prove missing-boot-package rejection.
+- `hv handoff reset`: clear the handoff object back to empty/not-ready state.
+
+New script and validation entry:
+
+- `./smoke/smoke-hv-linux-handoff-v0.sh`: behavior smoke for HV18.
+- `./scripts/validate-hyperzig.sh`: now includes `smoke/smoke-hv-linux-handoff-v0.sh` in the required hypervisor ladder.
+- `zig build validate-hyperzig`: runs the canonical validator including HV18.
