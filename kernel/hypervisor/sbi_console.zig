@@ -84,7 +84,6 @@ pub fn reset() void {
 pub fn validate() Result {
     const s = mutable();
     s.validation_count += 1;
-    if (s.state == .rejected and s.last_error != .none) return .rejected;
     if (!s.has_request) return reject(.no_request);
     if (s.last_extension_id != legacy_console_extension_id) return reject(.invalid_extension);
     if (s.last_function_id != legacy_putchar_function_id and s.last_function_id != legacy_getchar_function_id) return reject(.unsupported_function);
@@ -171,7 +170,24 @@ pub fn byteSum() usize {
 pub fn printState() void { printImplementedMarker(); printFields(); printBuffer(); printNonClaims(); }
 pub fn printStatusCommand() void { printState(); }
 pub fn printValidateCommand() void { const r = validate(); printResult("validate_result", r); printFields(); printNonClaims(); }
-pub fn printBlockersCommand() void { const r = validate(); uart.write("hv: console.blocker_count="); uart.writeDec(if (r == .ok) 0 else 1); uart.write("\r\n"); if (r == .ok) uart.write("hv: console.blocker=none\r\n") else { uart.write("hv: console.blocker="); uart.write(errorName(object().last_error)); uart.write("\r\n"); } printNonClaims(); }
+pub fn printBlockersCommand() void {
+    const s = object();
+    const blocker_count: usize = if (s.last_error == .none) 0 else 1;
+
+    uart.write("hv: console.blocker_count=");
+    uart.writeDec(blocker_count);
+    uart.write("\r\n");
+
+    if (s.last_error == .none) {
+        uart.write("hv: console.blocker=none\r\n");
+    } else {
+        uart.write("hv: console.blocker=");
+        uart.write(errorName(s.last_error));
+        uart.write("\r\n");
+    }
+
+    printNonClaims();
+}
 pub fn printPutcharTestCommand() void { const r = recordPutchar('A'); printResult("putchar_test", r); sbi.printStatusCommand(); printFields(); printBuffer(); printNonClaims(); }
 pub fn printPutstringTestCommand() void { for ("Hi!") |ch| { if (recordPutchar(ch) != .ok) break; } uart.write("hv: console.putstring_test=ok\r\n"); sbi.printStatusCommand(); printFields(); printBuffer(); printNonClaims(); }
 pub fn printGetcharTestCommand() void { const r = recordGetchar(); printResult("getchar_test", r); sbi.printStatusCommand(); uart.write("hv: console.getchar_result=no-input\r\n"); printFields(); printNonClaims(); }
