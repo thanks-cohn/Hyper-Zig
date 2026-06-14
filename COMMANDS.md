@@ -440,3 +440,22 @@ HV23 adds a software-only guest-entry assembly preparation object derived from t
 - `./smoke/smoke-hv-entry-stub-v0.sh`: behavior-based HV23 smoke proof with generated transcript at `smoke/transcripts/latest-hv-entry-stub-v0.txt`.
 - `./scripts/validate-hyperzig.sh`: includes `smoke/smoke-hv-entry-stub-v0.sh` in the required hypervisor validation ladder.
 - `zig build validate-hyperzig`: runs the same validation ladder through `build.zig`.
+
+
+## HV24 H-Extension Discovery and Hypervisor CSR Safety commands
+
+- `hv h-ext` / `hv-hext` / `hv h-ext status`: print the current H-extension discovery object state, owner IDs, safety policy, counters, blockers, and non-claims.
+- `hv h-ext discover`: execute the safe discovery path. When no proven safe H-CSR probe exists, it blocks unsafe reads, records `h_extension_status=unknown`, marks H-CSRs as `blocked-by-safety-policy`, and exposes `no-safe-h-csr-probe`.
+- `hv h-ext validate`: validate the discovery object and reject empty or inconsistent state.
+- `hv h-ext blockers`: print deterministic blocker state.
+- `hv h-ext csr-table`: print tracked CSR read statuses for hgatp, hstatus, hedeleg, hideleg, hvip, hie, htval, htinst, vscause, vstval, vsstatus, vstvec, and vsepc.
+- `hv h-ext safety`: print the CSR safety policy and active-stage2 non-claim.
+- `hv h-ext fake-detected-test`: prove unsupported fake detection is rejected.
+- `hv h-ext unsafe-probe-test`: prove unsafe forced probing is rejected.
+- `hv h-ext reset`: reset discovery state to empty.
+
+HV24 validation entries:
+
+- `./smoke/smoke-hv-h-extension-v0.sh`: behavior-based HV24 smoke proof with generated transcript at `smoke/transcripts/latest-hv-h-extension-v0.txt`.
+- `./scripts/validate-hyperzig.sh`: includes `smoke/smoke-hv-h-extension-v0.sh` in the required hypervisor validation ladder.
+- `zig build validate-hyperzig`: runs the same validation ladder through `build.zig`.

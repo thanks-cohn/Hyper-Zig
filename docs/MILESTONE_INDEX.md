@@ -379,3 +379,14 @@ Next milestone after HV12: HV13 Guest Boot Package Contract, still without Linux
 - **Smoke test file:** `smoke/smoke-hv-entry-stub-v0.sh`.
 - **Intentionally missing features:** Linux boot, Linux guest support, guest execution, guest mode entry, first guest instruction execution, trap return execution, active hardware second-stage translation, `hgatp` writes, H-extension support claim, full SBI services, real timer interrupt injection, distro boot, and printk proof.
 - **Next dependency:** active stage2 activation prerequisites, guarded first-instruction infrastructure, or real trap-entry/trap-return assembly preparation with all non-claims intact.
+
+
+## HV24 H-Extension Discovery and Hypervisor CSR Safety Foundation
+
+- **Purpose:** Create a real H-extension discovery and hypervisor CSR safety object without claiming unsupported hardware capability.
+- **Actual capability proven:** The kernel creates, discovers, validates, rejects, and resets an owner-bound H-extension discovery object. It records safe-detection policy, blocks unsafe direct hypervisor CSR reads when no safe probe exists, reports unknown H-extension status honestly, keeps `h_extension_claim=not-claimed`, keeps `hgatp_write=not-attempted`, and exposes deterministic blockers and CSR table statuses.
+- **Key commands added:** `hv h-ext`, `hv-hext`, `hv h-ext status`, `hv h-ext discover`, `hv h-ext validate`, `hv h-ext blockers`, `hv h-ext csr-table`, `hv h-ext safety`, `hv h-ext fake-detected-test`, `hv h-ext unsafe-probe-test`, `hv h-ext reset`.
+- **Smoke test file:** `smoke/smoke-hv-h-extension-v0.sh`.
+- **Transcript:** `smoke/transcripts/latest-hv-h-extension-v0.txt`.
+- **Intentionally missing features:** Linux guest support, Linux boot, guest execution, guest mode entry, first guest instruction execution, trap-return execution, active hardware second-stage translation, `hgatp` writes, unguarded hypervisor CSR reads, H-extension support claims without safe detection, Buildroot/BusyBox/Alpine/Ubuntu boot, and printk proof.
+- **Next dependency:** hgatp payload construction, active stage2 activation prerequisites, guarded first-instruction infrastructure, or real trap-entry/trap-return assembly preparation with all non-claims intact.

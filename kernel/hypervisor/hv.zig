@@ -22,6 +22,7 @@ const sbi_dispatch = @import("sbi_dispatch.zig");
 const guest_context = @import("guest_context.zig");
 const trap_plan = @import("trap_plan.zig");
 const entry_stub = @import("entry_stub.zig");
+const h_extension = @import("h_extension.zig");
 
 pub fn init() void {
     vm.init();
@@ -46,6 +47,7 @@ pub fn init() void {
     guest_context.init(vm.object().id, vcpu.object().id);
     trap_plan.init(vm.object().id, vcpu.object().id);
     entry_stub.init(vm.object().id, vcpu.object().id);
+    h_extension.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -80,6 +82,7 @@ pub fn printStatus() void {
     guest_context.printStatusCommand();
     trap_plan.printStatusCommand();
     entry_stub.printStatusCommand();
+    h_extension.printStatusCommand();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
@@ -89,6 +92,16 @@ pub fn printStatus() void {
     uart.write("hv: next=controlled active guest-entry prerequisites or SBI dispatch integration (no Linux boot claim)\r\n");
 }
 
+
+pub fn printHExtension() void { h_extension.printStatusCommand(); }
+pub fn discoverHExtension() void { h_extension.printDiscoverCommand(); }
+pub fn validateHExtension() void { h_extension.printValidateCommand(); }
+pub fn blockersHExtension() void { h_extension.printBlockersCommand(); }
+pub fn csrTableHExtension() void { h_extension.printCsrTableCommand(); }
+pub fn safetyHExtension() void { h_extension.printSafetyCommand(); }
+pub fn fakeDetectedTestHExtension() void { h_extension.printFakeDetectedTestCommand(); }
+pub fn unsafeProbeTestHExtension() void { h_extension.printUnsafeProbeTestCommand(); }
+pub fn resetHExtension() void { h_extension.printResetCommand(); }
 
 pub fn printEntryStub() void { entry_stub.printStatusCommand(); }
 pub fn prepareEntryStub() void { entry_stub.printPrepareCommand(); }

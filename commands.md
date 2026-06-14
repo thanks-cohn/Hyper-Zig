@@ -157,3 +157,22 @@ HV22 adds a software-only guarded trap-return plan object derived from the HV21 
 - `hv entry-stub reset`
 
 Smoke proof: `./smoke/smoke-hv-entry-stub-v0.sh`. Canonical validation: `./scripts/validate-hyperzig.sh` and `zig build validate-hyperzig`.
+
+
+## HV24 H-Extension Discovery and Hypervisor CSR Safety commands
+
+- `hv h-ext` / `hv-hext` / `hv h-ext status`: print H-extension discovery state, safety policy, counters, blockers, and non-claims.
+- `hv h-ext discover`: run the safe discovery path and block unsafe H-CSR reads when no safe probe exists.
+- `hv h-ext validate`: validate discovered state and reject empty or inconsistent state.
+- `hv h-ext blockers`: print deterministic blocker state.
+- `hv h-ext csr-table`: print tracked hypervisor CSR read statuses.
+- `hv h-ext safety`: print CSR safety policy.
+- `hv h-ext fake-detected-test`: prove fake detection is rejected.
+- `hv h-ext unsafe-probe-test`: prove unsafe forced probing is rejected.
+- `hv h-ext reset`: reset discovery state to empty.
+
+HV24 validation entries:
+
+- `./smoke/smoke-hv-h-extension-v0.sh`: behavior smoke for HV24; generates `smoke/transcripts/latest-hv-h-extension-v0.txt`.
+- `./scripts/validate-hyperzig.sh`: includes HV24 as a required smoke milestone.
+- `zig build validate-hyperzig`: invokes canonical validation including HV24.

@@ -4,14 +4,14 @@ const hyperzig_status_text =
     \\Hyper-Zig developer status
     \\  current project: Hyper-Zig
     \\  Zig target: 0.14.x
-    \\  current proven milestones: HV0 through HV23 when smoke validation passes
-    \\  current milestone: HV23 Guest Entry Assembly Preparation Foundation (no Linux boot, guest execution, guest mode entry, trap return, hgatp write, active stage2, or printk claim)
+    \\  current proven milestones: HV0 through HV24 when smoke validation passes
+    \\  current milestone: HV24 H-Extension Discovery and Hypervisor CSR Safety Foundation (no Linux boot, guest execution, guest mode entry, trap return, hgatp write, active stage2, H-extension support, or printk claim unless safely detected)
     \\  canonical validation command: ./scripts/validate-hyperzig.sh
     \\  no Linux guest support yet
     \\  no guest execution yet
-    \\  no guest mode entry yet; HV23 prepares and validates a software-only entry-stub descriptor derived from HV22 guarded trap-plan metadata
-    \\  no active second-stage translation yet; HV23 records stage2 metadata/table readiness only and keeps active translation forbidden
-    \\  VM/vCPU through HV23 guest-entry assembly preparation foundations are smoke-proven when validation passes
+    \\  no guest mode entry yet; HV24 records safe H-extension discovery state and blocks unsafe hypervisor CSR reads
+    \\  no active second-stage translation yet; HV24 keeps hgatp writes not-attempted and active translation false
+    \\  VM/vCPU through HV24 H-extension CSR safety foundations are smoke-proven when validation passes
     \\  next: read docs/hypervisor/DEVELOPER_START_HERE.md
     \\
 ;
