@@ -347,3 +347,24 @@ New script and validation entry:
 - `./smoke/smoke-hv-linux-handoff-v0.sh`: behavior smoke for HV18.
 - `./scripts/validate-hyperzig.sh`: now includes `smoke/smoke-hv-linux-handoff-v0.sh` in the required hypervisor ladder.
 - `zig build validate-hyperzig`: runs the canonical validator including HV18.
+
+## HV19 SBI Console Mediation Foundation commands
+
+HV19 adds a real byte-backed SBI console mediation object connected to the HV15 SBI foundation. These commands model legacy SBI console metadata and buffering only. They do **not** boot Linux, execute guests, activate second-stage translation, claim full SBI services, implement DBCN, or prove `printk` works.
+
+- `hv console` / `hv-console` / `hv console status`: print owner VM/vCPU IDs, mediation state, last SBI extension/function, last operation/character, counters, output buffer length/capacity/byte-sum, output bytes, deterministic no-input accounting, blockers, and non-claims.
+- `hv console putchar-test`: record one legacy SBI console putchar request through the HV15 SBI path and append `A` to the byte-backed output buffer.
+- `hv console putstring-test`: record multiple putchar operations through the same mediation object and preserve byte order in the output buffer.
+- `hv console getchar-test`: record a legacy SBI console getchar request and return deterministic no-input/unavailable behavior.
+- `hv console invalid-test`: reject unsupported legacy console function metadata and an invalid extension ID.
+- `hv console overflow-test`: fill the real output buffer to capacity and reject the next putchar as overflow.
+- `hv console validate`: validate the current console mediation request state and reject the empty/no-request state deterministically.
+- `hv console blockers`: report deterministic blockers for the current mediation state.
+- `hv console buffer`: inspect the current output buffer, length, capacity, and byte-sum computed from buffered bytes.
+- `hv console reset`: clear buffered bytes and counters back to empty state while incrementing/reset-reporting reset generation honestly.
+
+Validation additions:
+
+- `./smoke/smoke-hv-sbi-console-v0.sh`: behavior smoke for HV19; writes `smoke/transcripts/latest-hv-sbi-console-v0.txt` from executed QEMU shell commands.
+- `./scripts/validate-hyperzig.sh`: now includes the HV19 SBI console smoke in the required validation ladder.
+- `zig build validate-hyperzig`: runs the canonical validation script, including HV19, through the build graph.
