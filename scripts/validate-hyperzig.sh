@@ -44,6 +44,10 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv-trap-plan-v0.sh"
     "smoke/smoke-hv-entry-stub-v0.sh"
     "smoke/smoke-hv-h-extension-v0.sh"
+    "smoke/smoke-hv25-hgatp-lifecycle-v0.sh"
+    "smoke/smoke-hv25-hgatp-derivation-v0.sh"
+    "smoke/smoke-hv25-stage2-plan-v0.sh"
+    "smoke/smoke-hv25-negative-invariants-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"

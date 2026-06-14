@@ -23,6 +23,8 @@ const guest_context = @import("guest_context.zig");
 const trap_plan = @import("trap_plan.zig");
 const entry_stub = @import("entry_stub.zig");
 const h_extension = @import("h_extension.zig");
+const hgatp_candidate = @import("hgatp_candidate.zig");
+const stage2_activation_plan = @import("stage2_activation_plan.zig");
 
 pub fn init() void {
     vm.init();
@@ -48,6 +50,8 @@ pub fn init() void {
     trap_plan.init(vm.object().id, vcpu.object().id);
     entry_stub.init(vm.object().id, vcpu.object().id);
     h_extension.init(vm.object().id, vcpu.object().id);
+    hgatp_candidate.init(vm.object().id, vcpu.object().id);
+    stage2_activation_plan.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -83,6 +87,8 @@ pub fn printStatus() void {
     trap_plan.printStatusCommand();
     entry_stub.printStatusCommand();
     h_extension.printStatusCommand();
+    hgatp_candidate.printStatusCommand();
+    stage2_activation_plan.printStatusCommand();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
@@ -92,6 +98,51 @@ pub fn printStatus() void {
     uart.write("hv: next=controlled active guest-entry prerequisites or SBI dispatch integration (no Linux boot claim)\r\n");
 }
 
+
+fn prepareHv25Prereqs() void {
+    _ = guest_memory.configureDefault();
+    _ = guest_address_space.ensureCreatedWithGuestMemory();
+    _ = second_stage.configureFromCurrentGuest();
+    _ = stage2_table.buildFromSecondStageMetadata();
+    _ = h_extension.discoverSafe();
+    _ = h_extension.validate();
+}
+
+pub fn printHgatp() void { hgatp_candidate.printStatusCommand(); }
+pub fn buildHgatp() void { prepareHv25Prereqs(); hgatp_candidate.printBuildCommand(); }
+pub fn validateHgatp() void { hgatp_candidate.printValidateCommand(); }
+pub fn blockersHgatp() void { hgatp_candidate.printBlockersCommand(); }
+pub fn fieldsHgatp() void { hgatp_candidate.printFieldsCommand(); }
+pub fn candidateHgatp() void { hgatp_candidate.printCandidateCommand(); }
+pub fn checksumHgatp() void { hgatp_candidate.printChecksumCommand(); }
+pub fn resetHgatp() void { hgatp_candidate.printResetCommand(); }
+pub fn hgatpLifecycleInvariant() void { _=hgatp_candidate.reset(); const r0=hgatp_candidate.validate(); prepareHv25Prereqs(); const r1=hgatp_candidate.build(); const b=hgatp_candidate.object().build_count; const cs=hgatp_candidate.object().checksum; const r2=hgatp_candidate.validate(); const v=hgatp_candidate.object().validate_count; const pass = r0==.rejected and r1==.ok and r2==.ok and b>0 and v>0 and cs!=0; uart.write("hv: hv25.hgatp.lifecycle_invariant="); uart.write(if(pass) "ok" else "rejected"); uart.write("\r\n"); hgatp_candidate.printStatusCommand(); }
+pub fn hgatpDerivationInvariant() void { prepareHv25Prereqs(); _=hgatp_candidate.build(); const a=hgatp_candidate.object().value; const c=hgatp_candidate.object().checksum; const b=hgatp_candidate.mutateVmid(2); const d=hgatp_candidate.object().checksum; const e=hgatp_candidate.mutateRootPpn(1); const f=hgatp_candidate.object().checksum; const pass = a!=b and b!=e and c!=d and d!=f; uart.write("hv: hv25.hgatp.derivation_invariant="); uart.write(if(pass) "ok" else "rejected"); uart.write("\r\n"); hgatp_candidate.printStatusCommand(); }
+pub fn hgatpCorruptionInvariant() void { prepareHv25Prereqs(); const r1=hgatp_candidate.corruptMode(); const e1=hgatp_candidate.object().last_error; prepareHv25Prereqs(); const r2=hgatp_candidate.corruptPpn(); const e2=hgatp_candidate.object().last_error; prepareHv25Prereqs(); const r3=hgatp_candidate.corruptVmid(); const e3=hgatp_candidate.object().last_error; const pass = r1==.rejected and e1==.invalid_mode and r2==.rejected and e2==.ppn_misaligned and r3==.rejected and e3==.invalid_vmid; uart.write("hv: hv25.hgatp.corruption_invariant="); uart.write(if(pass) "ok" else "rejected"); uart.write("\r\n"); hgatp_candidate.printStatusCommand(); }
+
+pub fn printStage2Plan() void { stage2_activation_plan.printStatusCommand(); }
+pub fn buildStage2Plan() void { prepareHv25Prereqs(); _=hgatp_candidate.build(); _=hgatp_candidate.validate(); stage2_activation_plan.printBuildCommand(); }
+pub fn validateStage2Plan() void { stage2_activation_plan.printValidateCommand(); }
+pub fn blockersStage2Plan() void { stage2_activation_plan.printBlockersCommand(); }
+pub fn nextStage2Plan() void { stage2_activation_plan.printNextCommand(); }
+pub fn checksumStage2Plan() void { stage2_activation_plan.printChecksumCommand(); }
+pub fn resetStage2Plan() void { stage2_activation_plan.printResetCommand(); }
+pub fn stage2PlanLifecycleInvariant() void { _=stage2_activation_plan.reset(); const r0=stage2_activation_plan.validate(); prepareHv25Prereqs(); _=hgatp_candidate.build(); _=hgatp_candidate.validate(); const r1=stage2_activation_plan.build(); const c=stage2_activation_plan.object().checksum; const r2=stage2_activation_plan.validate(); const pass=r0==.rejected and r1==.ok and r2==.ok and c!=0; uart.write("hv: hv25.stage2_plan.lifecycle_invariant="); uart.write(if(pass) "ok" else "rejected"); uart.write("\r\n"); stage2_activation_plan.printStatusCommand(); }
+pub fn stage2PlanConsumptionInvariant() void { prepareHv25Prereqs(); _=hgatp_candidate.build(); _=hgatp_candidate.validate(); _=stage2_activation_plan.build(); const c1=stage2_activation_plan.object().checksum; _=hgatp_candidate.mutateVmid(3); _=hgatp_candidate.validate(); _=stage2_activation_plan.build(); const c2=stage2_activation_plan.object().checksum; const pass=c1!=0 and c2!=0 and c1!=c2 and stage2_activation_plan.object().hgatp_checksum==hgatp_candidate.object().checksum; uart.write("hv: hv25.stage2_plan.consumption_invariant="); uart.write(if(pass) "ok" else "rejected"); uart.write("\r\n"); stage2_activation_plan.printStatusCommand(); }
+pub fn stage2PlanCorruptionInvariant() void { prepareHv25Prereqs(); _=hgatp_candidate.build(); _=hgatp_candidate.validate(); const r1=stage2_activation_plan.removeHgatp(); const e1=stage2_activation_plan.object().last_error; prepareHv25Prereqs(); _=hgatp_candidate.build(); _=hgatp_candidate.validate(); const r2=stage2_activation_plan.removeTable(); const e2=stage2_activation_plan.object().last_error; prepareHv25Prereqs(); _=hgatp_candidate.build(); _=hgatp_candidate.validate(); const r3=stage2_activation_plan.markActiveStage2(); const e3=stage2_activation_plan.object().last_error; const pass=r1==.rejected and e1==.require_hgatp and r2==.rejected and e2==.require_table and r3==.rejected and e3==.active_stage2_forbidden; uart.write("hv: hv25.stage2_plan.corruption_invariant="); uart.write(if(pass) "ok" else "rejected"); uart.write("\r\n"); stage2_activation_plan.printStatusCommand(); }
+pub fn hv25InvariantAll() void { hgatpLifecycleInvariant(); hgatpDerivationInvariant(); hgatpCorruptionInvariant(); stage2PlanLifecycleInvariant(); stage2PlanConsumptionInvariant(); stage2PlanCorruptionInvariant(); }
+pub fn hgatpRequireHextTest() void { prepareHv25Prereqs(); hgatp_candidate.printNegativeResult("require_hext_test", hgatp_candidate.removeHext()); }
+pub fn hgatpModeTest() void { prepareHv25Prereqs(); hgatp_candidate.printNegativeResult("mode_test", hgatp_candidate.corruptMode()); }
+pub fn hgatpPpnAlignmentTest() void { prepareHv25Prereqs(); hgatp_candidate.printNegativeResult("ppn_alignment_test", hgatp_candidate.corruptPpn()); }
+pub fn hgatpVmidBoundsTest() void { prepareHv25Prereqs(); hgatp_candidate.printNegativeResult("vmid_bounds_test", hgatp_candidate.corruptVmid()); }
+pub fn hgatpWriteAttemptTest() void { prepareHv25Prereqs(); hgatp_candidate.printNegativeResult("write_attempt_test", hgatp_candidate.markWriteAttempt()); }
+pub fn hgatpActiveStage2Test() void { prepareHv25Prereqs(); hgatp_candidate.printNegativeResult("active_stage2_test", hgatp_candidate.markActiveStage2()); }
+pub fn stage2PlanRequireHgatpTest() void { prepareHv25Prereqs(); stage2_activation_plan.printNegativeResult("require_hgatp_test", stage2_activation_plan.removeHgatp()); }
+pub fn stage2PlanRequireStage2Test() void { prepareHv25Prereqs(); _=hgatp_candidate.build(); _=hgatp_candidate.validate(); stage2_activation_plan.printNegativeResult("require_stage2_test", stage2_activation_plan.removeStage2()); }
+pub fn stage2PlanRequireTableTest() void { prepareHv25Prereqs(); _=hgatp_candidate.build(); _=hgatp_candidate.validate(); stage2_activation_plan.printNegativeResult("require_table_test", stage2_activation_plan.removeTable()); }
+pub fn stage2PlanRequireCsrSafetyTest() void { prepareHv25Prereqs(); _=hgatp_candidate.build(); _=hgatp_candidate.validate(); stage2_activation_plan.printNegativeResult("require_csr_safety_test", stage2_activation_plan.removeCsrSafety()); }
+pub fn stage2PlanActiveStage2Test() void { prepareHv25Prereqs(); _=hgatp_candidate.build(); _=hgatp_candidate.validate(); stage2_activation_plan.printNegativeResult("active_stage2_test", stage2_activation_plan.markActiveStage2()); }
+pub fn stage2PlanWriteAttemptTest() void { prepareHv25Prereqs(); _=hgatp_candidate.build(); _=hgatp_candidate.validate(); stage2_activation_plan.printNegativeResult("write_attempt_test", stage2_activation_plan.markWriteAttempt()); }
 
 pub fn printHExtension() void { h_extension.printStatusCommand(); }
 pub fn discoverHExtension() void { h_extension.printDiscoverCommand(); }

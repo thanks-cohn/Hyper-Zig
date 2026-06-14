@@ -37,9 +37,9 @@ The intended end state is a real Zig/RISC-V hypervisor path toward Linux guests.
 
 ## Current Status
 
-Current milestone: **HV24 H-Extension Discovery and Hypervisor CSR Safety Foundation**
+Current milestone: **HV25 HGATP Candidate Payload and Stage2 Activation Plan Foundation**
 
-Hyper-Zig currently smoke-proves HV0 through HV24 when the full validation ladder passes.
+Hyper-Zig currently smoke-proves HV0 through HV25 when the full validation ladder passes.
 
 Today Hyper-Zig can:
 
@@ -165,6 +165,39 @@ qemu-system-riscv64 \
 > The `ZIG` environment variable must point to a real Zig 0.14.x compiler.
 >
 > Do not leave it as a placeholder path such as `/path/to/zig-0.14.x/zig`.
+
+
+## HV25 HGATP Candidate and Stage2 Activation Plan Commands
+
+HV25 adds executable, software-only HGATP candidate payload and stage2 activation-plan subsystems. They consume existing VM/vCPU state, guest memory/address-space state, stage2 metadata, stage2 software table metadata, H-extension discovery state, and CSR safety state. HV25 does not write `hgatp`, activate hardware second-stage translation, enter guest mode, execute guest instructions, execute trap return, or claim Linux support.
+
+```text
+hv hgatp
+hv-hgatp
+hv hgatp build
+hv hgatp validate
+hv hgatp invariant-lifecycle-test
+hv hgatp invariant-derivation-test
+hv hgatp invariant-corruption-test
+hv stage2-plan
+hv-stage2-plan
+hv stage2-plan build
+hv stage2-plan validate
+hv stage2-plan invariant-lifecycle-test
+hv stage2-plan invariant-consumption-test
+hv stage2-plan invariant-corruption-test
+hv hv25 invariant-all
+```
+
+Validate HV25 directly:
+
+```bash
+zig build
+./smoke/smoke-hv25-hgatp-lifecycle-v0.sh
+./smoke/smoke-hv25-hgatp-derivation-v0.sh
+./smoke/smoke-hv25-stage2-plan-v0.sh
+./smoke/smoke-hv25-negative-invariants-v0.sh
+```
 
 ## HV24 H-Extension Discovery Commands
 
