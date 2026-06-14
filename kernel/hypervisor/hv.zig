@@ -15,6 +15,7 @@ const boot_package = @import("boot_package.zig");
 const guest_dtb = @import("guest_dtb.zig");
 const sbi = @import("sbi.zig");
 const virtual_timer = @import("virtual_timer.zig");
+const binary_fdt = @import("binary_fdt.zig");
 
 pub fn init() void {
     vm.init();
@@ -32,6 +33,7 @@ pub fn init() void {
     guest_dtb.init(vm.object().id);
     sbi.init(vm.object().id, vcpu.object().id);
     virtual_timer.init(vm.object().id, vcpu.object().id);
+    binary_fdt.init(vm.object().id);
 }
 
 pub fn printStatus() void {
@@ -58,13 +60,14 @@ pub fn printStatus() void {
     guest_dtb.printState();
     sbi.printState();
     virtual_timer.printState();
+    binary_fdt.printState();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
     uart.write("hv: virtual_console=MISSING\r\n");
     uart.write("hv: sbi_layer=foundation-metadata-only\r\n");
     uart.write("hv: virtio_for_linux=MISSING\r\n");
-    uart.write("hv: next=HV16 virtual timer/SBI mediation prerequisites (no Linux claim)\r\n");
+    uart.write("hv: next=HV17 binary FDT encoder foundation (no Linux claim)\r\n");
 }
 
 pub fn printCapability() void {
@@ -352,6 +355,7 @@ pub fn printInspect() void {
     guest_dtb.printState();
     sbi.printState();
     virtual_timer.printState();
+    binary_fdt.printState();
 }
 
 pub fn printSbi() void { sbi.printStatusCommand(); }
@@ -370,6 +374,18 @@ pub fn pendingTestVirtualTimer() void { virtual_timer.printPendingTestCommand();
 pub fn sbiSetTestVirtualTimer() void { virtual_timer.printSbiSetTestCommand(); }
 pub fn invalidTestVirtualTimer() void { virtual_timer.printInvalidTestCommand(); }
 pub fn resetVirtualTimer() void { virtual_timer.printResetCommand(); }
+
+
+pub fn printBinaryFdt() void { binary_fdt.printState(); }
+pub fn buildBinaryFdt() void { binary_fdt.printBuildCommand(); }
+pub fn validateBinaryFdt() void { binary_fdt.printValidateCommand(); }
+pub fn headerBinaryFdt() void { binary_fdt.printHeaderCommand(); }
+pub fn nodesBinaryFdt() void { binary_fdt.printNodesCommand(); }
+pub fn stringsBinaryFdt() void { binary_fdt.printStringsCommand(); }
+pub fn checksumBinaryFdt() void { binary_fdt.printChecksumCommand(); }
+pub fn boundsTestBinaryFdt() void { binary_fdt.printBoundsTestCommand(); }
+pub fn missingContractTestBinaryFdt() void { binary_fdt.printMissingContractTestCommand(); }
+pub fn resetBinaryFdt() void { binary_fdt.printResetCommand(); }
 
 pub fn printObjects() void {
     printInspect();

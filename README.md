@@ -77,6 +77,64 @@ git clone https://github.com/thanks-cohn/Hyper-Zig.git
 cd Hyper-Zig
 ```
 
+
+## Current milestone: HV17 Binary FDT / Device Tree Blob Encoder Foundation
+
+Hyper-Zig currently smoke-proves HV0 through HV17 when the validation ladder passes. HV17 prepares a byte-backed binary Flattened Device Tree encoder foundation for future Linux handoff work. It derives from the HV14 DTB contract and can encode a minimal in-memory FDT-shaped buffer with a real header, reservation block, structure block, strings block, root node, memory node, CPU node, chosen node, bootargs, optional initrd metadata, deterministic counters, validation blockers, reset behavior, and checksum proof.
+
+What Hyper-Zig can do today:
+
+- Boot the diagnostic RISC-V kernel under QEMU with Zig 0.14.x.
+- Exercise the existing VM/vCPU, guest-memory, guest-address-space, tiny guest-image, guest-entry metadata, guest-exit metadata, guest-run gate, second-stage metadata, software stage2 table, guest boot package, DTB contract, SBI foundation, virtual timer foundation, and HV17 binary FDT encoder command paths.
+- Build and validate a minimal binary FDT buffer with `hv fdt build` after preparing HV13/HV14 prerequisites.
+
+What Hyper-Zig cannot do today:
+
+- HV17 does not boot Linux.
+- HV17 does not execute guests.
+- HV17 does not activate hardware second-stage translation.
+- HV17 does not write `hgatp`.
+- HV17 does not prove the FDT is accepted by Linux yet.
+- HV17 does not provide Buildroot or Ubuntu boot support.
+
+Exact commands to start:
+
+```bash
+export ZIG=/path/to/zig-0.14.x/zig
+./scripts/check-zig-version.sh
+zig build
+qemu-system-riscv64 -machine virt -cpu rv64 -smp 1 -m 128M -nographic -monitor none -serial stdio -kernel zig-out/bin/zign01d-v0
+```
+
+Inside the shell, use:
+
+```text
+hv bootpkg attach-kernel
+hv bootpkg set-cmdline root=/dev/ram0 console=hvc0 earlycon
+hv bootpkg set-entry
+hv bootpkg attach-initrd
+hv bootpkg validate
+hv dtb build
+hv fdt build
+hv fdt validate
+hv fdt header
+hv fdt nodes
+hv fdt strings
+hv fdt checksum
+```
+
+Exact commands to validate:
+
+```bash
+./scripts/check-zig-version.sh
+zig build
+./smoke/smoke-hv-binary-fdt-v0.sh
+./scripts/validate-hyperzig.sh
+zig build validate-hyperzig
+```
+
+The next milestone should move toward SBI console mediation, controlled active guest-entry prerequisites, or Linux image handoff validation without claiming Linux support.
+
 ### Verify the toolchain
 
 ```bash

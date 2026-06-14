@@ -314,3 +314,12 @@ Next milestone after HV12: HV13 Guest Boot Package Contract, still without Linux
 - **Transcript:** `smoke/transcripts/latest-hv-virtual-timer-v0.txt`.
 - **Intentionally missing features:** Linux guest support, guest execution, active second-stage translation, `hgatp` writes, real timer interrupt injection, H-extension support claims, and full SBI service implementation.
 - **Next dependency:** SBI console mediation, binary FDT, or controlled active guest-entry prerequisites.
+
+## HV17 Binary FDT / Device Tree Blob Encoder Foundation
+
+- **Purpose:** turn the HV14 DTB contract into an executable binary Flattened Device Tree encoder foundation for future Linux handoff work.
+- **Actual capability proven:** the kernel builds a byte-backed FDT-shaped buffer with header, reservation block, structure block, strings block, BEGIN_NODE/PROP/END_NODE/END tokens, copied bootargs, guest-memory metadata, CPU metadata, chosen-node metadata, initrd metadata when present, computed offsets/sizes, counters, validation blockers, reset behavior, and checksum proof.
+- **Commands:** `hv fdt`, `hv-fdt`, `hv fdt status`, `hv fdt build`, `hv fdt validate`, `hv fdt header`, `hv fdt nodes`, `hv fdt strings`, `hv fdt checksum`, `hv fdt bounds-test`, `hv fdt missing-contract-test`, `hv fdt reset`.
+- **Smoke test:** `smoke/smoke-hv-binary-fdt-v0.sh`.
+- **Intentionally missing features:** Linux guest support, guest execution, active hardware second-stage translation, `hgatp` writes, H-extension support claim, full SBI services, timer interrupt injection, Buildroot boot, Ubuntu boot, and proof that Linux accepts the FDT.
+- **Next dependency:** SBI console mediation, controlled active guest-entry prerequisites, or Linux image handoff validation without claiming Linux support.
