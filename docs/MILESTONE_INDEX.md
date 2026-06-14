@@ -399,3 +399,7 @@ Next milestone after HV12: HV13 Guest Boot Package Contract, still without Linux
 - **Smoke test files:** `smoke/smoke-hv25-hgatp-lifecycle-v0.sh`, `smoke/smoke-hv25-hgatp-derivation-v0.sh`, `smoke/smoke-hv25-stage2-plan-v0.sh`, and `smoke/smoke-hv25-negative-invariants-v0.sh`.
 - **Intentionally missing features:** Linux guest support, Linux boot, BusyBox boot, Alpine boot, guest execution, guest mode entry, first guest instruction execution, trap-return execution, active hardware second-stage translation, `hgatp` writes, H-extension support claims without safe detection, and printk proof.
 - **Next dependency:** guarded HGATP write preflight with a no-write dry-run path, hardware CSR fault-recovery probe infrastructure, or active stage2 activation guard design while preserving all non-claims.
+
+## HV26 - Guarded Guest Entry Infrastructure and Trap Return Frame Foundation
+
+HV26 adds executable, software-only Guest Entry Frame, Trap Return Frame, First Instruction Readiness Plan, and invariant harness modules. The milestone consumes the HV25 HGATP candidate and stage2 activation-plan checksums rather than duplicating them, and QEMU smoke tests verify mutation and rejection behavior. HV26 does not enter guest mode, execute guest instructions, execute trap return, write HGATP, or activate second-stage translation.

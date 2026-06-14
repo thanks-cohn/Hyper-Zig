@@ -337,3 +337,19 @@ The goal is to build a readable, verifiable hypervisor path in Zig:
 ## Historical Notes
 
 Older milestone writeups for HV7 through HV16 described important steps in the ladder, but they are now superseded by the HV24 status above. The implementation history remains visible through tags, transcripts, validation logs, and milestone documentation. The README now keeps the front door focused on what Hyper-Zig is, why it matters, how to run it, what is proven today, and what remains unclaimed.
+
+## HV26: Guarded Guest Entry Infrastructure and Trap Return Frame Foundation
+
+HV26 adds software-only executable infrastructure that reduces the gap to a future guarded guest-entry attempt without entering guest mode. It builds a typed Guest Entry Frame, a typed Trap Return Frame, and a First Instruction Readiness Plan from existing hypervisor state. The new chain consumes the real HV25 HGATP candidate and stage2 activation-plan checksums, plus guest-context and frame checksums, and invariant commands prove those consumed checksums affect downstream frame or plan checksums.
+
+HV26 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute trap return, write HGATP, activate second-stage translation, or prove active virtualization. It preserves `guest_entered=false`, `guest_instruction_executed=false`, `trap_return_executed=false`, `hgatp_written=false`, and `active_stage2=false` in the new HV26 command outputs.
+
+HV26 smoke coverage:
+
+```bash
+./smoke/smoke-hv26-guest-entry-frame-v0.sh
+./smoke/smoke-hv26-trap-return-frame-v0.sh
+./smoke/smoke-hv26-first-instruction-plan-v0.sh
+./smoke/smoke-hv26-negative-invariants-v0.sh
+./smoke/smoke-hv26-entry-infrastructure-v0.sh
+```

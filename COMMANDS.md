@@ -472,3 +472,20 @@ Stage2 plan commands: `hv stage2-plan`, `hv-stage2-plan`, `hv stage2-plan status
 Invariant commands: `hv hgatp invariant-lifecycle-test`, `hv hgatp invariant-derivation-test`, `hv hgatp invariant-corruption-test`, `hv stage2-plan invariant-lifecycle-test`, `hv stage2-plan invariant-consumption-test`, `hv stage2-plan invariant-corruption-test`, `hv hv25 invariant-all`.
 
 Negative invariant commands cover missing H-extension, invalid mode, PPN alignment, VMID bounds, write-attempt, active-stage2, missing HGATP, missing stage2 metadata, missing table metadata, and missing CSR safety paths.
+
+## HV26 guarded guest entry infrastructure
+
+New software-only commands:
+- `hv guest-entry` / `hv-guest-entry`, `hv guest-entry build`, `validate`, `blockers`, `fields`, `registers`, `checksum`, `reset`.
+- `hv trap-return` / `hv-trap-return`, `hv trap-return build`, `validate`, `blockers`, `fields`, `checksum`, `reset`.
+- `hv first-instruction` / `hv-first-instruction`, `hv first-instruction build`, `validate`, `blockers`, `next`, `chain`, `checksum`, `reset`.
+- HV26 invariant commands: `hv guest-entry invariant-lifecycle-test`, `hv guest-entry invariant-mutation-test`, `hv trap-return invariant-lifecycle-test`, `hv trap-return invariant-mutation-test`, `hv first-instruction invariant-consumption-test`, `hv first-instruction invariant-corruption-test`, `hv hv26 invariant-hv25-consumption-test`, and `hv hv26 invariant-all`.
+
+New required smoke tests:
+- `./smoke/smoke-hv26-guest-entry-frame-v0.sh`
+- `./smoke/smoke-hv26-trap-return-frame-v0.sh`
+- `./smoke/smoke-hv26-first-instruction-plan-v0.sh`
+- `./smoke/smoke-hv26-negative-invariants-v0.sh`
+- `./smoke/smoke-hv26-entry-infrastructure-v0.sh`
+
+HV26 remains software-only: it does not enter a guest, execute guest instructions, perform trap return, write HGATP, or activate second-stage translation.

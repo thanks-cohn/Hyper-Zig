@@ -48,6 +48,11 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv25-hgatp-derivation-v0.sh"
     "smoke/smoke-hv25-stage2-plan-v0.sh"
     "smoke/smoke-hv25-negative-invariants-v0.sh"
+    "smoke/smoke-hv26-guest-entry-frame-v0.sh"
+    "smoke/smoke-hv26-trap-return-frame-v0.sh"
+    "smoke/smoke-hv26-first-instruction-plan-v0.sh"
+    "smoke/smoke-hv26-negative-invariants-v0.sh"
+    "smoke/smoke-hv26-entry-infrastructure-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"

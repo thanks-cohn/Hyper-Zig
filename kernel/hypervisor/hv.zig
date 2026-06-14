@@ -25,6 +25,10 @@ const entry_stub = @import("entry_stub.zig");
 const h_extension = @import("h_extension.zig");
 const hgatp_candidate = @import("hgatp_candidate.zig");
 const stage2_activation_plan = @import("stage2_activation_plan.zig");
+const guest_entry_frame = @import("guest_entry_frame.zig");
+const trap_return_frame = @import("trap_return_frame.zig");
+const first_instruction_plan = @import("first_instruction_plan.zig");
+const hv26_invariants = @import("hv26_invariants.zig");
 
 pub fn init() void {
     vm.init();
@@ -52,6 +56,9 @@ pub fn init() void {
     h_extension.init(vm.object().id, vcpu.object().id);
     hgatp_candidate.init(vm.object().id, vcpu.object().id);
     stage2_activation_plan.init(vm.object().id, vcpu.object().id);
+    guest_entry_frame.init(vm.object().id, vcpu.object().id);
+    trap_return_frame.init(vm.object().id, vcpu.object().id);
+    first_instruction_plan.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -657,3 +664,57 @@ fn printNonClaims() void {
     uart.write("hv: second_stage_translation=MISSING\r\n");
 }
 
+
+pub fn printGuestEntryFrame() void { guest_entry_frame.printStatusCommand(); }
+pub fn buildGuestEntryFrame() void { guest_entry_frame.printBuildCommand(); }
+pub fn validateGuestEntryFrame() void { guest_entry_frame.printValidateCommand(); }
+pub fn blockersGuestEntryFrame() void { guest_entry_frame.printBlockersCommand(); }
+pub fn fieldsGuestEntryFrame() void { guest_entry_frame.printFieldsCommand(); }
+pub fn registersGuestEntryFrame() void { guest_entry_frame.printRegistersCommand(); }
+pub fn checksumGuestEntryFrame() void { guest_entry_frame.printChecksumCommand(); }
+pub fn resetGuestEntryFrame() void { guest_entry_frame.printResetCommand(); }
+pub fn gefLifecycle() void { _ = hv26_invariants.guestEntryLifecycle(); }
+pub fn gefMutation() void { _ = hv26_invariants.guestEntryMutation(); }
+pub fn gefRequireActivation() void { guest_entry_frame.printTest("require_activation_plan_test", guest_entry_frame.missingActivationPlan()); }
+pub fn gefRequireContext() void { guest_entry_frame.printTest("require_context_test", guest_entry_frame.missingContext()); }
+pub fn gefPcMutation() void { _=guest_entry_frame.build(); const before=guest_entry_frame.object().checksum; const after=guest_entry_frame.mutatePc(); uart.write("hv: guest_entry_frame.pc_mutation_test=ok\r\n"); uart.write("hv: guest_entry_frame.before_checksum="); uart.writeHex(before); uart.write("\r\nhv: guest_entry_frame.after_checksum="); uart.writeHex(after); uart.write("\r\n"); }
+pub fn gefSpMutation() void { _=guest_entry_frame.build(); const before=guest_entry_frame.object().checksum; const after=guest_entry_frame.mutateSp(); uart.write("hv: guest_entry_frame.sp_mutation_test=ok\r\n"); uart.write("hv: guest_entry_frame.before_checksum="); uart.writeHex(before); uart.write("\r\nhv: guest_entry_frame.after_checksum="); uart.writeHex(after); uart.write("\r\n"); }
+pub fn gefRegisterCorruption() void { guest_entry_frame.printTest("register_corruption_test", guest_entry_frame.corruptRegister()); }
+pub fn gefGuestEntered() void { guest_entry_frame.printTest("guest_entered_test", guest_entry_frame.markGuestEntered()); }
+pub fn gefInstruction() void { guest_entry_frame.printTest("instruction_executed_test", guest_entry_frame.markInstruction()); }
+pub fn printTrapReturnFrame() void { trap_return_frame.printStatusCommand(); }
+pub fn buildTrapReturnFrame() void { trap_return_frame.printBuildCommand(); }
+pub fn validateTrapReturnFrame() void { trap_return_frame.printValidateCommand(); }
+pub fn blockersTrapReturnFrame() void { trap_return_frame.printBlockersCommand(); }
+pub fn fieldsTrapReturnFrame() void { trap_return_frame.printFieldsCommand(); }
+pub fn checksumTrapReturnFrame() void { trap_return_frame.printChecksumCommand(); }
+pub fn resetTrapReturnFrame() void { trap_return_frame.printResetCommand(); }
+pub fn trfLifecycle() void { _ = hv26_invariants.trapLifecycle(); }
+pub fn trfMutation() void { _ = hv26_invariants.trapMutation(); }
+pub fn trfRequireEntry() void { trap_return_frame.printTest("require_entry_frame_test", trap_return_frame.missingEntry()); }
+pub fn trfRequireCsr() void { trap_return_frame.printTest("require_csr_safety_test", trap_return_frame.missingCsr()); }
+pub fn trfRequireHext() void { trap_return_frame.printTest("require_hext_test", trap_return_frame.missingHext()); }
+pub fn trfSepc() void { trap_return_frame.printTest("sepc_corruption_test", trap_return_frame.corruptSepc()); }
+pub fn trfStatus() void { trap_return_frame.printTest("status_corruption_test", trap_return_frame.corruptStatus()); }
+pub fn trfExecuted() void { trap_return_frame.printTest("executed_test", trap_return_frame.markExecuted()); }
+pub fn printFirstInstructionPlan() void { first_instruction_plan.printStatusCommand(); }
+pub fn buildFirstInstructionPlan() void { first_instruction_plan.printBuildCommand(); }
+pub fn validateFirstInstructionPlan() void { first_instruction_plan.printValidateCommand(); }
+pub fn blockersFirstInstructionPlan() void { first_instruction_plan.printBlockersCommand(); }
+pub fn nextFirstInstructionPlan() void { first_instruction_plan.printNextCommand(); }
+pub fn chainFirstInstructionPlan() void { first_instruction_plan.printChainCommand(); }
+pub fn checksumFirstInstructionPlan() void { first_instruction_plan.printChecksumCommand(); }
+pub fn resetFirstInstructionPlan() void { first_instruction_plan.printResetCommand(); }
+pub fn fipConsumption() void { _=hv26_invariants.firstConsumption(); }
+pub fn fipCorruption() void { _=hv26_invariants.firstCorruption(); }
+pub fn hv26Hv25Consumption() void { _=hv26_invariants.hv25Consumption(); }
+pub fn hv26All() void { hv26_invariants.allInvariants(); }
+pub fn fipRequireHgatp() void { first_instruction_plan.printTest("require_hgatp_test", first_instruction_plan.missingHgatp()); }
+pub fn fipRequireActivation() void { first_instruction_plan.printTest("require_activation_plan_test", first_instruction_plan.missingActivation()); }
+pub fn fipRequireEntry() void { first_instruction_plan.printTest("require_entry_frame_test", first_instruction_plan.missingEntry()); }
+pub fn fipRequireTrap() void { first_instruction_plan.printTest("require_trap_return_frame_test", first_instruction_plan.missingTrap()); }
+pub fn fipGuest() void { first_instruction_plan.printTest("guest_entered_test", first_instruction_plan.markGuest()); }
+pub fn fipInstruction() void { first_instruction_plan.printTest("instruction_executed_test", first_instruction_plan.markInstruction()); }
+pub fn fipTrap() void { first_instruction_plan.printTest("trap_return_executed_test", first_instruction_plan.markTrap()); }
+pub fn fipStage2() void { first_instruction_plan.printTest("active_stage2_test", first_instruction_plan.markStage2()); }
+pub fn fipHgatpWritten() void { first_instruction_plan.printTest("hgatp_written_test", first_instruction_plan.markHgatpWritten()); }
