@@ -297,7 +297,6 @@ The goal is to build a readable, verifiable hypervisor path in Zig:
 4. State exactly what works and what does not.
 5. Move to the next milestone.
 
-That is the Hyper-Zig standard: no placeholder code, no fake implementations, no status-only milestones, and no claims without executing proof.
 
 ## Useful Files
 
