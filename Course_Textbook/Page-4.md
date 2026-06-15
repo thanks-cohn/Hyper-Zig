@@ -540,41 +540,315 @@ fn printNonClaims() void {
 12. Invalid operations are rejected instead of silently accepted.
 
 13. The module records failures instead of hiding them.
-```
+````markdown
+```text
 Section: 4C
+Module: Guest Memory
 Type: Exercise
+Source: guest_memory.zig
 ```
-
 
 # Guest Memory
 
 ### The Exercise
 
-In HV03 you built a vCPU lifecycle.
+In HV03, you built a vCPU lifecycle.
 
-Now you will build a Guest Memory object.
+Now you will build a small Guest Memory model in C.
 
 The goal is not to build Linux.
 
 The goal is not to build a real allocator.
 
-The goal is to model ownership and memory management.
+The goal is to rebuild the ideas from the Hyper-Zig module in a smaller form:
+
+- ownership
+- configuration state
+- page count
+- byte size
+- allocation
+- freeing
+- invalid access rejection
+- failure counters
+
+A VM now has a CPU.
+
+This exercise gives that VM memory.
+
+Not magical memory.
+
+Managed memory.
+
+Memory with rules.
 
 ### Concepts Required
 
-- Structures
-- Enumerations
-- Arrays
-- State
-- Ownership
-- Validation
-- Counters
+- `struct`
+- `enum`
+- global state
+- function return values
+- counters
+- bounds checks
+- basic failure handling
+
+### C Skeleton
+
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+#define PAGE_SIZE 4096
+#define MAX_GUEST_PAGES 8
+
+typedef unsigned int VmId;
+
+typedef enum
+{
+    GUEST_MEMORY_NOT_CONFIGURED,
+    GUEST_MEMORY_CONFIGURED
+} GuestMemoryState;
+
+typedef enum
+{
+    GUEST_MEMORY_ERROR_NONE,
+    GUEST_MEMORY_ERROR_ALREADY_CONFIGURED,
+    GUEST_MEMORY_ERROR_NOT_CONFIGURED,
+    GUEST_MEMORY_ERROR_INVALID_PAGE_COUNT,
+    GUEST_MEMORY_ERROR_DOUBLE_FREE,
+    GUEST_MEMORY_ERROR_OUT_OF_BOUNDS
+} GuestMemoryError;
+
+typedef enum
+{
+    GUEST_MEMORY_OK,
+    GUEST_MEMORY_REJECTED
+} GuestMemoryResult;
+
+typedef struct
+{
+    VmId owner_vm_id;
+
+    GuestMemoryState state;
+
+    size_t page_count;
+
+    size_t size_bytes;
+
+    unsigned long alloc_count;
+
+    unsigned long free_count;
+
+    unsigned long failed_allocation_count;
+
+    unsigned long invalid_free_count;
+
+    unsigned long bounds_reject_count;
+
+    GuestMemoryError last_error;
+} GuestMemory;
+
+static GuestMemory guest_memory;
+
+void guest_memory_init(VmId owner_vm_id)
+{
+    guest_memory.owner_vm_id = owner_vm_id;
+    guest_memory.state = GUEST_MEMORY_NOT_CONFIGURED;
+    guest_memory.page_count = 0;
+    guest_memory.size_bytes = 0;
+
+    guest_memory.alloc_count = 0;
+    guest_memory.free_count = 0;
+    guest_memory.failed_allocation_count = 0;
+    guest_memory.invalid_free_count = 0;
+    guest_memory.bounds_reject_count = 0;
+
+    guest_memory.last_error = GUEST_MEMORY_ERROR_NONE;
+}
+
+GuestMemoryResult guest_memory_configure(size_t requested_pages)
+{
+    /*
+        TODO:
+
+        Reject this operation if memory is already configured.
+
+        Reject this operation if requested_pages is 0.
+
+        Reject this operation if requested_pages is greater than
+        MAX_GUEST_PAGES.
+
+        If accepted:
+
+        - set state to GUEST_MEMORY_CONFIGURED
+        - set page_count
+        - set size_bytes
+        - increment alloc_count
+        - clear last_error
+    */
+
+    return GUEST_MEMORY_REJECTED;
+}
+
+GuestMemoryResult guest_memory_free(void)
+{
+    /*
+        TODO:
+
+        Reject this operation if memory is not configured.
+
+        If rejected:
+
+        - increment invalid_free_count
+        - set last_error to GUEST_MEMORY_ERROR_DOUBLE_FREE
+
+        If accepted:
+
+        - set state to GUEST_MEMORY_NOT_CONFIGURED
+        - clear page_count
+        - clear size_bytes
+        - increment free_count
+        - clear last_error
+    */
+
+    return GUEST_MEMORY_REJECTED;
+}
+
+GuestMemoryResult guest_memory_validate_access(
+    size_t offset,
+    size_t length)
+{
+    /*
+        TODO:
+
+        Reject this operation if memory is not configured.
+
+        Reject this operation if length is 0.
+
+        Reject this operation if offset is outside the configured memory.
+
+        Reject this operation if offset + length goes past size_bytes.
+
+        If rejected:
+
+        - increment bounds_reject_count
+        - set last_error to the appropriate error
+
+        If accepted:
+
+        - clear last_error
+    */
+
+    return GUEST_MEMORY_REJECTED;
+}
+
+const char *guest_memory_state_name(GuestMemoryState state)
+{
+    switch (state)
+    {
+        case GUEST_MEMORY_NOT_CONFIGURED:
+            return "not-configured";
+
+        case GUEST_MEMORY_CONFIGURED:
+            return "configured";
+    }
+
+    return "unknown";
+}
+
+const char *guest_memory_error_name(GuestMemoryError error)
+{
+    switch (error)
+    {
+        case GUEST_MEMORY_ERROR_NONE:
+            return "none";
+
+        case GUEST_MEMORY_ERROR_ALREADY_CONFIGURED:
+            return "already-configured";
+
+        case GUEST_MEMORY_ERROR_NOT_CONFIGURED:
+            return "not-configured";
+
+        case GUEST_MEMORY_ERROR_INVALID_PAGE_COUNT:
+            return "invalid-page-count";
+
+        case GUEST_MEMORY_ERROR_DOUBLE_FREE:
+            return "double-free";
+
+        case GUEST_MEMORY_ERROR_OUT_OF_BOUNDS:
+            return "out-of-bounds";
+    }
+
+    return "unknown";
+}
+
+void guest_memory_print(void)
+{
+    printf("guest_memory.owner_vm_id=%u\n", guest_memory.owner_vm_id);
+    printf("guest_memory.state=%s\n",
+        guest_memory_state_name(guest_memory.state));
+    printf("guest_memory.page_count=%zu\n", guest_memory.page_count);
+    printf("guest_memory.size_bytes=%zu\n", guest_memory.size_bytes);
+    printf("guest_memory.alloc_count=%lu\n", guest_memory.alloc_count);
+    printf("guest_memory.free_count=%lu\n", guest_memory.free_count);
+    printf("guest_memory.failed_allocation_count=%lu\n",
+        guest_memory.failed_allocation_count);
+    printf("guest_memory.invalid_free_count=%lu\n",
+        guest_memory.invalid_free_count);
+    printf("guest_memory.bounds_reject_count=%lu\n",
+        guest_memory.bounds_reject_count);
+    printf("guest_memory.last_error=%s\n",
+        guest_memory_error_name(guest_memory.last_error));
+}
+
+int main(void)
+{
+    guest_memory_init(0);
+
+    /*
+        TODO:
+
+        1. Configure guest memory with 2 pages.
+
+        2. Validate an access inside the memory.
+
+        3. Validate an access outside the memory.
+
+        4. Free the memory.
+
+        5. Try to free it again.
+
+        6. Print the final state.
+    */
+
+    return 0;
+}
+
+````
+
+### Required Behavior
+
+Your C version should reject:
+
+- configuring memory twice
+- configuring zero pages
+- configuring more than `MAX_GUEST_PAGES`
+- freeing memory before it is configured
+- freeing memory twice
+- accessing memory before it is configured
+- zero-length accesses
+- accesses beyond `size_bytes`
+
+Your C version should accept:
+
+- a valid page count
+- a valid access inside memory
+- a valid free after configuration
 
 ### Questions
 
 1.
 
-Why does Guest Memory need an owner_vm_id?
+Why does Guest Memory need an `owner_vm_id`?
 
 What could go wrong if memory had no owner?
 
@@ -594,113 +868,69 @@ configured
 
 3.
 
-Create a function:
+Why is `page_count = 0` rejected?
 
-```c
-int configure_memory(
-    unsigned int page_count
-);
-```
-
-Requirements:
-
-- Reject page_count = 0
-- Reject page_count > 8
-- Accept valid values
+What does zero pages mean for a guest?
 
 4.
 
-Create a function:
+Why does the model track both:
 
-```c
-int free_memory(void);
+```text
+page_count
 ```
 
-Requirements:
+and
 
-- Reject double free
-- Return memory to not-configured
+```text
+size_bytes
+```
+
+?
 
 5.
 
-Create a function:
-
-```c
-int validate_access(
-    unsigned int offset,
-    unsigned int length
-);
-```
-
-Requirements:
-
-- Reject out-of-bounds access
-- Reject zero-length access
+Why should a second call to `guest_memory_free()` be rejected?
 
 6.
 
-Add counters:
-
-- alloc_count
-- free_count
-- invalid_free_count
-- bounds_reject_count
-
-When should each counter increase?
+Why should a zero-length access be rejected?
 
 7.
 
-What is rollback?
+Why should invalid operations update counters instead of silently failing?
 
-Suppose four pages are requested.
+8.
 
-The first three succeed.
-
-The fourth fails.
-
-What should happen to the first three?
-
-Why?
+What does this exercise teach that a plain array would not teach?
 
 ### Challenge Question
 
-Which is more dangerous?
+Suppose the real Hyper-Zig module asks the physical memory manager for four pages.
 
-A memory allocation that fails safely.
+The first three allocations succeed.
 
-or
+The fourth allocation fails.
 
-A memory allocation that partially succeeds and leaves resources behind.
-
-Explain why.
-
-### Practical Challenge
-
-Draw the lifecycle of Guest Memory.
-
-Start with:
-
-```text
-not-configured
-```
-
-Then show:
-
-```text
-configure
-↓
-configured
-↓
-free
-↓
-not-configured
-```
-
-Now add every failure path.
-
-Which operations should be rejected?
+What should happen to the first three pages?
 
 Why?
+
+### Completion Check
+
+Before moving to HV05, make sure you can explain:
+
+- what Guest Memory is
+- why memory belongs to a VM
+- why memory starts unconfigured
+- why page limits exist
+- why invalid accesses are rejected
+- why double-free is rejected
+- why failure counters are useful
+```
+````
+
+
 
 ```
 Section: 4D
