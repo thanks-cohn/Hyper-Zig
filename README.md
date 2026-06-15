@@ -37,9 +37,9 @@ The intended end state is a real Zig/RISC-V hypervisor path toward Linux guests.
 
 ## Current Status
 
-Current milestone: **HV25 Software HGATP Candidate Foundation**
+Current milestone: **HV26 External-State HGATP Activation Readiness Observer**
 
-Hyper-Zig currently smoke-proves HV0 through HV25 when the full validation ladder passes.
+Hyper-Zig currently smoke-proves HV0 through HV26 when the full validation ladder passes.
 
 Today Hyper-Zig can:
 
@@ -61,6 +61,11 @@ Today Hyper-Zig can:
 - Build a software-only HGATP candidate derived from existing Hyper-Zig VM, vCPU, guest address-space, second-stage metadata, software stage-2 table, and H-extension CSR safety state.
 - Validate HGATP candidate mode, VMID, root PPN, source presence, and safety flags.
 - Compute a deterministic HGATP candidate checksum and provide mutation/corruption tests while preserving `hgatp_write_attempted=false` and `active_stage2=false` as software policy fields.
+- Build a software-only HGATP activation readiness observer.
+- Consume existing HV24/HV25/stage2 state without manufacturing prerequisite state.
+- Compute HGATP activation readiness blockers, next action, and checksum.
+- Prove source integrity by comparing prerequisite source fingerprints before and after observation.
+- Preserve `hgatp_write_attempted=false` and `active_stage2=false` as non-claim policy fields.
 - Produce logs and transcripts that prove the behavior above.
 
 Today Hyper-Zig does **not**:
@@ -74,11 +79,19 @@ Today Hyper-Zig does **not**:
 - Write `hgatp`.
 - Activate second-stage translation.
 - Prove active virtualization.
+- Treat HGATP activation readiness as an HGATP write, active translation event, guest entry event, or guest execution proof.
 - Claim RISC-V H-extension support unless a safe executed detection path proves it.
 - Provide full SBI services.
 - Inject real timer interrupts into a running guest.
 - Boot Buildroot, BusyBox, Alpine, Ubuntu, or any other Linux distribution.
 - Provide production isolation or production virtualization.
+
+
+## HV26 External-State HGATP Activation Readiness Observer
+
+HV26 builds a software-only readiness observer that consumes existing HV24 H-extension/CSR-safety state, HV25 HGATP candidate state, second-stage metadata, software stage2-table state, VM state, and vCPU state. It computes source presence, source validity, source fingerprints, blockers, next action, a readiness checksum, and the readiness state. It proves source integrity by comparing prerequisite source fingerprints before and after observation, and it preserves `hgatp_write_attempted=false` and `active_stage2=false` as non-claim policy fields.
+
+HV26 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute a trap return, write `hgatp`, activate second-stage translation, or prove active virtualization. Readiness acceptance means only that the observer consumed live prerequisite state, found the structural source fields present, saw no source mutation during observation, saw no HGATP write attempt, and saw no active stage2 state.
 
 ## Quick Start (Fresh Machine)
 

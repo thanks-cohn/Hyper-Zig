@@ -24,6 +24,7 @@ const trap_plan = @import("trap_plan.zig");
 const entry_stub = @import("entry_stub.zig");
 const h_extension = @import("h_extension.zig");
 const hgatp_candidate = @import("hgatp_candidate.zig");
+const hgatp_readiness = @import("hgatp_activation_readiness.zig");
 
 pub fn init() void {
     vm.init();
@@ -50,6 +51,7 @@ pub fn init() void {
     entry_stub.init(vm.object().id, vcpu.object().id);
     h_extension.init(vm.object().id, vcpu.object().id);
     hgatp_candidate.init(vm.object().id, vcpu.object().id);
+    hgatp_readiness.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -86,6 +88,7 @@ pub fn printStatus() void {
     entry_stub.printStatusCommand();
     h_extension.printStatusCommand();
     hgatp_candidate.printStatusCommand();
+    hgatp_readiness.printStatusCommand();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
@@ -95,6 +98,27 @@ pub fn printStatus() void {
     uart.write("hv: next=controlled active guest-entry prerequisites or SBI dispatch integration (no Linux boot claim)\r\n");
 }
 
+
+
+pub fn printHgatpReadiness() void { hgatp_readiness.printStatusCommand(); }
+pub fn buildHgatpReadiness() void { hgatp_readiness.printBuildCommand(); }
+pub fn validateHgatpReadiness() void { hgatp_readiness.printValidateCommand(); }
+pub fn blockersHgatpReadiness() void { hgatp_readiness.printBlockersCommand(); }
+pub fn nextHgatpReadiness() void { hgatp_readiness.printNextCommand(); }
+pub fn checksumHgatpReadiness() void { hgatp_readiness.printChecksumCommand(); }
+pub fn resetHgatpReadiness() void { hgatp_readiness.printResetCommand(); }
+pub fn invariantLifecycleTestHgatpReadiness() void { hgatp_readiness.printInvariantLifecycleCommand(); }
+pub fn invariantConsumptionTestHgatpReadiness() void { hgatp_readiness.printInvariantConsumptionCommand(); }
+pub fn invariantCorruptionTestHgatpReadiness() void { hgatp_readiness.printInvariantCorruptionCommand(); }
+pub fn requireCandidateTestHgatpReadiness() void { hgatp_readiness.printRequireCandidateTestCommand(); }
+pub fn invalidCandidateTestHgatpReadiness() void { hgatp_readiness.printInvalidCandidateTestCommand(); }
+pub fn requireStage2TestHgatpReadiness() void { hgatp_readiness.printRequireStage2TestCommand(); }
+pub fn requireTableTestHgatpReadiness() void { hgatp_readiness.printRequireTableTestCommand(); }
+pub fn requireHextTestHgatpReadiness() void { hgatp_readiness.printRequireHextTestCommand(); }
+pub fn requireCsrSafetyTestHgatpReadiness() void { hgatp_readiness.printRequireCsrSafetyTestCommand(); }
+pub fn writeAttemptTestHgatpReadiness() void { hgatp_readiness.printWriteAttemptTestCommand(); }
+pub fn activeStage2TestHgatpReadiness() void { hgatp_readiness.printActiveStage2TestCommand(); }
+pub fn sourceIntegrityTestHgatpReadiness() void { hgatp_readiness.printSourceIntegrityTestCommand(); }
 
 pub fn printHgatpCandidate() void { hgatp_candidate.printStatusCommand(); }
 pub fn buildHgatpCandidate() void { hgatp_candidate.printBuildCommand(); }
