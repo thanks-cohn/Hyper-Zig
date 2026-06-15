@@ -17,20 +17,80 @@
 
 # Hyper-Zig
 
+Build a Hypervisor.
+Understand a Hypervisor.
+Watch a Hypervisor Come Into Existence.
+
 Hyper-Zig is a proof-driven RISC-V hypervisor project written in Zig.
 
-It is not a Linux host yet. It is not a production hypervisor yet. It is a deliberately incremental hypervisor laboratory that builds the pieces required for Linux guest boot one proven milestone at a time.
+Its goal is simple and ambitious:
+
+Create a complete, understandable path from a tiny educational kernel to Linux guest boot.
+
+Most operating systems are too large to study completely.
+
+Most hypervisors are too complex to understand from the beginning.
+
+Hyper-Zig is an attempt to bridge that gap.
+
+The project is being built in public as both a serious hypervisor effort and a living record of how virtualization systems are constructed. Every subsystem, milestone, validation, failure, and success is preserved so readers can follow the entire journey from VM creation to guest execution.
+
+Hyper-Zig is one of a small handful of serious Zig hypervisor projects aiming at real guest-boot capability instead of toy status output. It is not trying to look finished before it is finished. It is trying to make every step toward real virtualization visible, testable, and understandable.
+
+Today Hyper-Zig has completed more than thirty consecutive hypervisor milestones.
+
+It already contains:
+
+- VM infrastructure.
+- vCPU infrastructure.
+- Guest memory systems.
+- Guest address-space management.
+- Guest image loading.
+- Guest boot package construction.
+- DTB/FDT handoff preparation.
+- SBI foundations.
+- SBI console and dispatch foundations.
+- Virtual timer prerequisites.
+- Linux-shaped handoff validation objects.
+- Guest exit accounting.
+- Trap planning infrastructure.
+- H-extension discovery.
+- Hypervisor CSR safety infrastructure.
+- HGATP candidate derivation.
+- Guarded HGATP write planning.
+- Guarded HGATP write gating.
+- Hardware-facing HGATP boundary preparation.
+- HGATP CSR result and fault accounting.
+
+Tomorrow it aims for:
+
+- Safe hardware-backed `hgatp` write activation.
+- Second-stage translation activation.
+- Guest-mode entry.
+- First real guest traps.
+- BusyBox boot.
+- Alpine boot.
+- Linux guest boot.
+
+The promise of Hyper-Zig is not merely the destination.
+
+The promise is that every step toward that destination is visible, reproducible, and understandable.
+
+## What Hyper-Zig Is
+
+Hyper-Zig is a deliberately incremental hypervisor laboratory that builds the pieces required for Linux guest boot one proven milestone at a time.
+
+It is not a Linux host yet. It is not a production hypervisor yet. It does not claim guest execution before guest execution is real.
 
 The long-term target is Linux guest boot capability. The deeper purpose is to become one of the clearest public references for how modern virtualization works from first principles.
 
-Most mature hypervisors are too large to learn from easily. Hyper-Zig is built in the open as a readable ladder: VM objects, vCPUs, guest memory, guest address spaces, guest images, boot contracts, FDT/DTB handoff, SBI foundations, virtual timer metadata, stage-2 translation metadata, trap plans, and guest-entry preparation.
-
+Most mature hypervisors are too large to learn from easily. Hyper-Zig is built in the open as a readable ladder: VM objects, vCPUs, guest memory, guest address spaces, guest images, boot contracts, FDT/DTB handoff, SBI foundations, virtual timer metadata, stage-2 translation metadata, trap plans, hypervisor CSR handling, and guest-entry preparation.
 
 ## Why Hyper-Zig Exists
 
 Hyper-Zig exists because virtualization should be readable, inspectable, and teachable without being fake.
 
-The project is advancing toward Linux guest boot through real hypervisor development, each milestone must add observable behavior, validation output, or execution evidence.
+The project is advancing toward Linux guest boot through real hypervisor development. Each milestone must add observable behavior, validation output, or execution evidence.
 
 The result is not just a kernel. It is a public construction path for a RISC-V hypervisor: small enough to study, strict enough to trust, and ambitious enough to grow toward real Linux guest execution.
 
