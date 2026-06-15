@@ -357,3 +357,11 @@ The goal is to build a readable, verifiable hypervisor path in Zig:
 ## Historical Notes
 
 Older milestone writeups for HV7 through HV16 described important steps in the ladder, but they are now superseded by the HV24 status above. The implementation history remains visible through tags, transcripts, validation logs, and milestone documentation. The README now keeps the front door focused on what Hyper-Zig is, why it matters, how to run it, what is proven today, and what remains unclaimed.
+
+## HV32: Guarded HGATP CSR Result/Fault Accounting Foundation
+
+HV32 adds a guarded HGATP CSR result/fault accounting object. It builds `kernel/hypervisor/hgatp_csr_result.zig`, consumes existing HV31 CSR interface state, classifies the current path as denied/not-called, exposes empty future fault slots, exposes readback-not-attempted slots, and proves source integrity with before/after fingerprints.
+
+HV32 preserves these non-claim fields as false in the current policy: `csr_write_function_called=false`, `raw_asm_called=false`, `hgatp_write_attempted=false`, `hgatp_write_performed=false`, `active_stage2=false`, `guest_entered=false`, and `first_guest_instruction_executed=false`.
+
+HV32 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute trap return, write HGATP, observe a real fault, perform readback, activate second-stage translation, or prove active virtualization.

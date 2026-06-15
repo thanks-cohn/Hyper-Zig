@@ -644,3 +644,39 @@ HV31 adds a guarded HGATP CSR interface object that consumes the existing HV30 w
 * `hv hgatp-csr-interface invariant-corruption-test` proves HV31-local corruption paths reject as expected.
 
 HV31 does not boot Linux, boot BusyBox, boot Alpine, enter guest mode, execute guest instructions, execute trap return, write HGATP, or activate second-stage translation.
+
+## HV32 Guarded HGATP CSR Result/Fault Accounting
+
+New HV32 shell commands:
+
+- `hv hgatp-csr-result`
+- `hv-hgatp-csr-result`
+- `hv hgatp-csr-result status`
+- `hv hgatp-csr-result build`
+- `hv hgatp-csr-result validate`
+- `hv hgatp-csr-result blockers`
+- `hv hgatp-csr-result next`
+- `hv hgatp-csr-result checksum`
+- `hv hgatp-csr-result reset`
+- `hv hgatp-csr-result fields`
+- `hv hgatp-csr-result observation`
+- `hv hgatp-csr-result trap-slot`
+- `hv hgatp-csr-result readback`
+- `hv hgatp-csr-result decision`
+- `hv hgatp-csr-result require-interface-test`
+- `hv hgatp-csr-result invalid-interface-test`
+- `hv hgatp-csr-result source-integrity-test`
+- `hv hgatp-csr-result request-value-test`
+- `hv hgatp-csr-result csr-called-test`
+- `hv hgatp-csr-result raw-asm-called-test`
+- `hv hgatp-csr-result write-attempted-test`
+- `hv hgatp-csr-result write-performed-test`
+- `hv hgatp-csr-result fake-fault-test`
+- `hv hgatp-csr-result fake-readback-test`
+- `hv hgatp-csr-result active-stage2-test`
+- `hv hgatp-csr-result guest-entered-test`
+- `hv hgatp-csr-result first-instruction-test`
+- `hv hgatp-csr-result invariant-consumption-test`
+- `hv hgatp-csr-result invariant-corruption-test`
+
+HV32 consumes the already-built HV31 CSR interface and records denied/not-called result accounting, empty trap slots, and readback-not-attempted slots. It does not perform an HGATP write or readback.
