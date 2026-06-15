@@ -46,6 +46,8 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv-h-extension-v0.sh"
     "smoke/smoke-hv25-hgatp-candidate-v0.sh"
     "smoke/smoke-hv25-hgatp-negative-v0.sh"
+    "smoke/smoke-hv26-hgatp-readiness-v0.sh"
+    "smoke/smoke-hv26-hgatp-readiness-negative-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -149,6 +151,8 @@ run_smoke() {
         smoke-hv-h-extension-v0) transcript="$ROOT/smoke/transcripts/latest-hv-h-extension-v0.txt" ;;
         smoke-hv25-hgatp-candidate-v0) transcript="$ROOT/smoke/transcripts/latest-hv25-hgatp-candidate-v0.txt" ;;
         smoke-hv25-hgatp-negative-v0) transcript="$ROOT/smoke/transcripts/latest-hv25-hgatp-negative-v0.txt" ;;
+        smoke-hv26-hgatp-readiness-v0) transcript="$ROOT/smoke/transcripts/latest-hv26-hgatp-readiness-v0.txt" ;;
+        smoke-hv26-hgatp-readiness-negative-v0) transcript="$ROOT/smoke/transcripts/latest-hv26-hgatp-readiness-negative-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"

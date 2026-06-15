@@ -482,3 +482,30 @@ HV25 adds a software-only HGATP candidate object. These commands build, validate
 - `hv hgatp active-stage2-test`: mark a software active-stage2 flag and print the blocker recorded by validation.
 
 Smoke proof: `./smoke/smoke-hv25-hgatp-candidate-v0.sh` and `./smoke/smoke-hv25-hgatp-negative-v0.sh`.
+
+
+## HV26 External-State HGATP Activation Readiness Observer Commands
+
+HV26 adds a software-only readiness observer in `kernel/hypervisor/hgatp_activation_readiness.zig`. It consumes existing VM, vCPU, HV25 HGATP candidate, second-stage metadata, software stage2 table, and HV24 H-extension/CSR-safety state. It computes source presence, source validity, source fingerprints, blockers, next action, checksum, readiness state, and non-claim policy fields without building, validating, resetting, repairing, or mutating prerequisite subsystems. These commands do not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute a trap return, write `hgatp`, activate second-stage translation, or prove active virtualization.
+
+- `hv hgatp-readiness` / `hv-hgatp-readiness` / `hv hgatp-readiness status`: print the current readiness observer state, counters, blocker, source summary, source fingerprint checksums, and non-claim policy.
+- `hv hgatp-readiness build`: observe existing prerequisite state, capture source fingerprints before and after observation, compute readiness and next action, and reject if the observed source fingerprint changes.
+- `hv hgatp-readiness validate`: validate only the readiness object; it does not validate prerequisite subsystems.
+- `hv hgatp-readiness blockers`: print the current readiness blocker and blocker count.
+- `hv hgatp-readiness next`: print the computed next action.
+- `hv hgatp-readiness checksum`: print the deterministic readiness checksum.
+- `hv hgatp-readiness reset`: reset only the readiness observer object.
+- `hv hgatp-readiness invariant-lifecycle-test`: run readiness object lifecycle invariants.
+- `hv hgatp-readiness invariant-consumption-test`: prove readiness observes the current HV25 candidate checksum rather than inventing one.
+- `hv hgatp-readiness invariant-corruption-test`: run readiness-local corruption rejection invariants.
+- `hv hgatp-readiness require-candidate-test`: corrupt only the readiness-local candidate-present observation and print the resulting blocker.
+- `hv hgatp-readiness invalid-candidate-test`: corrupt only the readiness-local candidate-valid observation and print the resulting blocker.
+- `hv hgatp-readiness require-stage2-test`: corrupt only the readiness-local second-stage metadata observation and print the resulting blocker.
+- `hv hgatp-readiness require-table-test`: corrupt only the readiness-local software stage2 table observation and print the resulting blocker.
+- `hv hgatp-readiness require-hext-test`: corrupt only the readiness-local H-extension discovery observation and print the resulting blocker.
+- `hv hgatp-readiness require-csr-safety-test`: corrupt only the readiness-local CSR-safety observation and print the resulting blocker.
+- `hv hgatp-readiness write-attempt-test`: corrupt only the readiness-local HGATP-write-attempt observation and print the resulting blocker.
+- `hv hgatp-readiness active-stage2-test`: corrupt only the readiness-local active-stage2 observation and print the resulting blocker.
+- `hv hgatp-readiness source-integrity-test`: corrupt only the readiness-local source-fingerprint-unchanged observation and print the resulting blocker.
+
+Smoke proof: `./smoke/smoke-hv26-hgatp-readiness-v0.sh` and `./smoke/smoke-hv26-hgatp-readiness-negative-v0.sh`.
