@@ -594,3 +594,25 @@ HV29 adds a software-only HGATP hardware-facing write-boundary object. The bound
 - `hv hgatp-write-boundary active-stage2-test`: corrupt the local active-stage2 observation.
 
 Smoke proof: `./smoke/smoke-hv29-hgatp-write-boundary-v0.sh` and `./smoke/smoke-hv29-hgatp-write-boundary-negative-v0.sh`.
+
+## HV30 Guarded HGATP Write Attempt commands
+
+HV30 adds a software-only guarded HGATP write-attempt object. The attempt consumes externally produced HV29 write-boundary state, fingerprints the HV29 checksum, HV29 request checksum, HV29 request value, HV29 ready flag, HV29 boundary state, VM ID, and vCPU ID before and after observation, constructs a denied attempt request, and stops before any CSR write function can be called. It does not write `hgatp`, activate second-stage translation, enter a guest, execute guest instructions, execute trap return, or boot any guest OS.
+
+- `hv hgatp-write-attempt` / `hv-hgatp-write-attempt` / `hv hgatp-write-attempt status`: print attempt status, HV29 source observations, request policy fields, and blocker.
+- `hv hgatp-write-attempt build`: observe current HV29 write-boundary state and build only the HV30 write-attempt object.
+- `hv hgatp-write-attempt validate`: validate only the existing write-attempt object.
+- `hv hgatp-write-attempt blockers`: print the current deterministic blocker.
+- `hv hgatp-write-attempt next`: print the next action implied by the blocker.
+- `hv hgatp-write-attempt checksum`: print the attempt checksum.
+- `hv hgatp-write-attempt reset`: reset only the attempt object.
+- `hv hgatp-write-attempt fields`: print observed HV29 boundary fields and source fingerprints.
+- `hv hgatp-write-attempt request`: print attempt request checksum and no-CSR/no-write/no-activation policy fields.
+- `hv hgatp-write-attempt decision`: print the software-only denial decision.
+- `hv hgatp-write-attempt require-boundary-test`: corrupt the local boundary-present observation.
+- `hv hgatp-write-attempt source-integrity-test`: corrupt the local source-fingerprint comparison.
+- `hv hgatp-write-attempt request-value-test`: corrupt the local request value observation.
+- `hv hgatp-write-attempt invariant-consumption-test`: prove the attempt consumes the current HV29 boundary checksum, request value, and ready state.
+- `hv hgatp-write-attempt invariant-corruption-test`: prove attempt-local corruption changes validation blockers.
+
+Smoke proof: `./smoke/smoke-hv30-hgatp-write-attempt-v0.sh` and `./smoke/smoke-hv30-hgatp-write-attempt-negative-v0.sh`.

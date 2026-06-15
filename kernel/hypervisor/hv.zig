@@ -28,6 +28,7 @@ const hgatp_readiness = @import("hgatp_activation_readiness.zig");
 const hgatp_write_plan = @import("hgatp_write_plan.zig");
 const hgatp_write_gate = @import("hgatp_write_gate.zig");
 const hgatp_write_boundary = @import("hgatp_write_boundary.zig");
+const hgatp_write_attempt = @import("hgatp_write_attempt.zig");
 
 pub fn init() void {
     vm.init();
@@ -58,6 +59,7 @@ pub fn init() void {
     hgatp_write_plan.init(vm.object().id, vcpu.object().id);
     hgatp_write_gate.init(vm.object().id, vcpu.object().id);
     hgatp_write_boundary.init(vm.object().id, vcpu.object().id);
+    hgatp_write_attempt.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -97,6 +99,7 @@ pub fn printStatus() void {
     hgatp_readiness.printStatusCommand();
     hgatp_write_gate.printStatusCommand();
     hgatp_write_boundary.printStatusCommand();
+    hgatp_write_attempt.printStatusCommand();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
@@ -107,6 +110,22 @@ pub fn printStatus() void {
 }
 
 
+
+pub fn printHgatpWriteAttempt() void { hgatp_write_attempt.printStatusCommand(); }
+pub fn buildHgatpWriteAttempt() void { hgatp_write_attempt.printBuildCommand(); }
+pub fn validateHgatpWriteAttempt() void { hgatp_write_attempt.printValidateCommand(); }
+pub fn blockersHgatpWriteAttempt() void { hgatp_write_attempt.printBlockersCommand(); }
+pub fn nextHgatpWriteAttempt() void { hgatp_write_attempt.printNextCommand(); }
+pub fn checksumHgatpWriteAttempt() void { hgatp_write_attempt.printChecksumCommand(); }
+pub fn resetHgatpWriteAttempt() void { hgatp_write_attempt.printResetCommand(); }
+pub fn fieldsHgatpWriteAttempt() void { hgatp_write_attempt.printFieldsCommand(); }
+pub fn requestHgatpWriteAttempt() void { hgatp_write_attempt.printRequestCommand(); }
+pub fn decisionHgatpWriteAttempt() void { hgatp_write_attempt.printDecisionCommand(); }
+pub fn requireBoundaryTestHgatpWriteAttempt() void { hgatp_write_attempt.printRequireBoundaryTestCommand(); }
+pub fn sourceIntegrityTestHgatpWriteAttempt() void { hgatp_write_attempt.printSourceIntegrityTestCommand(); }
+pub fn requestValueTestHgatpWriteAttempt() void { hgatp_write_attempt.printRequestValueTestCommand(); }
+pub fn invariantConsumptionTestHgatpWriteAttempt() void { hgatp_write_attempt.printInvariantConsumptionCommand(); }
+pub fn invariantCorruptionTestHgatpWriteAttempt() void { hgatp_write_attempt.printInvariantCorruptionCommand(); }
 
 pub fn printHgatpWriteBoundary() void { hgatp_write_boundary.printStatusCommand(); }
 pub fn buildHgatpWriteBoundary() void { hgatp_write_boundary.printBuildCommand(); }
