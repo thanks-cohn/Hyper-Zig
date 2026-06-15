@@ -29,6 +29,7 @@ const hgatp_write_plan = @import("hgatp_write_plan.zig");
 const hgatp_write_gate = @import("hgatp_write_gate.zig");
 const hgatp_write_boundary = @import("hgatp_write_boundary.zig");
 const hgatp_write_attempt = @import("hgatp_write_attempt.zig");
+const hgatp_csr_interface = @import("hgatp_csr_interface.zig");
 
 pub fn init() void {
     vm.init();
@@ -60,6 +61,7 @@ pub fn init() void {
     hgatp_write_gate.init(vm.object().id, vcpu.object().id);
     hgatp_write_boundary.init(vm.object().id, vcpu.object().id);
     hgatp_write_attempt.init(vm.object().id, vcpu.object().id);
+    hgatp_csr_interface.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -100,6 +102,7 @@ pub fn printStatus() void {
     hgatp_write_gate.printStatusCommand();
     hgatp_write_boundary.printStatusCommand();
     hgatp_write_attempt.printStatusCommand();
+    hgatp_csr_interface.printStatusCommand();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
@@ -110,6 +113,29 @@ pub fn printStatus() void {
 }
 
 
+
+pub fn printHgatpCsrInterface() void { hgatp_csr_interface.printStatusCommand(); }
+pub fn buildHgatpCsrInterface() void { hgatp_csr_interface.printBuildCommand(); }
+pub fn validateHgatpCsrInterface() void { hgatp_csr_interface.printValidateCommand(); }
+pub fn blockersHgatpCsrInterface() void { hgatp_csr_interface.printBlockersCommand(); }
+pub fn nextHgatpCsrInterface() void { hgatp_csr_interface.printNextCommand(); }
+pub fn checksumHgatpCsrInterface() void { hgatp_csr_interface.printChecksumCommand(); }
+pub fn resetHgatpCsrInterface() void { hgatp_csr_interface.printResetCommand(); }
+pub fn fieldsHgatpCsrInterface() void { hgatp_csr_interface.printFieldsCommand(); }
+pub fn requestHgatpCsrInterface() void { hgatp_csr_interface.printRequestCommand(); }
+pub fn resultHgatpCsrInterface() void { hgatp_csr_interface.printResultCommand(); }
+pub fn decisionHgatpCsrInterface() void { hgatp_csr_interface.printDecisionCommand(); }
+pub fn requireAttemptTestHgatpCsrInterface() void { hgatp_csr_interface.printRequireAttemptTestCommand(); }
+pub fn invalidAttemptTestHgatpCsrInterface() void { hgatp_csr_interface.printInvalidAttemptTestCommand(); }
+pub fn sourceIntegrityTestHgatpCsrInterface() void { hgatp_csr_interface.printSourceIntegrityTestCommand(); }
+pub fn requestValueTestHgatpCsrInterface() void { hgatp_csr_interface.printRequestValueTestCommand(); }
+pub fn csrCalledTestHgatpCsrInterface() void { hgatp_csr_interface.printCsrCalledTestCommand(); }
+pub fn rawAsmCalledTestHgatpCsrInterface() void { hgatp_csr_interface.printRawAsmCalledTestCommand(); }
+pub fn writeAttemptedTestHgatpCsrInterface() void { hgatp_csr_interface.printWriteAttemptedTestCommand(); }
+pub fn writePerformedTestHgatpCsrInterface() void { hgatp_csr_interface.printWritePerformedTestCommand(); }
+pub fn activeStage2TestHgatpCsrInterface() void { hgatp_csr_interface.printActiveStage2TestCommand(); }
+pub fn invariantConsumptionTestHgatpCsrInterface() void { hgatp_csr_interface.printInvariantConsumptionCommand(); }
+pub fn invariantCorruptionTestHgatpCsrInterface() void { hgatp_csr_interface.printInvariantCorruptionCommand(); }
 
 pub fn printHgatpWriteAttempt() void { hgatp_write_attempt.printStatusCommand(); }
 pub fn buildHgatpWriteAttempt() void { hgatp_write_attempt.printBuildCommand(); }
