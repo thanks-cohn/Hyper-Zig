@@ -37,9 +37,9 @@ The intended end state is a real Zig/RISC-V hypervisor path toward Linux guests.
 
 ## Current Status
 
-Current milestone: **HV28 Guarded HGATP Write Gate Foundation**
+Current milestone: **HV29 HGATP Hardware Boundary Preparation Foundation**
 
-Hyper-Zig currently smoke-proves HV0 through HV28 when the full validation ladder passes.
+Hyper-Zig currently smoke-proves HV0 through HV29 when the full validation ladder passes.
 
 Today Hyper-Zig can:
 
@@ -62,6 +62,7 @@ Today Hyper-Zig can:
 - Validate HGATP candidate mode, VMID, root PPN, source presence, and safety flags.
 - Compute a deterministic HGATP candidate checksum and provide mutation/corruption tests while preserving `hgatp_write_attempted=false` and `active_stage2=false` as software policy fields.
 - Build a software-only HGATP activation readiness observer.
+- Build a software-only hardware-facing HGATP write boundary that consumes HV28 write-gate state, denies the boundary request, computes blockers and next action, computes a checksum, and proves source integrity while preserving no-write/no-activation policy fields.
 - Consume existing HV24/HV25/stage2 state without manufacturing prerequisite state.
 - Compute HGATP activation readiness blockers, next action, and checksum.
 - Prove source integrity by comparing prerequisite source fingerprints before and after observation.
@@ -88,6 +89,11 @@ Today Hyper-Zig does **not**:
 
 
 
+## HV29 HGATP Hardware Boundary Preparation Foundation
+
+HV29 builds a software-only hardware-facing HGATP write boundary. It consumes existing HV28 write-gate state, constructs a denied boundary request from the observed planned HGATP value, computes blockers, computes the next action, computes a checksum, and proves source integrity by comparing prerequisite source fingerprints before and after observation. It preserves `boundary_request_allowed=false`, `hardware_boundary_reached=false`, `hgatp_write_attempted=false`, `hgatp_write_performed=false`, and `active_stage2=false` as policy fields.
+
+HV29 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute trap return, write `hgatp`, reach the hardware write boundary, activate second-stage translation, or prove active virtualization. The boundary object is software-only preparation for a future guarded HGATP write path.
 
 ## HV28 Guarded HGATP Write Gate Foundation
 

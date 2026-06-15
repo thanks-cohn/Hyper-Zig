@@ -564,3 +564,33 @@ HV28 adds a software-only guarded HGATP write gate. The gate consumes externally
 - `hv hgatp-write-gate write-attempt-test`: corrupt the local write-attempt observation.
 - `hv hgatp-write-gate write-performed-test`: corrupt the local write-performed observation.
 - `hv hgatp-write-gate active-stage2-test`: corrupt the local active-stage2 observation.
+
+## HV29 HGATP Hardware Boundary Preparation commands
+
+HV29 adds a software-only HGATP hardware-facing write-boundary object. The boundary consumes externally produced HV28 write-gate state, captures prerequisite fingerprints before and after observation, constructs a boundary request from the observed planned HGATP value, denies that request before hardware, computes blockers, computes next action, and computes a checksum. It does not write `hgatp`, reach the hardware write boundary, activate second-stage translation, enter a guest, execute guest instructions, execute trap return, or boot any guest OS.
+
+- `hv hgatp-write-boundary` / `hv-hgatp-write-boundary` / `hv hgatp-write-boundary status`: print boundary status, source observations, request policy, and blocker.
+- `hv hgatp-write-boundary build`: observe current HV28 write-gate state and build only the boundary object.
+- `hv hgatp-write-boundary validate`: validate only the existing boundary object.
+- `hv hgatp-write-boundary blockers`: print the current deterministic blocker.
+- `hv hgatp-write-boundary next`: print the next action implied by the blocker.
+- `hv hgatp-write-boundary checksum`: print the boundary checksum.
+- `hv hgatp-write-boundary reset`: reset only the boundary object.
+- `hv hgatp-write-boundary fields`: print observed write-gate fields, source fingerprints, and request policy fields.
+- `hv hgatp-write-boundary request`: print the constructed request value, request checksum, deny/allow counters, and non-activation policy fields.
+- `hv hgatp-write-boundary decision`: print the software-only boundary decision.
+- `hv hgatp-write-boundary invariant-lifecycle-test`: exercise reset/build/validate lifecycle behavior.
+- `hv hgatp-write-boundary invariant-consumption-test`: prove the boundary consumes the current HV28 write-gate checksum and planned HGATP value.
+- `hv hgatp-write-boundary invariant-corruption-test`: prove boundary-local corruption changes validation blockers.
+- `hv hgatp-write-boundary require-gate-test`: corrupt the local write-gate-present observation.
+- `hv hgatp-write-boundary invalid-gate-test`: corrupt the local write-gate-valid observation.
+- `hv hgatp-write-boundary gate-allows-boundary-test`: corrupt the local gate-allows-hardware-boundary observation.
+- `hv hgatp-write-boundary source-integrity-test`: corrupt the local source-fingerprint comparison.
+- `hv hgatp-write-boundary request-value-test`: corrupt the local request value observation.
+- `hv hgatp-write-boundary boundary-allowed-test`: corrupt the local boundary-request-allowed policy field.
+- `hv hgatp-write-boundary boundary-reached-test`: corrupt the local hardware-boundary-reached policy field.
+- `hv hgatp-write-boundary write-attempt-test`: corrupt the local write-attempt observation.
+- `hv hgatp-write-boundary write-performed-test`: corrupt the local write-performed observation.
+- `hv hgatp-write-boundary active-stage2-test`: corrupt the local active-stage2 observation.
+
+Smoke proof: `./smoke/smoke-hv29-hgatp-write-boundary-v0.sh` and `./smoke/smoke-hv29-hgatp-write-boundary-negative-v0.sh`.

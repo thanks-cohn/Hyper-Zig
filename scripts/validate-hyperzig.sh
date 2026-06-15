@@ -52,6 +52,8 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv27-hgatp-write-plan-negative-v0.sh"
     "smoke/smoke-hv28-hgatp-write-gate-v0.sh"
     "smoke/smoke-hv28-hgatp-write-gate-negative-v0.sh"
+    "smoke/smoke-hv29-hgatp-write-boundary-v0.sh"
+    "smoke/smoke-hv29-hgatp-write-boundary-negative-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -161,6 +163,8 @@ run_smoke() {
         smoke-hv27-hgatp-write-plan-negative-v0) transcript="$ROOT/smoke/transcripts/latest-hv27-hgatp-write-plan-negative-v0.txt" ;;
         smoke-hv28-hgatp-write-gate-v0) transcript="$ROOT/smoke/transcripts/latest-hv28-hgatp-write-gate-v0.txt" ;;
         smoke-hv28-hgatp-write-gate-negative-v0) transcript="$ROOT/smoke/transcripts/latest-hv28-hgatp-write-gate-negative-v0.txt" ;;
+        smoke-hv29-hgatp-write-boundary-v0) transcript="$ROOT/smoke/transcripts/latest-hv29-hgatp-write-boundary-v0.txt" ;;
+        smoke-hv29-hgatp-write-boundary-negative-v0) transcript="$ROOT/smoke/transcripts/latest-hv29-hgatp-write-boundary-negative-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"
@@ -468,6 +472,8 @@ printf '  - HV21 guest context preparation: %s\n' "$ROOT/smoke/transcripts/lates
 printf '  - HV22 guarded trap-return plan: %s\n' "$ROOT/smoke/transcripts/latest-hv-trap-plan-v0.txt"
 printf '  - HV23 guest entry assembly preparation: %s\n' "$ROOT/smoke/transcripts/latest-hv-entry-stub-v0.txt"
 printf '  - HV24 H-extension discovery: %s\n' "$ROOT/smoke/transcripts/latest-hv-h-extension-v0.txt"
+printf '  - HV29 HGATP write boundary: %s\n' "$ROOT/smoke/transcripts/latest-hv29-hgatp-write-boundary-v0.txt"
+printf '  - HV29 HGATP write boundary negative: %s\n' "$ROOT/smoke/transcripts/latest-hv29-hgatp-write-boundary-negative-v0.txt"
 printf '\nCompleted milestones/evidence:\n'
 if [[ ${#COMPLETED[@]} -eq 0 ]]; then printf '  - none\n'; else printf '  - %s\n' "${COMPLETED[@]}"; fi
 printf '\nMissing optional smoke tests (MISSING is not PASS):\n'
