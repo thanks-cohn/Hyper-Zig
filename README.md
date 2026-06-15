@@ -25,13 +25,12 @@ The long-term target is Linux guest boot capability. The deeper purpose is to be
 
 Most mature hypervisors are too large to learn from easily. Hyper-Zig is built in the open as a readable ladder: VM objects, vCPUs, guest memory, guest address spaces, guest images, boot contracts, FDT/DTB handoff, SBI foundations, virtual timer metadata, stage-2 translation metadata, trap plans, and guest-entry preparation.
 
-The rule is simple: if a capability is not backed by executing code, validation commands, and reproducible transcripts, Hyper-Zig does not claim it.
 
 ## Why Hyper-Zig Exists
 
 Hyper-Zig exists because virtualization should be readable, inspectable, and teachable without being fake.
 
-The project is advancing toward Linux guest boot through real hypervisor development rather than placeholder implementations, documentation-only milestones, or simulated progress. Each milestone must add observable behavior, validation output, or execution evidence.
+The project is advancing toward Linux guest boot through real hypervisor development, each milestone must add observable behavior, validation output, or execution evidence.
 
 The result is not just a kernel. It is a public construction path for a RISC-V hypervisor: small enough to study, strict enough to trust, and ambitious enough to grow toward real Linux guest execution.
 
@@ -96,19 +95,11 @@ Hyper-Zig does not currently:
 - Prove active virtualization.
 - Provide production isolation.
 
-Those are future milestones. The README says this plainly because Hyper-Zig is built around proof, not marketing fog.
+Those are future milestones. The README says this plainly because Hyper-Zig is built around proof.
 
 ## What Makes Hyper-Zig Different
 
 ### Evidence Driven
-
-Hyper-Zig does not count documentation as implementation.
-
-Hyper-Zig does not count placeholders as implementation.
-
-Hyper-Zig does not count status printouts as implementation.
-
-A feature is only real when it is backed by executing code, validation commands, and reproducible evidence.
 
 ### Hypervisor First
 
@@ -136,7 +127,6 @@ Milestones are supported by:
 - proof artifacts
 - negative tests
 
-No lonely green checkmarks. No cardboard code.
 
 ## Roadmap
 
@@ -245,5 +235,9 @@ qemu-system-riscv64 \
 > IMPORTANT
 >
 > The `ZIG` environment variable must point to a real Zig 0.14.x compiler.
->
 > Do not leave it as a placeholder path such as `/path/to/zig-0.14.x/zig`.
+
+
+<p align="center">
+  <img src="who_needs_anything_else_2.png" alt="we're gonna make it!" width="720">
+</p>
