@@ -509,3 +509,32 @@ HV26 adds a software-only readiness observer in `kernel/hypervisor/hgatp_activat
 - `hv hgatp-readiness source-integrity-test`: corrupt only the readiness-local source-fingerprint-unchanged observation and print the resulting blocker.
 
 Smoke proof: `./smoke/smoke-hv26-hgatp-readiness-v0.sh` and `./smoke/smoke-hv26-hgatp-readiness-negative-v0.sh`.
+
+## HV27 Guarded HGATP Write Plan Commands
+
+HV27 adds a software-only guarded HGATP write-plan object. It consumes externally produced HV25 HGATP candidate state and HV26 readiness state, computes planned HGATP metadata, blockers, next action, checksum, and source-integrity fingerprints. It does not write `hgatp`, activate second-stage translation, enter a guest, execute guest instructions, or execute trap return.
+
+- `hv hgatp-write-plan` / `hv-hgatp-write-plan` / `hv hgatp-write-plan status`: print plan status, blockers, source observations, and policy fields.
+- `hv hgatp-write-plan build`: observe current prerequisite state and build a side-effect-free software-only write plan.
+- `hv hgatp-write-plan validate`: validate only the existing write-plan object.
+- `hv hgatp-write-plan blockers`: print the current deterministic blocker.
+- `hv hgatp-write-plan next`: print the next action implied by the blocker.
+- `hv hgatp-write-plan checksum`: print the plan checksum.
+- `hv hgatp-write-plan reset`: reset only the write-plan object.
+- `hv hgatp-write-plan fields`: print observed sources and planned HGATP fields.
+- `hv hgatp-write-plan invariant-lifecycle-test`: exercise reset/build/validate lifecycle behavior.
+- `hv hgatp-write-plan invariant-consumption-test`: prove the plan consumes the current candidate checksum.
+- `hv hgatp-write-plan invariant-corruption-test`: prove local corruption changes validation blockers.
+- `hv hgatp-write-plan require-candidate-test`: corrupt the local candidate-present observation.
+- `hv hgatp-write-plan invalid-candidate-test`: corrupt the local candidate-valid observation.
+- `hv hgatp-write-plan require-readiness-test`: corrupt the local readiness-present observation.
+- `hv hgatp-write-plan invalid-readiness-test`: corrupt the local readiness-valid observation.
+- `hv hgatp-write-plan require-hext-test`: corrupt the local H-extension discovery observation.
+- `hv hgatp-write-plan require-csr-safety-test`: corrupt the local CSR-safety observation.
+- `hv hgatp-write-plan source-integrity-test`: corrupt the local source-fingerprint comparison.
+- `hv hgatp-write-plan write-allowed-test`: corrupt the local write-allowed policy field.
+- `hv hgatp-write-plan write-attempt-test`: corrupt the local write-attempt observation.
+- `hv hgatp-write-plan active-stage2-test`: corrupt the local active-stage2 observation.
+- `hv hgatp-write-plan require-stage2-metadata-test`: corrupt the local second-stage metadata observation.
+- `hv hgatp-write-plan require-stage2-table-test`: corrupt the local stage2 table observation.
+- `hv hgatp-write-plan readiness-not-ready-test`: corrupt the local future-guarded-write readiness observation.

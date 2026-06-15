@@ -25,6 +25,7 @@ const entry_stub = @import("entry_stub.zig");
 const h_extension = @import("h_extension.zig");
 const hgatp_candidate = @import("hgatp_candidate.zig");
 const hgatp_readiness = @import("hgatp_activation_readiness.zig");
+const hgatp_write_plan = @import("hgatp_write_plan.zig");
 
 pub fn init() void {
     vm.init();
@@ -52,6 +53,7 @@ pub fn init() void {
     h_extension.init(vm.object().id, vcpu.object().id);
     hgatp_candidate.init(vm.object().id, vcpu.object().id);
     hgatp_readiness.init(vm.object().id, vcpu.object().id);
+    hgatp_write_plan.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -99,6 +101,32 @@ pub fn printStatus() void {
 }
 
 
+
+
+pub fn printHgatpWritePlan() void { hgatp_write_plan.printStatusCommand(); }
+pub fn buildHgatpWritePlan() void { hgatp_write_plan.printBuildCommand(); }
+pub fn validateHgatpWritePlan() void { hgatp_write_plan.printValidateCommand(); }
+pub fn blockersHgatpWritePlan() void { hgatp_write_plan.printBlockersCommand(); }
+pub fn nextHgatpWritePlan() void { hgatp_write_plan.printNextCommand(); }
+pub fn checksumHgatpWritePlan() void { hgatp_write_plan.printChecksumCommand(); }
+pub fn resetHgatpWritePlan() void { hgatp_write_plan.printResetCommand(); }
+pub fn fieldsHgatpWritePlan() void { hgatp_write_plan.printFieldsCommand(); }
+pub fn invariantLifecycleTestHgatpWritePlan() void { hgatp_write_plan.printInvariantLifecycleCommand(); }
+pub fn invariantConsumptionTestHgatpWritePlan() void { hgatp_write_plan.printInvariantConsumptionCommand(); }
+pub fn invariantCorruptionTestHgatpWritePlan() void { hgatp_write_plan.printInvariantCorruptionCommand(); }
+pub fn requireCandidateTestHgatpWritePlan() void { hgatp_write_plan.printRequireCandidateTestCommand(); }
+pub fn invalidCandidateTestHgatpWritePlan() void { hgatp_write_plan.printInvalidCandidateTestCommand(); }
+pub fn requireReadinessTestHgatpWritePlan() void { hgatp_write_plan.printRequireReadinessTestCommand(); }
+pub fn invalidReadinessTestHgatpWritePlan() void { hgatp_write_plan.printInvalidReadinessTestCommand(); }
+pub fn readinessNotReadyTestHgatpWritePlan() void { hgatp_write_plan.printReadinessNotReadyTestCommand(); }
+pub fn requireHextTestHgatpWritePlan() void { hgatp_write_plan.printRequireHextTestCommand(); }
+pub fn requireCsrSafetyTestHgatpWritePlan() void { hgatp_write_plan.printRequireCsrSafetyTestCommand(); }
+pub fn requireStage2MetadataTestHgatpWritePlan() void { hgatp_write_plan.printRequireStage2MetadataTestCommand(); }
+pub fn requireStage2TableTestHgatpWritePlan() void { hgatp_write_plan.printRequireStage2TableTestCommand(); }
+pub fn sourceIntegrityTestHgatpWritePlan() void { hgatp_write_plan.printSourceIntegrityTestCommand(); }
+pub fn writeAllowedTestHgatpWritePlan() void { hgatp_write_plan.printWriteAllowedTestCommand(); }
+pub fn writeAttemptTestHgatpWritePlan() void { hgatp_write_plan.printWriteAttemptTestCommand(); }
+pub fn activeStage2TestHgatpWritePlan() void { hgatp_write_plan.printActiveStage2TestCommand(); }
 
 pub fn printHgatpReadiness() void { hgatp_readiness.printStatusCommand(); }
 pub fn buildHgatpReadiness() void { hgatp_readiness.printBuildCommand(); }

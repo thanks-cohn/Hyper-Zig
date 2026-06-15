@@ -37,9 +37,9 @@ The intended end state is a real Zig/RISC-V hypervisor path toward Linux guests.
 
 ## Current Status
 
-Current milestone: **HV26 External-State HGATP Activation Readiness Observer**
+Current milestone: **HV27 Guarded HGATP Write Plan Foundation**
 
-Hyper-Zig currently smoke-proves HV0 through HV26 when the full validation ladder passes.
+Hyper-Zig currently smoke-proves HV0 through HV27 when the full validation ladder passes.
 
 Today Hyper-Zig can:
 
@@ -86,6 +86,14 @@ Today Hyper-Zig does **not**:
 - Boot Buildroot, BusyBox, Alpine, Ubuntu, or any other Linux distribution.
 - Provide production isolation or production virtualization.
 
+
+
+
+## HV27 Guarded HGATP Write Plan Foundation
+
+HV27 builds a software-only guarded HGATP write plan. It consumes existing HV25 HGATP candidate state and existing HV26 readiness state, computes the planned HGATP value from observed candidate state, derives planned VMID/root-PPN/mode metadata, computes blockers, computes a next action, computes a checksum, and proves source integrity by comparing prerequisite fingerprints before and after observation. It preserves `write_allowed_now=false`, `write_attempted=false`, and `active_stage2=false` as safety policy fields.
+
+HV27 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute trap return, write `hgatp`, activate second-stage translation, or prove active virtualization. The plan is metadata for a possible future guarded write attempt only.
 
 ## HV26 External-State HGATP Activation Readiness Observer
 
