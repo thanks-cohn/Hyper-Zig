@@ -538,3 +538,29 @@ HV27 adds a software-only guarded HGATP write-plan object. It consumes externall
 - `hv hgatp-write-plan require-stage2-metadata-test`: corrupt the local second-stage metadata observation.
 - `hv hgatp-write-plan require-stage2-table-test`: corrupt the local stage2 table observation.
 - `hv hgatp-write-plan readiness-not-ready-test`: corrupt the local future-guarded-write readiness observation.
+
+## HV28 Guarded HGATP Write Gate commands
+
+HV28 adds a software-only guarded HGATP write gate. The gate consumes externally produced HV27 write-plan state and H-extension/CSR-safety state, fingerprints prerequisite sources before and after observation, computes blockers, computes a next action and checksum, and always blocks current write requests before the hardware boundary. It does not write `hgatp`, reach the hardware write boundary, activate second-stage translation, enter a guest, execute guest instructions, execute trap return, or boot any guest OS.
+
+- `hv hgatp-write-gate` / `hv-hgatp-write-gate` / `hv hgatp-write-gate status`: print gate status, source observations, policy fields, and blocker.
+- `hv hgatp-write-gate build`: observe current prerequisite state and build only the write-gate object.
+- `hv hgatp-write-gate validate`: validate only the existing write-gate object.
+- `hv hgatp-write-gate blockers`: print the current deterministic blocker.
+- `hv hgatp-write-gate next`: print the next action implied by the blocker.
+- `hv hgatp-write-gate checksum`: print the gate checksum.
+- `hv hgatp-write-gate reset`: reset only the write-gate object.
+- `hv hgatp-write-gate fields`: print observed write-plan fields, source fingerprints, and gate policy fields.
+- `hv hgatp-write-gate decision`: print the software-only gate decision.
+- `hv hgatp-write-gate invariant-lifecycle-test`: exercise reset/build/validate lifecycle behavior.
+- `hv hgatp-write-gate invariant-consumption-test`: prove the gate consumes the current HV27 write-plan checksum.
+- `hv hgatp-write-gate invariant-corruption-test`: prove local corruption changes validation blockers.
+- `hv hgatp-write-gate require-plan-test`: corrupt the local write-plan-present observation.
+- `hv hgatp-write-gate invalid-plan-test`: corrupt the local write-plan-valid observation.
+- `hv hgatp-write-gate require-hext-test`: corrupt the local H-extension discovery observation.
+- `hv hgatp-write-gate require-csr-safety-test`: corrupt the local CSR-safety observation.
+- `hv hgatp-write-gate source-integrity-test`: corrupt the local source-fingerprint comparison.
+- `hv hgatp-write-gate boundary-attempt-test`: corrupt the local hardware-boundary observation.
+- `hv hgatp-write-gate write-attempt-test`: corrupt the local write-attempt observation.
+- `hv hgatp-write-gate write-performed-test`: corrupt the local write-performed observation.
+- `hv hgatp-write-gate active-stage2-test`: corrupt the local active-stage2 observation.

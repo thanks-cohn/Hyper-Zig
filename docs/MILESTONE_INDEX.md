@@ -394,3 +394,7 @@ Next milestone after HV12: HV13 Guest Boot Package Contract, still without Linux
 ## HV25 Software HGATP Candidate Foundation
 
 HV25 adds `kernel/hypervisor/hgatp_candidate.zig`, a software-only HGATP candidate subsystem. It derives candidate fields from current Hyper-Zig VM/vCPU, guest address-space, HV11 second-stage metadata, HV12 software table metadata, and HV24 H-extension CSR safety state. It validates mode, VMID, root PPN, sources, and safety flags; computes a deterministic checksum; and exposes bounded shell and smoke-test coverage. It does not write HGATP, activate second-stage translation, enter guest mode, execute guest instructions, or boot a guest OS.
+
+## HV28 Guarded HGATP Write Gate Foundation
+
+HV28 adds `kernel/hypervisor/hgatp_write_gate.zig`, a software-only gate that consumes the externally built HV27 HGATP write plan and H-extension CSR-safety state. It blocks current requests before the hardware boundary and records blockers, next action, checksum, and source-fingerprint integrity without writing HGATP or activating second-stage translation.
