@@ -459,3 +459,26 @@ HV24 validation entries:
 - `./smoke/smoke-hv-h-extension-v0.sh`: behavior-based HV24 smoke proof with generated transcript at `smoke/transcripts/latest-hv-h-extension-v0.txt`.
 - `./scripts/validate-hyperzig.sh`: includes `smoke/smoke-hv-h-extension-v0.sh` in the required hypervisor validation ladder.
 - `zig build validate-hyperzig`: runs the same validation ladder through `build.zig`.
+
+## HV25 Software HGATP Candidate Commands
+
+HV25 adds a software-only HGATP candidate object. These commands build, validate, inspect, reset, and corrupt that candidate through real subsystem logic. They do not write `hgatp`, do not activate stage-2 translation, do not enter a guest, and do not execute guest instructions.
+
+- `hv hgatp` / `hv-hgatp` / `hv hgatp status`: print current software-only HGATP candidate state, counters, blocker, and safety policy.
+- `hv hgatp build`: derive VMID, root PPN, mode, sources, candidate value, and checksum from existing VM, vCPU, guest address-space, HV11 second-stage metadata, HV12 software table, and HV24 H-extension safety state.
+- `hv hgatp validate`: validate the current candidate without writing any CSR.
+- `hv hgatp blockers`: validate and print the actual blocker from candidate state.
+- `hv hgatp fields`: print mode, VMID, root table GPA, root PPN, candidate value, and checksum.
+- `hv hgatp checksum`: print the deterministic checksum.
+- `hv hgatp reset`: clear the candidate back to empty state.
+- `hv hgatp invariant-lifecycle-test`: run lifecycle invariants directly against the subsystem.
+- `hv hgatp invariant-derivation-test`: run VMID and root-PPN mutation invariants directly against the subsystem.
+- `hv hgatp invariant-corruption-test`: run corruption rejection invariants directly against the subsystem.
+- `hv hgatp mode-test`: corrupt mode and print the blocker recorded by validation.
+- `hv hgatp ppn-alignment-test`: corrupt root PPN alignment and print the blocker recorded by validation.
+- `hv hgatp vmid-bounds-test`: corrupt VMID bounds and print the blocker recorded by validation.
+- `hv hgatp require-hext-test`: remove H-extension discovery source and print the blocker recorded by validation.
+- `hv hgatp write-attempt-test`: mark a software write-attempt flag and print the blocker recorded by validation.
+- `hv hgatp active-stage2-test`: mark a software active-stage2 flag and print the blocker recorded by validation.
+
+Smoke proof: `./smoke/smoke-hv25-hgatp-candidate-v0.sh` and `./smoke/smoke-hv25-hgatp-negative-v0.sh`.

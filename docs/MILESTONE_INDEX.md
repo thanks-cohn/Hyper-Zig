@@ -390,3 +390,7 @@ Next milestone after HV12: HV13 Guest Boot Package Contract, still without Linux
 - **Transcript:** `smoke/transcripts/latest-hv-h-extension-v0.txt`.
 - **Intentionally missing features:** Linux guest support, Linux boot, guest execution, guest mode entry, first guest instruction execution, trap-return execution, active hardware second-stage translation, `hgatp` writes, unguarded hypervisor CSR reads, H-extension support claims without safe detection, Buildroot/BusyBox/Alpine/Ubuntu boot, and printk proof.
 - **Next dependency:** hgatp payload construction, active stage2 activation prerequisites, guarded first-instruction infrastructure, or real trap-entry/trap-return assembly preparation with all non-claims intact.
+
+## HV25 Software HGATP Candidate Foundation
+
+HV25 adds `kernel/hypervisor/hgatp_candidate.zig`, a software-only HGATP candidate subsystem. It derives candidate fields from current Hyper-Zig VM/vCPU, guest address-space, HV11 second-stage metadata, HV12 software table metadata, and HV24 H-extension CSR safety state. It validates mode, VMID, root PPN, sources, and safety flags; computes a deterministic checksum; and exposes bounded shell and smoke-test coverage. It does not write HGATP, activate second-stage translation, enter guest mode, execute guest instructions, or boot a guest OS.
