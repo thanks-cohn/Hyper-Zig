@@ -616,3 +616,31 @@ HV30 adds a software-only guarded HGATP write-attempt object. The attempt consum
 - `hv hgatp-write-attempt invariant-corruption-test`: prove attempt-local corruption changes validation blockers.
 
 Smoke proof: `./smoke/smoke-hv30-hgatp-write-attempt-v0.sh` and `./smoke/smoke-hv30-hgatp-write-attempt-negative-v0.sh`.
+
+## HV31 Guarded HGATP CSR Interface commands
+
+HV31 adds a guarded HGATP CSR interface object that consumes the existing HV30 write-attempt state and preserves the no-write policy. It exposes the CSR boundary and an isolated dangerous raw-write function in code, but the default command path denies before CSR assembly and reports that the CSR function and raw assembly path were not called.
+
+* `hv hgatp-csr-interface` / `hv-hgatp-csr-interface` / `hv hgatp-csr-interface status` prints HV31 state, source fingerprints, request/result fields, and no-write policy fields.
+* `hv hgatp-csr-interface build` observes HV30 state, builds an HV31 request from the HV30 attempted HGATP value/checksums, denies before CSR assembly, and computes result/checksum state.
+* `hv hgatp-csr-interface validate` revalidates the current HV31 object.
+* `hv hgatp-csr-interface blockers` prints blocker count and blocker name.
+* `hv hgatp-csr-interface next` prints the next action.
+* `hv hgatp-csr-interface checksum` prints the HV31 checksum.
+* `hv hgatp-csr-interface reset` resets only the HV31 object.
+* `hv hgatp-csr-interface fields` prints owner, HV30-consumption, CSR-call, raw-assembly, no-write, no-activation, no-guest-entry, and source-fingerprint fields.
+* `hv hgatp-csr-interface request` prints the HV31 request value and checksum derived from HV30.
+* `hv hgatp-csr-interface result` prints the HV31 result code and result checksum.
+* `hv hgatp-csr-interface decision` prints the current decision.
+* `hv hgatp-csr-interface require-attempt-test` proves missing HV30 state blocks HV31.
+* `hv hgatp-csr-interface source-integrity-test` proves source fingerprint mutation is rejected.
+* `hv hgatp-csr-interface request-value-test` proves request-value mismatch is rejected.
+* `hv hgatp-csr-interface csr-called-test` proves any observed CSR function call is rejected.
+* `hv hgatp-csr-interface raw-asm-called-test` proves any observed raw assembly call is rejected.
+* `hv hgatp-csr-interface write-attempted-test` proves any observed HGATP write attempt is rejected.
+* `hv hgatp-csr-interface write-performed-test` proves any observed HGATP write completion is rejected.
+* `hv hgatp-csr-interface active-stage2-test` proves active second-stage state is rejected.
+* `hv hgatp-csr-interface invariant-consumption-test` proves HV31 consumes HV30 value, checksum, request checksum, and readiness state.
+* `hv hgatp-csr-interface invariant-corruption-test` proves HV31-local corruption paths reject as expected.
+
+HV31 does not boot Linux, boot BusyBox, boot Alpine, enter guest mode, execute guest instructions, execute trap return, write HGATP, or activate second-stage translation.

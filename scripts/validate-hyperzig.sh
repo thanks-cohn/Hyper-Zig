@@ -56,6 +56,8 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv29-hgatp-write-boundary-negative-v0.sh"
     "smoke/smoke-hv30-hgatp-write-attempt-v0.sh"
     "smoke/smoke-hv30-hgatp-write-attempt-negative-v0.sh"
+    "smoke/smoke-hv31-hgatp-csr-interface-v0.sh"
+    "smoke/smoke-hv31-hgatp-csr-interface-negative-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
