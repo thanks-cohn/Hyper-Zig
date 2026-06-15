@@ -37,9 +37,9 @@ The intended end state is a real Zig/RISC-V hypervisor path toward Linux guests.
 
 ## Current Status
 
-Current milestone: **HV24 H-Extension Discovery and Hypervisor CSR Safety Foundation**
+Current milestone: **HV25 Software HGATP Candidate Foundation**
 
-Hyper-Zig currently smoke-proves HV0 through HV24 when the full validation ladder passes.
+Hyper-Zig currently smoke-proves HV0 through HV25 when the full validation ladder passes.
 
 Today Hyper-Zig can:
 
@@ -58,6 +58,9 @@ Today Hyper-Zig can:
 - Build Linux-shaped handoff validation objects.
 - Prepare guarded trap-return and entry-stub metadata.
 - Discover and validate an H-extension CSR safety object that blocks unsafe hypervisor CSR reads when no safe probe path exists.
+- Build a software-only HGATP candidate derived from existing Hyper-Zig VM, vCPU, guest address-space, second-stage metadata, software stage-2 table, and H-extension CSR safety state.
+- Validate HGATP candidate mode, VMID, root PPN, source presence, and safety flags.
+- Compute a deterministic HGATP candidate checksum and provide mutation/corruption tests while preserving `hgatp_write_attempted=false` and `active_stage2=false` as software policy fields.
 - Produce logs and transcripts that prove the behavior above.
 
 Today Hyper-Zig does **not**:
@@ -69,6 +72,8 @@ Today Hyper-Zig does **not**:
 - Execute `sret`, `hret`, or `mret` into a guest.
 - Activate hardware second-stage translation.
 - Write `hgatp`.
+- Activate second-stage translation.
+- Prove active virtualization.
 - Claim RISC-V H-extension support unless a safe executed detection path proves it.
 - Provide full SBI services.
 - Inject real timer interrupts into a running guest.
