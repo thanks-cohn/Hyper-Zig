@@ -464,6 +464,9 @@ uart.write("\r\n");
 }
 fn printRequest() void {
 const r = object();
+uart.write("hv: hgatp_write_attempt.planned_hgatp_value=");
+uart.writeHex(r.planned_hgatp_value);
+uart.write("\r\n");
 uart.write("hv: hgatp_write_attempt.attempt_request_present=");
 printBool(r.attempt_request_present);
 uart.write("\r\nhv: hgatp_write_attempt.attempt_request_checksum=");
