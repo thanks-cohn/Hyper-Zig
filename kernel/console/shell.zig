@@ -297,6 +297,27 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "hv context bounds-test")) return hv.boundsTestGuestContext();
     if (equals(cmd, "hv context reset")) return hv.resetGuestContext();
 
+    if (equals(cmd, "hv hgatp-write-gate") or equals(cmd, "hv-hgatp-write-gate") or equals(cmd, "hv hgatp-write-gate status")) return hv.printHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate build")) return hv.buildHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate validate")) return hv.validateHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate blockers")) return hv.blockersHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate next")) return hv.nextHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate checksum")) return hv.checksumHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate reset")) return hv.resetHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate fields")) return hv.fieldsHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate decision")) return hv.decisionHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate invariant-lifecycle-test")) return hv.invariantLifecycleTestHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate invariant-consumption-test")) return hv.invariantConsumptionTestHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate invariant-corruption-test")) return hv.invariantCorruptionTestHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate require-plan-test")) return hv.requirePlanTestHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate invalid-plan-test")) return hv.invalidPlanTestHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate require-hext-test")) return hv.requireHextTestHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate require-csr-safety-test")) return hv.requireCsrSafetyTestHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate source-integrity-test")) return hv.sourceIntegrityTestHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate boundary-attempt-test")) return hv.boundaryAttemptTestHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate write-attempt-test")) return hv.writeAttemptTestHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate write-performed-test")) return hv.writePerformedTestHgatpWriteGate();
+    if (equals(cmd, "hv hgatp-write-gate active-stage2-test")) return hv.activeStage2TestHgatpWriteGate();
     if (equals(cmd, "hv hgatp-write-plan") or equals(cmd, "hv-hgatp-write-plan") or equals(cmd, "hv hgatp-write-plan status")) return hv.printHgatpWritePlan();
     if (equals(cmd, "hv hgatp-write-plan build")) return hv.buildHgatpWritePlan();
     if (equals(cmd, "hv hgatp-write-plan validate")) return hv.validateHgatpWritePlan();

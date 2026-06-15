@@ -26,6 +26,7 @@ const h_extension = @import("h_extension.zig");
 const hgatp_candidate = @import("hgatp_candidate.zig");
 const hgatp_readiness = @import("hgatp_activation_readiness.zig");
 const hgatp_write_plan = @import("hgatp_write_plan.zig");
+const hgatp_write_gate = @import("hgatp_write_gate.zig");
 
 pub fn init() void {
     vm.init();
@@ -54,6 +55,7 @@ pub fn init() void {
     hgatp_candidate.init(vm.object().id, vcpu.object().id);
     hgatp_readiness.init(vm.object().id, vcpu.object().id);
     hgatp_write_plan.init(vm.object().id, vcpu.object().id);
+    hgatp_write_gate.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -91,6 +93,7 @@ pub fn printStatus() void {
     h_extension.printStatusCommand();
     hgatp_candidate.printStatusCommand();
     hgatp_readiness.printStatusCommand();
+    hgatp_write_gate.printStatusCommand();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
@@ -102,6 +105,28 @@ pub fn printStatus() void {
 
 
 
+
+pub fn printHgatpWriteGate() void { hgatp_write_gate.printStatusCommand(); }
+pub fn buildHgatpWriteGate() void { hgatp_write_gate.printBuildCommand(); }
+pub fn validateHgatpWriteGate() void { hgatp_write_gate.printValidateCommand(); }
+pub fn blockersHgatpWriteGate() void { hgatp_write_gate.printBlockersCommand(); }
+pub fn nextHgatpWriteGate() void { hgatp_write_gate.printNextCommand(); }
+pub fn checksumHgatpWriteGate() void { hgatp_write_gate.printChecksumCommand(); }
+pub fn resetHgatpWriteGate() void { hgatp_write_gate.printResetCommand(); }
+pub fn fieldsHgatpWriteGate() void { hgatp_write_gate.printFieldsCommand(); }
+pub fn decisionHgatpWriteGate() void { hgatp_write_gate.printDecisionCommand(); }
+pub fn invariantLifecycleTestHgatpWriteGate() void { hgatp_write_gate.printInvariantLifecycleCommand(); }
+pub fn invariantConsumptionTestHgatpWriteGate() void { hgatp_write_gate.printInvariantConsumptionCommand(); }
+pub fn invariantCorruptionTestHgatpWriteGate() void { hgatp_write_gate.printInvariantCorruptionCommand(); }
+pub fn requirePlanTestHgatpWriteGate() void { hgatp_write_gate.printRequirePlanTestCommand(); }
+pub fn invalidPlanTestHgatpWriteGate() void { hgatp_write_gate.printInvalidPlanTestCommand(); }
+pub fn requireHextTestHgatpWriteGate() void { hgatp_write_gate.printRequireHextTestCommand(); }
+pub fn requireCsrSafetyTestHgatpWriteGate() void { hgatp_write_gate.printRequireCsrSafetyTestCommand(); }
+pub fn sourceIntegrityTestHgatpWriteGate() void { hgatp_write_gate.printSourceIntegrityTestCommand(); }
+pub fn boundaryAttemptTestHgatpWriteGate() void { hgatp_write_gate.printBoundaryAttemptTestCommand(); }
+pub fn writeAttemptTestHgatpWriteGate() void { hgatp_write_gate.printWriteAttemptTestCommand(); }
+pub fn writePerformedTestHgatpWriteGate() void { hgatp_write_gate.printWritePerformedTestCommand(); }
+pub fn activeStage2TestHgatpWriteGate() void { hgatp_write_gate.printActiveStage2TestCommand(); }
 
 pub fn printHgatpWritePlan() void { hgatp_write_plan.printStatusCommand(); }
 pub fn buildHgatpWritePlan() void { hgatp_write_plan.printBuildCommand(); }

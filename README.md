@@ -37,9 +37,9 @@ The intended end state is a real Zig/RISC-V hypervisor path toward Linux guests.
 
 ## Current Status
 
-Current milestone: **HV27 Guarded HGATP Write Plan Foundation**
+Current milestone: **HV28 Guarded HGATP Write Gate Foundation**
 
-Hyper-Zig currently smoke-proves HV0 through HV27 when the full validation ladder passes.
+Hyper-Zig currently smoke-proves HV0 through HV28 when the full validation ladder passes.
 
 Today Hyper-Zig can:
 
@@ -88,6 +88,12 @@ Today Hyper-Zig does **not**:
 
 
 
+
+## HV28 Guarded HGATP Write Gate Foundation
+
+HV28 builds a software-only guarded HGATP write gate. It consumes existing HV27 write-plan state and H-extension/CSR-safety state, computes whether a future write request is blocked before hardware, computes blockers, computes the next action, computes a checksum, and proves source integrity by comparing prerequisite fingerprints before and after observation. It preserves `request_allowed_to_reach_hardware_boundary=false`, `request_blocked_before_hardware=true`, `hgatp_write_attempted=false`, `hgatp_write_performed=false`, and `active_stage2=false` as policy fields.
+
+HV28 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute trap return, write `hgatp`, reach the hardware write boundary, activate second-stage translation, or prove active virtualization. The gate is software-only metadata for a possible future guarded write path.
 
 ## HV27 Guarded HGATP Write Plan Foundation
 

@@ -50,6 +50,8 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv26-hgatp-readiness-negative-v0.sh"
     "smoke/smoke-hv27-hgatp-write-plan-v0.sh"
     "smoke/smoke-hv27-hgatp-write-plan-negative-v0.sh"
+    "smoke/smoke-hv28-hgatp-write-gate-v0.sh"
+    "smoke/smoke-hv28-hgatp-write-gate-negative-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -157,6 +159,8 @@ run_smoke() {
         smoke-hv26-hgatp-readiness-negative-v0) transcript="$ROOT/smoke/transcripts/latest-hv26-hgatp-readiness-negative-v0.txt" ;;
         smoke-hv27-hgatp-write-plan-v0) transcript="$ROOT/smoke/transcripts/latest-hv27-hgatp-write-plan-v0.txt" ;;
         smoke-hv27-hgatp-write-plan-negative-v0) transcript="$ROOT/smoke/transcripts/latest-hv27-hgatp-write-plan-negative-v0.txt" ;;
+        smoke-hv28-hgatp-write-gate-v0) transcript="$ROOT/smoke/transcripts/latest-hv28-hgatp-write-gate-v0.txt" ;;
+        smoke-hv28-hgatp-write-gate-negative-v0) transcript="$ROOT/smoke/transcripts/latest-hv28-hgatp-write-gate-negative-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"
