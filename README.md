@@ -37,9 +37,9 @@ The intended end state is a real Zig/RISC-V hypervisor path toward Linux guests.
 
 ## Current Status
 
-Current milestone: **HV29 HGATP Hardware Boundary Preparation Foundation**
+Current milestone: **HV30 Guarded HGATP Write Attempt Foundation**
 
-Hyper-Zig currently smoke-proves HV0 through HV29 when the full validation ladder passes.
+Hyper-Zig currently smoke-proves HV0 through HV30 when the full validation ladder passes.
 
 Today Hyper-Zig can:
 
@@ -63,6 +63,7 @@ Today Hyper-Zig can:
 - Compute a deterministic HGATP candidate checksum and provide mutation/corruption tests while preserving `hgatp_write_attempted=false` and `active_stage2=false` as software policy fields.
 - Build a software-only HGATP activation readiness observer.
 - Build a software-only hardware-facing HGATP write boundary that consumes HV28 write-gate state, denies the boundary request, computes blockers and next action, computes a checksum, and proves source integrity while preserving no-write/no-activation policy fields.
+- Build a software-only guarded HGATP write-attempt object that consumes HV29 write-boundary state, constructs a denied attempt request from the HV29 request value/checksum/readiness state, proves source integrity, and stops before any CSR write function.
 - Consume existing HV24/HV25/stage2 state without manufacturing prerequisite state.
 - Compute HGATP activation readiness blockers, next action, and checksum.
 - Prove source integrity by comparing prerequisite source fingerprints before and after observation.
@@ -88,6 +89,14 @@ Today Hyper-Zig does **not**:
 - Provide production isolation or production virtualization.
 
 
+
+## HV30 Guarded HGATP Write Attempt Foundation
+
+HV30 builds a software-only guarded HGATP write-attempt object. It consumes externally produced HV29 write-boundary state, fingerprints the HV29 checksum, HV29 request checksum, HV29 request value, HV29 ready flag, HV29 boundary state, VM ID, and vCPU ID before and after observation, constructs an attempt request from the observed HV29 request value, computes blockers, computes next action, and computes a checksum. Current policy denies the attempt before any CSR write function can be called.
+
+HV30 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute trap return, write `hgatp`, call an HGATP CSR write function, activate second-stage translation, or prove active virtualization. The attempt object is software-only preparation for a future guarded CSR write path.
+
+Next milestone: guarded CSR write function wiring that remains denied by policy until the prerequisite chain can safely authorize it.
 
 ## HV29 HGATP Hardware Boundary Preparation Foundation
 

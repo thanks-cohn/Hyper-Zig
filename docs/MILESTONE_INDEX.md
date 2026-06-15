@@ -398,3 +398,13 @@ HV25 adds `kernel/hypervisor/hgatp_candidate.zig`, a software-only HGATP candida
 ## HV28 Guarded HGATP Write Gate Foundation
 
 HV28 adds `kernel/hypervisor/hgatp_write_gate.zig`, a software-only gate that consumes the externally built HV27 HGATP write plan and H-extension CSR-safety state. It blocks current requests before the hardware boundary and records blockers, next action, checksum, and source-fingerprint integrity without writing HGATP or activating second-stage translation.
+
+## HV29 HGATP Hardware Boundary Preparation Foundation
+
+HV29 adds `kernel/hypervisor/hgatp_write_boundary.zig`, a software-only hardware-facing HGATP write-boundary object that consumes HV28 write-gate state, constructs and denies a boundary request, computes source fingerprints, blockers, next action, and checksum, and preserves all no-write/no-activation policy fields.
+
+## HV30 Guarded HGATP Write Attempt Foundation
+
+HV30 adds `kernel/hypervisor/hgatp_write_attempt.zig`, a software-only guarded HGATP write-attempt object that consumes externally produced HV29 write-boundary state. It fingerprints the HV29 checksum, HV29 request checksum, HV29 request value, HV29 ready flag, HV29 boundary state, VM ID, and vCPU ID before and after observation; constructs an attempt request from the HV29 request value; denies the attempt before any CSR write function; and exposes executable dependency-consumption and corruption tests.
+
+HV30 does not write `hgatp`, activate second-stage translation, enter guest mode, execute guest instructions, execute trap return, claim active virtualization, boot Linux, boot BusyBox, or boot Alpine.
