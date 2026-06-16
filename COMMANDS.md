@@ -760,3 +760,47 @@ New shell commands:
 - `hv hgatp-hardware-write-operation invariant-corruption-test`
 
 HV34 builds an opt-in guarded HGATP hardware-write operation object from the existing HV33 preparation envelope. The default operation is denied before CSR access and blocked before the raw write path.
+
+## HV35 Guarded HGATP Execution Path Dry-Run Foundation
+
+New shell commands:
+
+- `hv hgatp-execution-dry-run`
+- `hv-hgatp-execution-dry-run`
+- `hv hgatp-execution-dry-run status`
+- `hv hgatp-execution-dry-run build`
+- `hv hgatp-execution-dry-run validate`
+- `hv hgatp-execution-dry-run execute`
+- `hv hgatp-execution-dry-run blockers`
+- `hv hgatp-execution-dry-run next`
+- `hv hgatp-execution-dry-run checksum`
+- `hv hgatp-execution-dry-run reset`
+- `hv hgatp-execution-dry-run fields`
+- `hv hgatp-execution-dry-run request`
+- `hv hgatp-execution-dry-run steps`
+- `hv hgatp-execution-dry-run result`
+- `hv hgatp-execution-dry-run trap-slot`
+- `hv hgatp-execution-dry-run readback`
+- `hv hgatp-execution-dry-run decision`
+- `hv hgatp-execution-dry-run require-operation-test`
+- `hv hgatp-execution-dry-run invalid-operation-test`
+- `hv hgatp-execution-dry-run source-integrity-test`
+- `hv hgatp-execution-dry-run request-value-test`
+- `hv hgatp-execution-dry-run opt-in-test`
+- `hv hgatp-execution-dry-run policy-allows-test`
+- `hv hgatp-execution-dry-run operation-call-reachable-test`
+- `hv hgatp-execution-dry-run operation-call-called-test`
+- `hv hgatp-execution-dry-run raw-write-called-test`
+- `hv hgatp-execution-dry-run execution-reached-raw-write-test`
+- `hv hgatp-execution-dry-run execution-called-raw-write-test`
+- `hv hgatp-execution-dry-run fake-trap-test`
+- `hv hgatp-execution-dry-run fake-readback-test`
+- `hv hgatp-execution-dry-run write-attempted-test`
+- `hv hgatp-execution-dry-run write-performed-test`
+- `hv hgatp-execution-dry-run active-stage2-test`
+- `hv hgatp-execution-dry-run guest-entered-test`
+- `hv hgatp-execution-dry-run first-instruction-test`
+- `hv hgatp-execution-dry-run invariant-consumption-test`
+- `hv hgatp-execution-dry-run invariant-corruption-test`
+
+HV35 builds and executes a guarded HGATP execution dry-run object from the existing HV34 hardware-write operation state. The executor records real dry-run control-flow accounting while preserving denial before CSR access, blocking before the raw write path, empty trap/readback slots, and all no-write/no-activation/no-guest-entry invariants.
