@@ -46,7 +46,7 @@ assert 'hv: hgatp_hardware_write_operation.result_code=operation_denied_before_c
 assert 'hv: hgatp_hardware_write_operation.trap_observed=false' in blocks[28]
 assert 'hv: hgatp_hardware_write_operation.readback_attempted=false' in blocks[29]
 assert 'hv: hgatp_hardware_write_operation.decision=operation_denied_before_csr' in blocks[30]
-pc=re.search(r'hv: hgatp_hardware_write_prep.hardware_write_checksum=(0x[0-9a-f]+)', blocks[20], re.I); oc=re.search(r'hv: hgatp_hardware_write_operation.operation_request_checksum=(0x[0-9a-f]+)', blocks[25], re.I)
+pc=re.search(r'hv: hgatp_hardware_write_prep.csr_result_request_checksum=(0x[0-9a-f]+)', blocks[20], re.I); oc=re.search(r'hv: hgatp_hardware_write_operation.operation_request_checksum=(0x[0-9a-f]+)', blocks[25], re.I)
 pv=re.search(r'hv: hgatp_hardware_write_prep.hardware_write_value=(0x[0-9a-f]+)', blocks[21], re.I) or re.search(r'hv: hgatp_hardware_write_prep.csr_result_request_value=(0x[0-9a-f]+)', blocks[20], re.I); ov=re.search(r'hv: hgatp_hardware_write_operation.operation_request_value=(0x[0-9a-f]+)', blocks[25], re.I)
 assert pc and oc and pc.group(1).lower()==oc.group(1).lower(), 'checksum propagation failed'
 assert pv and ov and pv.group(1).lower()==ov.group(1).lower(), 'request propagation failed'
