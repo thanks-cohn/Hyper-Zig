@@ -297,6 +297,36 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "hv context bounds-test")) return hv.boundsTestGuestContext();
     if (equals(cmd, "hv context reset")) return hv.resetGuestContext();
 
+
+    if (equals(cmd, "hv hgatp-hardware-write-prep") or equals(cmd, "hv-hgatp-hardware-write-prep") or equals(cmd, "hv hgatp-hardware-write-prep status")) return hv.printHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep build")) return hv.buildHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep validate")) return hv.validateHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep blockers")) return hv.blockersHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep next")) return hv.nextHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep checksum")) return hv.checksumHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep reset")) return hv.resetHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep fields")) return hv.fieldsHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep envelope")) return hv.envelopeHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep trap-envelope")) return hv.trapEnvelopeHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep readback-envelope")) return hv.readbackEnvelopeHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep decision")) return hv.decisionHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep require-result-test")) return hv.requireResultTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep invalid-result-test")) return hv.invalidResultTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep source-integrity-test")) return hv.sourceIntegrityTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep request-value-test")) return hv.requestValueTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep policy-allows-test")) return hv.policyAllowsTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep call-reachable-test")) return hv.callReachableTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep call-called-test")) return hv.callCalledTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep raw-write-called-test")) return hv.rawWriteCalledTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep fake-trap-test")) return hv.fakeTrapTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep fake-readback-test")) return hv.fakeReadbackTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep write-attempted-test")) return hv.writeAttemptedTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep write-performed-test")) return hv.writePerformedTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep active-stage2-test")) return hv.activeStage2TestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep guest-entered-test")) return hv.guestEnteredTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep first-instruction-test")) return hv.firstInstructionTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep invariant-consumption-test")) return hv.invariantConsumptionTestHgatpHardwareWritePrep();
+    if (equals(cmd, "hv hgatp-hardware-write-prep invariant-corruption-test")) return hv.invariantCorruptionTestHgatpHardwareWritePrep();
     if (equals(cmd, "hv hgatp-csr-result") or equals(cmd, "hv-hgatp-csr-result") or equals(cmd, "hv hgatp-csr-result status")) return hv.printHgatpCsrResult();
     if (equals(cmd, "hv hgatp-csr-result build")) return hv.buildHgatpCsrResult();
     if (equals(cmd, "hv hgatp-csr-result validate")) return hv.validateHgatpCsrResult();
