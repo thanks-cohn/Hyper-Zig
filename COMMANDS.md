@@ -680,3 +680,42 @@ New HV32 shell commands:
 - `hv hgatp-csr-result invariant-corruption-test`
 
 HV32 consumes the already-built HV31 CSR interface and records denied/not-called result accounting, empty trap slots, and readback-not-attempted slots. It does not perform an HGATP write or readback.
+
+
+## HV33 Guarded HGATP Hardware Write Preparation Foundation
+
+New HV33 shell commands:
+
+- `hv hgatp-hardware-write-prep`
+- `hv-hgatp-hardware-write-prep`
+- `hv hgatp-hardware-write-prep status`
+- `hv hgatp-hardware-write-prep build`
+- `hv hgatp-hardware-write-prep validate`
+- `hv hgatp-hardware-write-prep blockers`
+- `hv hgatp-hardware-write-prep next`
+- `hv hgatp-hardware-write-prep checksum`
+- `hv hgatp-hardware-write-prep reset`
+- `hv hgatp-hardware-write-prep fields`
+- `hv hgatp-hardware-write-prep envelope`
+- `hv hgatp-hardware-write-prep trap-envelope`
+- `hv hgatp-hardware-write-prep readback-envelope`
+- `hv hgatp-hardware-write-prep decision`
+- `hv hgatp-hardware-write-prep require-result-test`
+- `hv hgatp-hardware-write-prep invalid-result-test`
+- `hv hgatp-hardware-write-prep source-integrity-test`
+- `hv hgatp-hardware-write-prep request-value-test`
+- `hv hgatp-hardware-write-prep policy-allows-test`
+- `hv hgatp-hardware-write-prep call-reachable-test`
+- `hv hgatp-hardware-write-prep call-called-test`
+- `hv hgatp-hardware-write-prep raw-write-called-test`
+- `hv hgatp-hardware-write-prep fake-trap-test`
+- `hv hgatp-hardware-write-prep fake-readback-test`
+- `hv hgatp-hardware-write-prep write-attempted-test`
+- `hv hgatp-hardware-write-prep write-performed-test`
+- `hv hgatp-hardware-write-prep active-stage2-test`
+- `hv hgatp-hardware-write-prep guest-entered-test`
+- `hv hgatp-hardware-write-prep first-instruction-test`
+- `hv hgatp-hardware-write-prep invariant-consumption-test`
+- `hv hgatp-hardware-write-prep invariant-corruption-test`
+
+HV33 consumes the existing HV32 CSR result/fault accounting state, builds a guarded hardware-write envelope, and preserves the current no-write policy: hardware calls are blocked before call, raw write is not called, trap/readback envelopes remain empty, and no guest execution or active stage-2 state is claimed.

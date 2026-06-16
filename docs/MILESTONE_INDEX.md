@@ -408,3 +408,11 @@ HV29 adds `kernel/hypervisor/hgatp_write_boundary.zig`, a software-only hardware
 HV30 adds `kernel/hypervisor/hgatp_write_attempt.zig`, a software-only guarded HGATP write-attempt object that consumes externally produced HV29 write-boundary state. It fingerprints the HV29 checksum, HV29 request checksum, HV29 request value, HV29 ready flag, HV29 boundary state, VM ID, and vCPU ID before and after observation; constructs an attempt request from the HV29 request value; denies the attempt before any CSR write function; and exposes executable dependency-consumption and corruption tests.
 
 HV30 does not write `hgatp`, activate second-stage translation, enter guest mode, execute guest instructions, execute trap return, claim active virtualization, boot Linux, boot BusyBox, or boot Alpine.
+
+## HV33 Guarded HGATP Hardware Write Preparation Foundation
+
+- **Purpose:** Consume HV32 CSR result/fault accounting and construct the guarded hardware-write preparation envelope for a future HGATP operation while preserving the current no-write policy.
+- **Commands:** `hv hgatp-hardware-write-prep`, `hv-hgatp-hardware-write-prep`, plus status/build/validate/blockers/next/checksum/reset/fields/envelope/trap-envelope/readback-envelope/decision and negative invariant tests.
+- **Smoke tests:** `smoke/smoke-hv33-hgatp-hardware-write-prep-v0.sh` and `smoke/smoke-hv33-hgatp-hardware-write-prep-negative-v0.sh`.
+- **Intentionally missing features:** HGATP writes, HGATP readback, trap evidence, stage-2 activation, guest entry, trap return, guest instruction execution, and guest OS boot.
+- **Next dependency:** a guarded hardware CSR operation milestone that can add an explicit opt-in write path with real trap/fault capture.

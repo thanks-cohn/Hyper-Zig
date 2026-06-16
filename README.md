@@ -61,6 +61,7 @@ It already contains:
 - Guarded HGATP write gating.
 - Hardware-facing HGATP boundary preparation.
 - HGATP CSR result and fault accounting.
+- Guarded HGATP hardware-write preparation.
 
 Tomorrow it aims for:
 
@@ -99,7 +100,7 @@ The result is not just a kernel. It is a public construction path for a RISC-V h
 Current verified milestone chain:
 
 ```text
-HV0 -> HV32
+HV0 -> HV33
 ```
 
 Hyper-Zig currently provides:
@@ -128,16 +129,27 @@ Hyper-Zig currently provides:
 - Guarded HGATP write-attempt accounting.
 - Guarded HGATP CSR interface preparation.
 - HGATP CSR result and fault accounting.
+- Guarded HGATP hardware-write preparation.
 
 Validation currently proves:
 
 - Zig 0.14.x build success.
 - Full Hyper-Zig validation success.
-- HV0 through HV32 smoke validation success.
-- HV32 positive smoke coverage.
-- HV32 negative smoke coverage.
+- HV0 through HV33 smoke validation success.
+- HV33 positive smoke coverage.
+- HV33 negative smoke coverage.
 - Deterministic checksum and source-integrity checks across the guarded HGATP path.
 - Explicit no-write and no-activation policy preservation where hardware action is not yet safe to claim.
+
+
+
+## HV33 Guarded HGATP Hardware Write Preparation
+
+HV33 adds a real guarded HGATP hardware-write preparation subsystem. It builds a guarded HGATP hardware-write preparation object, consumes existing HV32 CSR result/fault accounting state, constructs a hardware-write envelope, classifies the current path as blocked before hardware call, exposes a trap envelope without claiming a trap, exposes a readback envelope without performing readback, proves source integrity, and proves the raw write function remains not called.
+
+HV33 preserves these no-action invariants: `hardware_write_policy_allows=false`, `hardware_write_call_called=false`, `raw_write_function_called=false`, `hgatp_write_attempted=false`, `hgatp_write_performed=false`, `active_stage2=false`, `guest_entered=false`, and `first_guest_instruction_executed=false`.
+
+HV33 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute trap return, write HGATP, call the raw hardware write path, observe a real trap, perform readback, activate second-stage translation, or prove active virtualization.
 
 ## What Hyper-Zig Does Not Yet Do
 
