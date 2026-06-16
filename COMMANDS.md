@@ -804,3 +804,46 @@ New shell commands:
 - `hv hgatp-execution-dry-run invariant-corruption-test`
 
 HV35 builds and executes a guarded HGATP execution dry-run object from the existing HV34 hardware-write operation state. The executor records real dry-run control-flow accounting while preserving denial before CSR access, blocking before the raw write path, empty trap/readback slots, and all no-write/no-activation/no-guest-entry invariants.
+
+## HV36 Guarded HGATP Hardware Executor Skeleton commands
+
+HV36 adds a guarded HGATP hardware executor skeleton that consumes the existing HV35 execution dry-run state and executes no-write executor control flow. It denies before CSR access, skips CSR/raw writes, exposes empty trap/readback slots, and preserves no guest entry or second-stage activation.
+
+- `hv hgatp-hardware-executor`
+- `hv-hgatp-hardware-executor`
+- `hv hgatp-hardware-executor status`
+- `hv hgatp-hardware-executor build`
+- `hv hgatp-hardware-executor validate`
+- `hv hgatp-hardware-executor execute`
+- `hv hgatp-hardware-executor blockers`
+- `hv hgatp-hardware-executor next`
+- `hv hgatp-hardware-executor checksum`
+- `hv hgatp-hardware-executor reset`
+- `hv hgatp-hardware-executor fields`
+- `hv hgatp-hardware-executor request`
+- `hv hgatp-hardware-executor steps`
+- `hv hgatp-hardware-executor result`
+- `hv hgatp-hardware-executor trap-slot`
+- `hv hgatp-hardware-executor readback`
+- `hv hgatp-hardware-executor decision`
+- `hv hgatp-hardware-executor require-dry-run-test`
+- `hv hgatp-hardware-executor invalid-dry-run-test`
+- `hv hgatp-hardware-executor source-integrity-test`
+- `hv hgatp-hardware-executor request-value-test`
+- `hv hgatp-hardware-executor policy-allows-test`
+- `hv hgatp-hardware-executor boundary-bypass-test`
+- `hv hgatp-hardware-executor csr-reached-test`
+- `hv hgatp-hardware-executor csr-called-test`
+- `hv hgatp-hardware-executor raw-reached-test`
+- `hv hgatp-hardware-executor raw-called-test`
+- `hv hgatp-hardware-executor fake-trap-test`
+- `hv hgatp-hardware-executor fake-readback-test`
+- `hv hgatp-hardware-executor write-attempted-test`
+- `hv hgatp-hardware-executor write-performed-test`
+- `hv hgatp-hardware-executor active-stage2-test`
+- `hv hgatp-hardware-executor guest-entered-test`
+- `hv hgatp-hardware-executor first-instruction-test`
+- `hv hgatp-hardware-executor invariant-consumption-test`
+- `hv hgatp-hardware-executor invariant-corruption-test`
+
+Smoke proof: `./smoke/smoke-hv36-hgatp-hardware-executor-v0.sh` and `./smoke/smoke-hv36-hgatp-hardware-executor-negative-v0.sh` are included in `./scripts/validate-hyperzig.sh` and `zig build validate-hyperzig`.

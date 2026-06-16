@@ -66,6 +66,8 @@ REQUIRED_SMOKES=(
     "smoke/smoke-hv34-hgatp-hardware-write-operation-negative-v0.sh"
     "smoke/smoke-hv35-hgatp-execution-dry-run-v0.sh"
     "smoke/smoke-hv35-hgatp-execution-dry-run-negative-v0.sh"
+    "smoke/smoke-hv36-hgatp-hardware-executor-v0.sh"
+    "smoke/smoke-hv36-hgatp-hardware-executor-negative-v0.sh"
 )
 OPTIONAL_DECLARED_SMOKES=(
     "smoke/smoke-csr-v0.sh"
@@ -187,6 +189,8 @@ run_smoke() {
         smoke-hv34-hgatp-hardware-write-operation-negative-v0) transcript="$ROOT/smoke/transcripts/latest-hv34-hgatp-hardware-write-operation-negative-v0.txt" ;;
         smoke-hv35-hgatp-execution-dry-run-v0) transcript="$ROOT/smoke/transcripts/latest-hv35-hgatp-execution-dry-run-v0.txt" ;;
         smoke-hv35-hgatp-execution-dry-run-negative-v0) transcript="$ROOT/smoke/transcripts/latest-hv35-hgatp-execution-dry-run-negative-v0.txt" ;;
+        smoke-hv36-hgatp-hardware-executor-v0) transcript="$ROOT/smoke/transcripts/latest-hv36-hgatp-hardware-executor-v0.txt" ;;
+        smoke-hv36-hgatp-hardware-executor-negative-v0) transcript="$ROOT/smoke/transcripts/latest-hv36-hgatp-hardware-executor-negative-v0.txt" ;;
         *) transcript="$(find "$ROOT/smoke/transcripts" -maxdepth 1 -type f -name "*${base#smoke-}*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1{print $2}')" ;;
     esac
     record_smoke "$smoke" "$value" "$out" "$transcript"

@@ -298,6 +298,41 @@ fn handle(cmd: []const u8) void {
     if (equals(cmd, "hv context reset")) return hv.resetGuestContext();
 
 
+
+    if (equals(cmd, "hv hgatp-hardware-executor") or equals(cmd, "hv-hgatp-hardware-executor") or equals(cmd, "hv hgatp-hardware-executor status")) return hv.printHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor build")) return hv.buildHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor validate")) return hv.validateHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor execute")) return hv.executeHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor blockers")) return hv.blockersHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor next")) return hv.nextHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor checksum")) return hv.checksumHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor reset")) return hv.resetHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor fields")) return hv.fieldsHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor request")) return hv.requestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor steps")) return hv.stepsHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor result")) return hv.resultHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor trap-slot")) return hv.trapSlotHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor readback")) return hv.readbackHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor decision")) return hv.decisionHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor require-dry-run-test")) return hv.requireDryRunTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor invalid-dry-run-test")) return hv.invalidDryRunTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor source-integrity-test")) return hv.sourceIntegrityTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor request-value-test")) return hv.requestValueTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor policy-allows-test")) return hv.policyAllowsTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor boundary-bypass-test")) return hv.boundaryBypassTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor csr-reached-test")) return hv.csrReachedTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor csr-called-test")) return hv.csrCalledTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor raw-reached-test")) return hv.rawReachedTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor raw-called-test")) return hv.rawCalledTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor fake-trap-test")) return hv.fakeTrapTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor fake-readback-test")) return hv.fakeReadbackTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor write-attempted-test")) return hv.writeAttemptedTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor write-performed-test")) return hv.writePerformedTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor active-stage2-test")) return hv.activeStage2TestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor guest-entered-test")) return hv.guestEnteredTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor first-instruction-test")) return hv.firstInstructionTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor invariant-consumption-test")) return hv.invariantConsumptionTestHgatpHardwareExecutor();
+    if (equals(cmd, "hv hgatp-hardware-executor invariant-corruption-test")) return hv.invariantCorruptionTestHgatpHardwareExecutor();
     if (equals(cmd, "hv hgatp-execution-dry-run") or equals(cmd, "hv-hgatp-execution-dry-run") or equals(cmd, "hv hgatp-execution-dry-run status")) return hv.printHgatpExecutionDryRun();
     if (equals(cmd, "hv hgatp-execution-dry-run build")) return hv.buildHgatpExecutionDryRun();
     if (equals(cmd, "hv hgatp-execution-dry-run validate")) return hv.validateHgatpExecutionDryRun();
