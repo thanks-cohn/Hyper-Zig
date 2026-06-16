@@ -429,3 +429,12 @@ HV35 adds `kernel/hypervisor/hgatp_execution_dry_run.zig`, a guarded HGATP execu
 - **Smoke tests:** `smoke/smoke-hv35-hgatp-execution-dry-run-v0.sh` and `smoke/smoke-hv35-hgatp-execution-dry-run-negative-v0.sh`.
 - **Intentionally missing features:** HGATP writes, raw hardware write calls, HGATP readback, real trap observation, stage-2 activation, guest entry, trap return, guest instruction execution, and guest OS boot.
 - **Next dependency:** guarded transition from dry-run execution accounting to a still-denied hardware executor with real trap/fault capture slots prepared for a future opt-in HGATP write.
+
+## HV36 Guarded HGATP Hardware Executor Skeleton
+
+- **Purpose:** Build and execute a guarded HGATP hardware executor skeleton that consumes HV35 execution dry-run state and returns safely before CSR or raw hardware write access.
+- **Actual capability proven:** HV36 builds an executor object, consumes HV35 request/checksum/decision/accounting, executes skeleton control flow, records executor entry and return only during execute, denies before CSR, blocks before raw write, skips CSR/raw write, and exposes empty trap/readback slots.
+- **Commands:** `hv hgatp-hardware-executor`, `hv-hgatp-hardware-executor`, status/build/validate/execute/blockers/next/checksum/reset/fields/request/steps/result/trap-slot/readback/decision, and the HV36 negative invariant tests.
+- **Smoke tests:** `smoke/smoke-hv36-hgatp-hardware-executor-v0.sh` and `smoke/smoke-hv36-hgatp-hardware-executor-negative-v0.sh`.
+- **Intentionally missing features:** HGATP write, CSR write path call, raw hardware write path call, readback, real trap capture, active second-stage translation, guest entry, guest instruction execution, trap return, and guest OS boot.
+- **Next dependency:** a future guarded HGATP write boundary that can add an explicit opt-in hardware path without weakening the default denial policy.

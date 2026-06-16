@@ -380,3 +380,31 @@ HV34 does not:
 - perform readback
 - activate second-stage translation
 - prove active virtualization
+
+### HV36 Guarded HGATP Hardware Executor Skeleton
+
+HV36 adds `kernel/hypervisor/hgatp_hardware_executor.zig`, a guarded HGATP hardware executor skeleton. It does the following:
+
+- Builds a guarded HGATP hardware executor skeleton.
+- Consumes existing HV35 execution dry-run state.
+- Constructs a hardware executor request from the HV35 request value and checksum.
+- Executes real hardware-executor skeleton control-flow.
+- Records `executor_built=true` only during build.
+- Records `executor_entered=true` only during execute.
+- Records `executor_returned=true` only after execute completes.
+- Records the denied-before-CSR execution path.
+- Records the blocked-before-raw-write execution path.
+- Records CSR-write-skipped and raw-write-skipped accounting.
+- Exposes step accounting.
+- Exposes a trap slot without claiming a trap.
+- Exposes a readback slot without performing readback.
+- Proves source integrity against the consumed HV35 fingerprint.
+- Proves the CSR write function remains not called.
+- Proves the raw write function remains not called.
+- Preserves `hgatp_write_attempted=false`.
+- Preserves `hgatp_write_performed=false`.
+- Preserves `active_stage2=false`.
+- Preserves `guest_entered=false`.
+- Preserves `first_guest_instruction_executed=false`.
+
+HV36 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute trap return, write HGATP, call the CSR write path, call the raw hardware write path, observe a real trap, perform readback, activate second-stage translation, or prove active virtualization.
