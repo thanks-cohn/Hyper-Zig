@@ -299,6 +299,35 @@ fn handle(cmd: []const u8) void {
 
 
 
+    if (equals(cmd, "hv hgatp-trap-capture-prep") or equals(cmd, "hv-hgatp-trap-capture-prep") or equals(cmd, "hv hgatp-trap-capture-prep status")) return hv.printHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep build")) return hv.buildHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep validate")) return hv.validateHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep prepare")) return hv.prepareHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep blockers")) return hv.blockersHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep next")) return hv.nextHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep checksum")) return hv.checksumHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep reset")) return hv.resetHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep fields")) return hv.fieldsHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep trap-slot")) return hv.trapSlotHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep fault-slot")) return hv.faultSlotHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep result")) return hv.resultHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep decision")) return hv.decisionHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep require-executor-test")) return hv.requireExecutorTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep invalid-executor-test")) return hv.invalidExecutorTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep source-integrity-test")) return hv.sourceIntegrityTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep fake-trap-test")) return hv.fakeTrapTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep fake-fault-test")) return hv.fakeFaultTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep csr-called-test")) return hv.csrCalledTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep raw-called-test")) return hv.rawCalledTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep readback-test")) return hv.readbackTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep readback-valid-test")) return hv.readbackValidTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep write-attempted-test")) return hv.writeAttemptedTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep write-performed-test")) return hv.writePerformedTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep active-stage2-test")) return hv.activeStage2TestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep guest-entered-test")) return hv.guestEnteredTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep first-instruction-test")) return hv.firstInstructionTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep invariant-consumption-test")) return hv.invariantConsumptionTestHgatpTrapCapturePrep();
+    if (equals(cmd, "hv hgatp-trap-capture-prep invariant-corruption-test")) return hv.invariantCorruptionTestHgatpTrapCapturePrep();
     if (equals(cmd, "hv hgatp-hardware-executor") or equals(cmd, "hv-hgatp-hardware-executor") or equals(cmd, "hv hgatp-hardware-executor status")) return hv.printHgatpHardwareExecutor();
     if (equals(cmd, "hv hgatp-hardware-executor build")) return hv.buildHgatpHardwareExecutor();
     if (equals(cmd, "hv hgatp-hardware-executor validate")) return hv.validateHgatpHardwareExecutor();

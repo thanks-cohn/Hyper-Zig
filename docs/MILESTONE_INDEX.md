@@ -438,3 +438,5 @@ HV35 adds `kernel/hypervisor/hgatp_execution_dry_run.zig`, a guarded HGATP execu
 - **Smoke tests:** `smoke/smoke-hv36-hgatp-hardware-executor-v0.sh` and `smoke/smoke-hv36-hgatp-hardware-executor-negative-v0.sh`.
 - **Intentionally missing features:** HGATP write, CSR write path call, raw hardware write path call, readback, real trap capture, active second-stage translation, guest entry, guest instruction execution, trap return, and guest OS boot.
 - **Next dependency:** a future guarded HGATP write boundary that can add an explicit opt-in hardware path without weakening the default denial policy.
+
+- HV37: Guarded HGATP Trap/Fault Capture Preparation Foundation (`kernel/hypervisor/hgatp_trap_capture_prep.zig`, smoke HV37 positive/negative).

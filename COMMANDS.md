@@ -847,3 +847,35 @@ HV36 adds a guarded HGATP hardware executor skeleton that consumes the existing 
 - `hv hgatp-hardware-executor invariant-corruption-test`
 
 Smoke proof: `./smoke/smoke-hv36-hgatp-hardware-executor-v0.sh` and `./smoke/smoke-hv36-hgatp-hardware-executor-negative-v0.sh` are included in `./scripts/validate-hyperzig.sh` and `zig build validate-hyperzig`.
+
+
+## HV37 guarded HGATP trap/fault capture preparation
+
+* `hv hgatp-trap-capture-prep` / `hv-hgatp-trap-capture-prep` / `hv hgatp-trap-capture-prep status`
+* `hv hgatp-trap-capture-prep build`
+* `hv hgatp-trap-capture-prep validate`
+* `hv hgatp-trap-capture-prep prepare`
+* `hv hgatp-trap-capture-prep blockers`
+* `hv hgatp-trap-capture-prep next`
+* `hv hgatp-trap-capture-prep checksum`
+* `hv hgatp-trap-capture-prep reset`
+* `hv hgatp-trap-capture-prep fields`
+* `hv hgatp-trap-capture-prep trap-slot`
+* `hv hgatp-trap-capture-prep fault-slot`
+* `hv hgatp-trap-capture-prep result`
+* `hv hgatp-trap-capture-prep decision`
+* `hv hgatp-trap-capture-prep require-executor-test`
+* `hv hgatp-trap-capture-prep invalid-executor-test`
+* `hv hgatp-trap-capture-prep source-integrity-test`
+* `hv hgatp-trap-capture-prep fake-trap-test`
+* `hv hgatp-trap-capture-prep fake-fault-test`
+* `hv hgatp-trap-capture-prep csr-called-test`
+* `hv hgatp-trap-capture-prep raw-called-test`
+* `hv hgatp-trap-capture-prep readback-test`
+* `hv hgatp-trap-capture-prep write-attempted-test`
+* `hv hgatp-trap-capture-prep write-performed-test`
+* `hv hgatp-trap-capture-prep active-stage2-test`
+* `hv hgatp-trap-capture-prep guest-entered-test`
+* `hv hgatp-trap-capture-prep first-instruction-test`
+* `hv hgatp-trap-capture-prep invariant-consumption-test`
+* `hv hgatp-trap-capture-prep invariant-corruption-test`
