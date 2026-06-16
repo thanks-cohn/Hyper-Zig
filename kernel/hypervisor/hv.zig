@@ -33,6 +33,7 @@ const hgatp_csr_interface = @import("hgatp_csr_interface.zig");
 const hgatp_csr_result = @import("hgatp_csr_result.zig");
 const hgatp_hardware_write_prep = @import("hgatp_hardware_write_prep.zig");
 const hgatp_hardware_write_operation = @import("hgatp_hardware_write_operation.zig");
+const hgatp_execution_dry_run = @import("hgatp_execution_dry_run.zig");
 
 pub fn init() void {
     vm.init();
@@ -68,6 +69,7 @@ pub fn init() void {
     hgatp_csr_result.init(vm.object().id, vcpu.object().id);
     hgatp_hardware_write_prep.init(vm.object().id, vcpu.object().id);
     hgatp_hardware_write_operation.init(vm.object().id, vcpu.object().id);
+    hgatp_execution_dry_run.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -123,6 +125,42 @@ pub fn printStatus() void {
 
 
 
+
+pub fn printHgatpExecutionDryRun() void { hgatp_execution_dry_run.printStatusCommand(); }
+pub fn buildHgatpExecutionDryRun() void { hgatp_execution_dry_run.printBuildCommand(); }
+pub fn validateHgatpExecutionDryRun() void { hgatp_execution_dry_run.printValidateCommand(); }
+pub fn executeHgatpExecutionDryRun() void { hgatp_execution_dry_run.printExecuteCommand(); }
+pub fn blockersHgatpExecutionDryRun() void { hgatp_execution_dry_run.printBlockersCommand(); }
+pub fn nextHgatpExecutionDryRun() void { hgatp_execution_dry_run.printNextCommand(); }
+pub fn checksumHgatpExecutionDryRun() void { hgatp_execution_dry_run.printChecksumCommand(); }
+pub fn resetHgatpExecutionDryRun() void { hgatp_execution_dry_run.printResetCommand(); }
+pub fn fieldsHgatpExecutionDryRun() void { hgatp_execution_dry_run.printFieldsCommand(); }
+pub fn requestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printRequestCommand(); }
+pub fn stepsHgatpExecutionDryRun() void { hgatp_execution_dry_run.printStepsCommand(); }
+pub fn resultHgatpExecutionDryRun() void { hgatp_execution_dry_run.printResultCommand(); }
+pub fn trapSlotHgatpExecutionDryRun() void { hgatp_execution_dry_run.printTrapSlotCommand(); }
+pub fn readbackHgatpExecutionDryRun() void { hgatp_execution_dry_run.printReadbackCommand(); }
+pub fn decisionHgatpExecutionDryRun() void { hgatp_execution_dry_run.printDecisionCommand(); }
+pub fn requireOperationTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printRequireOperationTestCommand(); }
+pub fn invalidOperationTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printInvalidOperationTestCommand(); }
+pub fn sourceIntegrityTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printSourceIntegrityTestCommand(); }
+pub fn requestValueTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printRequestValueTestCommand(); }
+pub fn optInTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printOptInTestCommand(); }
+pub fn policyAllowsTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printPolicyAllowsTestCommand(); }
+pub fn operationCallReachableTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printOperationCallReachableTestCommand(); }
+pub fn operationCallCalledTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printOperationCallCalledTestCommand(); }
+pub fn rawWriteCalledTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printRawWriteCalledTestCommand(); }
+pub fn executionReachedRawWriteTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printExecutionReachedRawWriteTestCommand(); }
+pub fn executionCalledRawWriteTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printExecutionCalledRawWriteTestCommand(); }
+pub fn fakeTrapTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printFakeTrapTestCommand(); }
+pub fn fakeReadbackTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printFakeReadbackTestCommand(); }
+pub fn writeAttemptedTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printWriteAttemptedTestCommand(); }
+pub fn writePerformedTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printWritePerformedTestCommand(); }
+pub fn activeStage2TestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printActiveStage2TestCommand(); }
+pub fn guestEnteredTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printGuestEnteredTestCommand(); }
+pub fn firstInstructionTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printFirstInstructionTestCommand(); }
+pub fn invariantConsumptionTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printInvariantConsumptionCommand(); }
+pub fn invariantCorruptionTestHgatpExecutionDryRun() void { hgatp_execution_dry_run.printInvariantCorruptionCommand(); }
 pub fn printHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printStatusCommand(); }
 pub fn buildHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printBuildCommand(); }
 pub fn validateHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printValidateCommand(); }

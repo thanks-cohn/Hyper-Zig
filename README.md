@@ -62,6 +62,8 @@ It already contains:
 - Hardware-facing HGATP boundary preparation.
 - HGATP CSR result and fault accounting.
 - Guarded HGATP hardware-write preparation.
+- Guarded HGATP hardware-write operation state.
+- Guarded HGATP execution-path dry-run accounting.
 
 Tomorrow it aims for:
 
@@ -76,6 +78,33 @@ Tomorrow it aims for:
 The promise of Hyper-Zig is not merely the destination.
 
 The promise is that every step toward that destination is visible, reproducible, and understandable.
+
+
+### HV35 Guarded HGATP Execution Path Dry-Run
+
+HV35 adds `kernel/hypervisor/hgatp_execution_dry_run.zig`, a guarded HGATP execution dry-run subsystem. It does the following:
+
+- Builds a guarded HGATP execution dry-run object.
+- Consumes existing HV34 hardware-write operation state.
+- Constructs a dry-run request from the HV34 request value and checksum.
+- Executes real dry-run control-flow through an executor function.
+- Records `executor_entered=true` only during execute.
+- Records `executor_returned=true` only after execute completes.
+- Records the denied-before-CSR execution path.
+- Records the blocked-before-raw-write execution path.
+- Records raw-write-skipped step accounting.
+- Exposes executor step accounting.
+- Exposes a trap slot without claiming a trap.
+- Exposes a readback slot without performing readback.
+- Proves source integrity with before/after HV34 fingerprints.
+- Proves the raw write function remains not called.
+- Preserves `hgatp_write_attempted=false`.
+- Preserves `hgatp_write_performed=false`.
+- Preserves `active_stage2=false`.
+- Preserves `guest_entered=false`.
+- Preserves `first_guest_instruction_executed=false`.
+
+HV35 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute trap return, write HGATP, call the raw hardware write path, observe a real trap, perform readback, activate second-stage translation, or prove active virtualization.
 
 ## What Hyper-Zig Is
 
@@ -100,7 +129,7 @@ The result is not just a kernel. It is a public construction path for a RISC-V h
 Current verified milestone chain:
 
 ```text
-HV0 -> HV33
+HV0 -> HV35
 ```
 
 Hyper-Zig currently provides:
@@ -130,6 +159,8 @@ Hyper-Zig currently provides:
 - Guarded HGATP CSR interface preparation.
 - HGATP CSR result and fault accounting.
 - Guarded HGATP hardware-write preparation.
+- Guarded HGATP hardware-write operation state.
+- Guarded HGATP execution-path dry-run accounting.
 
 Validation currently proves:
 
