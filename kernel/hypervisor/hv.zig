@@ -32,6 +32,7 @@ const hgatp_write_attempt = @import("hgatp_write_attempt.zig");
 const hgatp_csr_interface = @import("hgatp_csr_interface.zig");
 const hgatp_csr_result = @import("hgatp_csr_result.zig");
 const hgatp_hardware_write_prep = @import("hgatp_hardware_write_prep.zig");
+const hgatp_hardware_write_operation = @import("hgatp_hardware_write_operation.zig");
 
 pub fn init() void {
     vm.init();
@@ -66,6 +67,7 @@ pub fn init() void {
     hgatp_csr_interface.init(vm.object().id, vcpu.object().id);
     hgatp_csr_result.init(vm.object().id, vcpu.object().id);
     hgatp_hardware_write_prep.init(vm.object().id, vcpu.object().id);
+    hgatp_hardware_write_operation.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -119,6 +121,40 @@ pub fn printStatus() void {
 }
 
 
+
+
+pub fn printHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printStatusCommand(); }
+pub fn buildHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printBuildCommand(); }
+pub fn validateHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printValidateCommand(); }
+pub fn blockersHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printBlockersCommand(); }
+pub fn nextHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printNextCommand(); }
+pub fn checksumHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printChecksumCommand(); }
+pub fn resetHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printResetCommand(); }
+pub fn fieldsHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printFieldsCommand(); }
+pub fn requestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printRequestCommand(); }
+pub fn preflightHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printPreflightCommand(); }
+pub fn resultHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printOperationResultCommand(); }
+pub fn trapSlotHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printTrapSlotCommand(); }
+pub fn readbackHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printReadbackCommand(); }
+pub fn decisionHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printDecisionCommand(); }
+pub fn requirePrepTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printRequirePrepTestCommand(); }
+pub fn invalidPrepTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printInvalidPrepTestCommand(); }
+pub fn sourceIntegrityTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printSourceIntegrityTestCommand(); }
+pub fn requestValueTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printRequestValueTestCommand(); }
+pub fn optInTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printOptInTestCommand(); }
+pub fn policyAllowsTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printPolicyAllowsTestCommand(); }
+pub fn callReachableTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printCallReachableTestCommand(); }
+pub fn callCalledTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printCallCalledTestCommand(); }
+pub fn rawWriteCalledTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printRawWriteCalledTestCommand(); }
+pub fn fakeTrapTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printFakeTrapTestCommand(); }
+pub fn fakeReadbackTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printFakeReadbackTestCommand(); }
+pub fn writeAttemptedTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printWriteAttemptedTestCommand(); }
+pub fn writePerformedTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printWritePerformedTestCommand(); }
+pub fn activeStage2TestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printActiveStage2TestCommand(); }
+pub fn guestEnteredTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printGuestEnteredTestCommand(); }
+pub fn firstInstructionTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printFirstInstructionTestCommand(); }
+pub fn invariantConsumptionTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printInvariantConsumptionCommand(); }
+pub fn invariantCorruptionTestHgatpHardwareWriteOperation() void { hgatp_hardware_write_operation.printInvariantCorruptionCommand(); }
 
 pub fn printHgatpHardwareWritePrep() void { hgatp_hardware_write_prep.printStatusCommand(); }
 pub fn buildHgatpHardwareWritePrep() void { hgatp_hardware_write_prep.printBuildCommand(); }

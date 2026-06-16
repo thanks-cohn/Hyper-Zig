@@ -719,3 +719,44 @@ New HV33 shell commands:
 - `hv hgatp-hardware-write-prep invariant-corruption-test`
 
 HV33 consumes the existing HV32 CSR result/fault accounting state, builds a guarded hardware-write envelope, and preserves the current no-write policy: hardware calls are blocked before call, raw write is not called, trap/readback envelopes remain empty, and no guest execution or active stage-2 state is claimed.
+
+## HV34 HGATP Hardware Write Operation Framework
+
+New shell commands:
+
+- `hv hgatp-hardware-write-operation`
+- `hv-hgatp-hardware-write-operation`
+- `hv hgatp-hardware-write-operation status`
+- `hv hgatp-hardware-write-operation build`
+- `hv hgatp-hardware-write-operation validate`
+- `hv hgatp-hardware-write-operation blockers`
+- `hv hgatp-hardware-write-operation next`
+- `hv hgatp-hardware-write-operation checksum`
+- `hv hgatp-hardware-write-operation reset`
+- `hv hgatp-hardware-write-operation fields`
+- `hv hgatp-hardware-write-operation request`
+- `hv hgatp-hardware-write-operation preflight`
+- `hv hgatp-hardware-write-operation result`
+- `hv hgatp-hardware-write-operation trap-slot`
+- `hv hgatp-hardware-write-operation readback`
+- `hv hgatp-hardware-write-operation decision`
+- `hv hgatp-hardware-write-operation require-prep-test`
+- `hv hgatp-hardware-write-operation invalid-prep-test`
+- `hv hgatp-hardware-write-operation source-integrity-test`
+- `hv hgatp-hardware-write-operation request-value-test`
+- `hv hgatp-hardware-write-operation opt-in-test`
+- `hv hgatp-hardware-write-operation policy-allows-test`
+- `hv hgatp-hardware-write-operation call-reachable-test`
+- `hv hgatp-hardware-write-operation call-called-test`
+- `hv hgatp-hardware-write-operation raw-write-called-test`
+- `hv hgatp-hardware-write-operation fake-trap-test`
+- `hv hgatp-hardware-write-operation fake-readback-test`
+- `hv hgatp-hardware-write-operation write-attempted-test`
+- `hv hgatp-hardware-write-operation write-performed-test`
+- `hv hgatp-hardware-write-operation active-stage2-test`
+- `hv hgatp-hardware-write-operation guest-entered-test`
+- `hv hgatp-hardware-write-operation first-instruction-test`
+- `hv hgatp-hardware-write-operation invariant-consumption-test`
+- `hv hgatp-hardware-write-operation invariant-corruption-test`
+
+HV34 builds an opt-in guarded HGATP hardware-write operation object from the existing HV33 preparation envelope. The default operation is denied before CSR access and blocked before the raw write path.
