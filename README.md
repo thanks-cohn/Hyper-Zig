@@ -313,3 +313,39 @@ qemu-system-riscv64 \
 <p align="center">
   <img src="who_needs_anything_else_2.png" alt="we're gonna make it!" width="720">
 </p>
+
+### HV34 — Opt-In Guarded HGATP Hardware Write Operation Framework
+
+HV34 does:
+
+- builds an explicit opt-in guarded HGATP hardware-write operation object
+- consumes existing HV33 hardware-write preparation state
+- constructs an operation request
+- preserves `operation_explicit_opt_in=false` by default
+- classifies current operation as denied before CSR
+- classifies current operation as blocked before raw write
+- exposes preflight state
+- exposes a trap slot without claiming a trap
+- exposes a readback slot without performing readback
+- proves source integrity
+- proves raw write function remains not called
+- preserves `hgatp_write_attempted=false`
+- preserves `hgatp_write_performed=false`
+- preserves `active_stage2=false`
+- preserves `guest_entered=false`
+- preserves `first_guest_instruction_executed=false`
+
+HV34 does not:
+
+- boot Linux
+- boot BusyBox
+- boot Alpine
+- execute guest instructions
+- enter guest mode
+- execute trap return
+- write HGATP
+- call the raw hardware write path
+- observe a real trap
+- perform readback
+- activate second-stage translation
+- prove active virtualization
