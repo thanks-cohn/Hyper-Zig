@@ -416,3 +416,16 @@ HV30 does not write `hgatp`, activate second-stage translation, enter guest mode
 - **Smoke tests:** `smoke/smoke-hv33-hgatp-hardware-write-prep-v0.sh` and `smoke/smoke-hv33-hgatp-hardware-write-prep-negative-v0.sh`.
 - **Intentionally missing features:** HGATP writes, HGATP readback, trap evidence, stage-2 activation, guest entry, trap return, guest instruction execution, and guest OS boot.
 - **Next dependency:** a guarded hardware CSR operation milestone that can add an explicit opt-in write path with real trap/fault capture.
+
+## HV34 HGATP Hardware Write Operation Framework
+
+HV34 adds `kernel/hypervisor/hgatp_hardware_write_operation.zig`, an explicit opt-in HGATP hardware-write operation object that consumes HV33 preparation state and preserves denial before CSR access. It exposes request, preflight, result, trap-slot, readback, blocker, and invariant commands without writing HGATP or claiming readback, traps, active stage2, or guest entry.
+
+## HV35 Guarded HGATP Execution Path Dry-Run Foundation
+
+HV35 adds `kernel/hypervisor/hgatp_execution_dry_run.zig`, a guarded HGATP execution-path dry-run object that consumes HV34 hardware-write operation state, fingerprints the source before and after build/execute, constructs a dry-run request, enters a real dry-run executor, records step accounting, denies before CSR access, blocks before raw write, skips raw write, records safe return, and exposes honest empty trap/readback slots.
+
+- **Commands:** `hv hgatp-execution-dry-run`, `hv-hgatp-execution-dry-run`, status/build/validate/execute/blockers/next/checksum/reset/fields/request/steps/result/trap-slot/readback/decision, and the HV35 negative invariant tests.
+- **Smoke tests:** `smoke/smoke-hv35-hgatp-execution-dry-run-v0.sh` and `smoke/smoke-hv35-hgatp-execution-dry-run-negative-v0.sh`.
+- **Intentionally missing features:** HGATP writes, raw hardware write calls, HGATP readback, real trap observation, stage-2 activation, guest entry, trap return, guest instruction execution, and guest OS boot.
+- **Next dependency:** guarded transition from dry-run execution accounting to a still-denied hardware executor with real trap/fault capture slots prepared for a future opt-in HGATP write.
