@@ -408,3 +408,10 @@ HV36 adds `kernel/hypervisor/hgatp_hardware_executor.zig`, a guarded HGATP hardw
 - Preserves `first_guest_instruction_executed=false`.
 
 HV36 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute trap return, write HGATP, call the CSR write path, call the raw hardware write path, observe a real trap, perform readback, activate second-stage translation, or prove active virtualization.
+
+
+### HV37 Guarded HGATP Trap/Fault Capture Preparation Foundation
+
+HV37 builds guarded HGATP trap/fault capture preparation around the HV36 hardware executor state. It consumes the HV36 hardware executor object, fingerprints that source before and after build and prepare, prepares an honest trap slot, prepares an honest fault slot, executes preparation control-flow, proves no trap is fabricated, proves no fault is fabricated, proves the CSR write function remains not called, proves the raw write function remains not called, and preserves all no-write and no-activation invariants.
+
+HV37 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute trap return, write HGATP, call a CSR write, call a raw write, perform readback, activate second-stage translation, or prove active virtualization.
