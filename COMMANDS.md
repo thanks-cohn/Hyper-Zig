@@ -879,3 +879,32 @@ Smoke proof: `./smoke/smoke-hv36-hgatp-hardware-executor-v0.sh` and `./smoke/smo
 * `hv hgatp-trap-capture-prep first-instruction-test`
 * `hv hgatp-trap-capture-prep invariant-consumption-test`
 * `hv hgatp-trap-capture-prep invariant-corruption-test`
+
+## HV38 Guarded HGATP CSR Write Boundary Foundation commands
+
+HV38 adds a real software-controlled CSR write boundary immediately before any future `hgatp` CSR write. These commands construct, validate, inspect, execute as a no-write readiness path, account for denials, and reset the boundary. They do **not** write `hgatp`, execute raw CSR writes, read back `hgatp`, activate second-stage translation, enter guest mode, or execute guest instructions.
+
+### `hv csr-boundary` / `hv-csr-boundary` / `hv csr-boundary status`
+- **What it does:** prints the current CSR boundary lifecycle, source fingerprint, authorization, accounting, execution record, and no-write invariant fields.
+
+### `hv csr-boundary create`
+- **What it does:** consumes the HV37 trap-capture preparation object, builds a CSR boundary request, records source fingerprints, assigns a replay nonce, and evaluates whether the software boundary is constructible.
+
+### `hv csr-boundary inspect`
+- **What it does:** inspects the current boundary object and execution record without mutating the write path.
+
+### `hv csr-boundary validate`
+- **What it does:** validates source stability, replay protection, denial policy, accounting, and required invariants while keeping `authorized_to_write=false`.
+
+### `hv csr-boundary execute`
+- **What it does:** records execution readiness and an execution record for the boundary while deliberately denying the hardware write path before CSR access.
+
+### `hv csr-boundary reset`
+- **What it does:** resets the CSR boundary lifecycle, request metadata, accounting, and execution record.
+
+### HV38 behavior tests
+- `hv csr-boundary denial-test` proves a CSR-call observation is rejected.
+- `hv csr-boundary replay-test` proves replayed boundary nonces are rejected.
+- `hv csr-boundary no-write-invariant-test` proves `hgatp_write_attempted=false`, `hgatp_write_performed=false`, `active_stage2=false`, `guest_entered=false`, and `first_guest_instruction_executed=false` across the execute-readiness path.
+
+Smoke proof: `smoke/smoke-hv38-csr-boundary-v0.sh` writes `smoke/transcripts/latest-hv38-csr-boundary-v0.txt` and verifies creation, validation, denial, accounting, lifecycle reset, replay protection, and no-write invariants from command behavior.

@@ -36,6 +36,7 @@ const hgatp_hardware_write_operation = @import("hgatp_hardware_write_operation.z
 const hgatp_execution_dry_run = @import("hgatp_execution_dry_run.zig");
 const hgatp_hardware_executor = @import("hgatp_hardware_executor.zig");
 const hgatp_trap_capture_prep = @import("hgatp_trap_capture_prep.zig");
+const hgatp_csr_write_boundary = @import("hgatp_csr_write_boundary.zig");
 
 pub fn init() void {
     vm.init();
@@ -74,6 +75,7 @@ pub fn init() void {
     hgatp_execution_dry_run.init(vm.object().id, vcpu.object().id);
     hgatp_hardware_executor.init(vm.object().id, vcpu.object().id);
     hgatp_trap_capture_prep.init(vm.object().id, vcpu.object().id);
+    hgatp_csr_write_boundary.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -119,6 +121,7 @@ pub fn printStatus() void {
     hgatp_hardware_write_prep.printStatusCommand();
     hgatp_hardware_executor.printStatusCommand();
     hgatp_trap_capture_prep.printStatusCommand();
+    hgatp_csr_write_boundary.printStatusCommand();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
@@ -133,6 +136,16 @@ pub fn printStatus() void {
 
 
 
+
+pub fn printCsrBoundary() void { hgatp_csr_write_boundary.printStatusCommand(); }
+pub fn createCsrBoundary() void { hgatp_csr_write_boundary.printCreateCommand(); }
+pub fn inspectCsrBoundary() void { hgatp_csr_write_boundary.printInspectCommand(); }
+pub fn validateCsrBoundary() void { hgatp_csr_write_boundary.printValidateCommand(); }
+pub fn executeCsrBoundary() void { hgatp_csr_write_boundary.printExecuteCommand(); }
+pub fn resetCsrBoundary() void { hgatp_csr_write_boundary.printResetCommand(); }
+pub fn denialTestCsrBoundary() void { hgatp_csr_write_boundary.printDenialTestCommand(); }
+pub fn replayTestCsrBoundary() void { hgatp_csr_write_boundary.printReplayTestCommand(); }
+pub fn noWriteInvariantTestCsrBoundary() void { hgatp_csr_write_boundary.printNoWriteInvariantTestCommand(); }
 
 pub fn printHgatpTrapCapturePrep() void { hgatp_trap_capture_prep.printStatusCommand(); }
 pub fn buildHgatpTrapCapturePrep() void { hgatp_trap_capture_prep.printBuildCommand(); }

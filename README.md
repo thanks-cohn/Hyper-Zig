@@ -64,9 +64,12 @@ It already contains:
 - Guarded HGATP hardware-write preparation.
 - Guarded HGATP hardware-write operation state.
 - Guarded HGATP execution-path dry-run accounting.
+- Guarded HGATP trap and fault capture preparation.
+- Guarded HGATP CSR write boundary construction, validation, accounting, replay protection, and no-write execution records.
 
 Tomorrow it aims for:
 
+- Continued guarded HGATP CSR-write boundary hardening before any hardware write.
 - Safe hardware-backed `hgatp` write activation.
 - Second-stage translation activation.
 - Guest-mode entry.
@@ -79,6 +82,30 @@ The promise of Hyper-Zig is not merely the destination.
 
 The promise is that every step toward that destination is visible, reproducible, and understandable.
 
+
+### HV38 Guarded HGATP CSR Write Boundary Foundation
+
+HV38 adds `kernel/hypervisor/hgatp_csr_write_boundary.zig`, a real software-controlled CSR write boundary subsystem. It consumes the HV37 trap-capture preparation object, constructs a boundary request, validates source fingerprints, evaluates authorization while keeping `authorized_to_write=false`, records denial/readiness accounting, protects against replayed boundary nonces, records an execution-readiness record, and exposes shell commands under `hv csr-boundary`.
+
+HV38 preserves `hgatp_write_attempted=false`, `hgatp_write_performed=false`, `active_stage2=false`, `guest_entered=false`, and `first_guest_instruction_executed=false`. It does not write HGATP, execute raw CSR writes, perform readback, activate second-stage translation, enter guest mode, execute trap return, or claim guest execution.
+
+Exact start commands:
+
+```sh
+zig build
+zig build hyperzig-status
+```
+
+Exact validation commands:
+
+```sh
+./smoke/smoke-hv38-csr-boundary-v0.sh
+./scripts/validate-hyperzig.sh
+```
+
+Current milestone: HV38 Guarded HGATP CSR Write Boundary Foundation.
+
+Next milestone: continue the guarded HGATP CSR write boundary toward a future safe hardware write without claiming a write until it exists.
 
 ### HV35 Guarded HGATP Execution Path Dry-Run
 
@@ -129,7 +156,7 @@ The result is not just a kernel. It is a public construction path for a RISC-V h
 Current verified milestone chain:
 
 ```text
-HV0 -> HV35
+HV0 -> HV38
 ```
 
 Hyper-Zig currently provides:
@@ -161,6 +188,8 @@ Hyper-Zig currently provides:
 - Guarded HGATP hardware-write preparation.
 - Guarded HGATP hardware-write operation state.
 - Guarded HGATP execution-path dry-run accounting.
+- Guarded HGATP trap and fault capture preparation.
+- Guarded HGATP CSR write boundary construction, validation, accounting, replay protection, and no-write execution records.
 
 Validation currently proves:
 

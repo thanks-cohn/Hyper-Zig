@@ -299,6 +299,15 @@ fn handle(cmd: []const u8) void {
 
 
 
+    if (equals(cmd, "hv csr-boundary") or equals(cmd, "hv-csr-boundary") or equals(cmd, "hv csr-boundary status")) return hv.printCsrBoundary();
+    if (equals(cmd, "hv csr-boundary create")) return hv.createCsrBoundary();
+    if (equals(cmd, "hv csr-boundary inspect")) return hv.inspectCsrBoundary();
+    if (equals(cmd, "hv csr-boundary validate")) return hv.validateCsrBoundary();
+    if (equals(cmd, "hv csr-boundary execute")) return hv.executeCsrBoundary();
+    if (equals(cmd, "hv csr-boundary reset")) return hv.resetCsrBoundary();
+    if (equals(cmd, "hv csr-boundary denial-test")) return hv.denialTestCsrBoundary();
+    if (equals(cmd, "hv csr-boundary replay-test")) return hv.replayTestCsrBoundary();
+    if (equals(cmd, "hv csr-boundary no-write-invariant-test")) return hv.noWriteInvariantTestCsrBoundary();
     if (equals(cmd, "hv hgatp-trap-capture-prep") or equals(cmd, "hv-hgatp-trap-capture-prep") or equals(cmd, "hv hgatp-trap-capture-prep status")) return hv.printHgatpTrapCapturePrep();
     if (equals(cmd, "hv hgatp-trap-capture-prep build")) return hv.buildHgatpTrapCapturePrep();
     if (equals(cmd, "hv hgatp-trap-capture-prep validate")) return hv.validateHgatpTrapCapturePrep();
