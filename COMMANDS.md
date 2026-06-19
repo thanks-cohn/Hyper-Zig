@@ -908,3 +908,47 @@ HV38 adds a real software-controlled CSR write boundary immediately before any f
 - `hv csr-boundary no-write-invariant-test` proves `hgatp_write_attempted=false`, `hgatp_write_performed=false`, `active_stage2=false`, `guest_entered=false`, and `first_guest_instruction_executed=false` across the execute-readiness path.
 
 Smoke proof: `smoke/smoke-hv38-csr-boundary-v0.sh` writes `smoke/transcripts/latest-hv38-csr-boundary-v0.txt` and verifies creation, validation, denial, accounting, lifecycle reset, replay protection, and no-write invariants from command behavior.
+
+## HV39 Guarded HGATP CSR Write Eligibility Executor commands
+
+HV39 adds `kernel/hypervisor/hgatp_csr_write_eligibility.zig`, a guarded HGATP CSR write eligibility executor. These commands consume the already-built HV38 CSR boundary state, construct a local eligibility request, run eligibility-control-flow only during `evaluate`, and record a deny-before-hardware decision. They do not write HGATP, do not call CSR/raw write paths, do not perform readback, do not observe traps, do not activate second-stage translation, and do not enter a guest.
+
+Commands added:
+
+- `hv hgatp-csr-write-eligibility` / `hv-hgatp-csr-write-eligibility` / `hv hgatp-csr-write-eligibility status`
+- `hv hgatp-csr-write-eligibility build`
+- `hv hgatp-csr-write-eligibility validate`
+- `hv hgatp-csr-write-eligibility evaluate`
+- `hv hgatp-csr-write-eligibility blockers`
+- `hv hgatp-csr-write-eligibility next`
+- `hv hgatp-csr-write-eligibility checksum`
+- `hv hgatp-csr-write-eligibility reset`
+- `hv hgatp-csr-write-eligibility fields`
+- `hv hgatp-csr-write-eligibility request`
+- `hv hgatp-csr-write-eligibility steps`
+- `hv hgatp-csr-write-eligibility result`
+- `hv hgatp-csr-write-eligibility trap-slot`
+- `hv hgatp-csr-write-eligibility readback`
+- `hv hgatp-csr-write-eligibility decision`
+- `hv hgatp-csr-write-eligibility require-boundary-test`
+- `hv hgatp-csr-write-eligibility invalid-boundary-test`
+- `hv hgatp-csr-write-eligibility source-integrity-test`
+- `hv hgatp-csr-write-eligibility request-value-test`
+- `hv hgatp-csr-write-eligibility policy-allows-test`
+- `hv hgatp-csr-write-eligibility csr-eligible-test`
+- `hv hgatp-csr-write-eligibility csr-reached-test`
+- `hv hgatp-csr-write-eligibility csr-called-test`
+- `hv hgatp-csr-write-eligibility raw-reached-test`
+- `hv hgatp-csr-write-eligibility raw-called-test`
+- `hv hgatp-csr-write-eligibility fake-trap-test`
+- `hv hgatp-csr-write-eligibility fake-fault-test`
+- `hv hgatp-csr-write-eligibility fake-readback-test`
+- `hv hgatp-csr-write-eligibility write-attempted-test`
+- `hv hgatp-csr-write-eligibility write-performed-test`
+- `hv hgatp-csr-write-eligibility active-stage2-test`
+- `hv hgatp-csr-write-eligibility guest-entered-test`
+- `hv hgatp-csr-write-eligibility first-instruction-test`
+- `hv hgatp-csr-write-eligibility invariant-consumption-test`
+- `hv hgatp-csr-write-eligibility invariant-corruption-test`
+
+Smoke proof: `./smoke/smoke-hv39-hgatp-csr-write-eligibility-v0.sh` and `./smoke/smoke-hv39-hgatp-csr-write-eligibility-negative-v0.sh`.

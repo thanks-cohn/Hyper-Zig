@@ -440,3 +440,12 @@ HV35 adds `kernel/hypervisor/hgatp_execution_dry_run.zig`, a guarded HGATP execu
 - **Next dependency:** a future guarded HGATP write boundary that can add an explicit opt-in hardware path without weakening the default denial policy.
 
 - HV37: Guarded HGATP Trap/Fault Capture Preparation Foundation (`kernel/hypervisor/hgatp_trap_capture_prep.zig`, smoke HV37 positive/negative).
+
+## HV39 Guarded HGATP CSR Write Eligibility Executor Foundation
+
+- **Purpose:** Consume the HV38 CSR boundary state and execute the guarded eligibility-control-flow that reaches a final deny-before-hardware decision before any CSR instruction or raw hardware write path is reached.
+- **Actual capability proven:** HV39 builds a local eligibility object, fingerprints HV38 before and after build/evaluate, propagates the HV38 request value/checksum/decision, records build-vs-evaluate accounting, records CSR/raw write skipped state, and exposes honest empty trap/readback slots.
+- **Commands:** `hv hgatp-csr-write-eligibility`, `hv-hgatp-csr-write-eligibility`, and the subcommands documented in `COMMANDS.md`.
+- **Smoke tests:** `smoke/smoke-hv39-hgatp-csr-write-eligibility-v0.sh` and `smoke/smoke-hv39-hgatp-csr-write-eligibility-negative-v0.sh`.
+- **Intentionally missing features:** HGATP write, CSR write path call, raw hardware write path call, readback, real trap observation, second-stage activation, guest-mode entry, trap return, and guest OS boot.
+- **Next dependency:** HV40 should turn the eligibility executor result into a narrowly-scoped guarded pre-write authorization envelope while still requiring an explicit no-write default until hardware write safety is proven.

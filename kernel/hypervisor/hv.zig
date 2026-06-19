@@ -37,6 +37,7 @@ const hgatp_execution_dry_run = @import("hgatp_execution_dry_run.zig");
 const hgatp_hardware_executor = @import("hgatp_hardware_executor.zig");
 const hgatp_trap_capture_prep = @import("hgatp_trap_capture_prep.zig");
 const hgatp_csr_write_boundary = @import("hgatp_csr_write_boundary.zig");
+const hgatp_csr_write_eligibility = @import("hgatp_csr_write_eligibility.zig");
 
 pub fn init() void {
     vm.init();
@@ -76,6 +77,7 @@ pub fn init() void {
     hgatp_hardware_executor.init(vm.object().id, vcpu.object().id);
     hgatp_trap_capture_prep.init(vm.object().id, vcpu.object().id);
     hgatp_csr_write_boundary.init(vm.object().id, vcpu.object().id);
+    hgatp_csr_write_eligibility.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -122,6 +124,7 @@ pub fn printStatus() void {
     hgatp_hardware_executor.printStatusCommand();
     hgatp_trap_capture_prep.printStatusCommand();
     hgatp_csr_write_boundary.printStatusCommand();
+    hgatp_csr_write_eligibility.printStatusCommand();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
@@ -136,6 +139,42 @@ pub fn printStatus() void {
 
 
 
+
+pub fn printHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printStatusCommand(); }
+pub fn buildHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printBuildCommand(); }
+pub fn validateHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printValidateCommand(); }
+pub fn evaluateHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printEvaluateCommand(); }
+pub fn blockersHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printBlockersCommand(); }
+pub fn nextHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printNextCommand(); }
+pub fn checksumHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printChecksumCommand(); }
+pub fn resetHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printResetCommand(); }
+pub fn fieldsHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printFieldsCommand(); }
+pub fn requestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printRequestCommand(); }
+pub fn stepsHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printStepsCommand(); }
+pub fn resultHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printResultCommand(); }
+pub fn trapSlotHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printTrapSlotCommand(); }
+pub fn readbackHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printReadbackCommand(); }
+pub fn decisionHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printDecisionCommand(); }
+pub fn requireBoundaryTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printRequireBoundaryTestCommand(); }
+pub fn invalidBoundaryTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printInvalidBoundaryTestCommand(); }
+pub fn sourceIntegrityTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printSourceIntegrityTestCommand(); }
+pub fn requestValueTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printRequestValueTestCommand(); }
+pub fn policyAllowsTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printPolicyAllowsTestCommand(); }
+pub fn csrEligibleTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printCsrEligibleTestCommand(); }
+pub fn csrReachedTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printCsrReachedTestCommand(); }
+pub fn csrCalledTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printCsrCalledTestCommand(); }
+pub fn rawReachedTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printRawReachedTestCommand(); }
+pub fn rawCalledTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printRawCalledTestCommand(); }
+pub fn fakeTrapTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printFakeTrapTestCommand(); }
+pub fn fakeFaultTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printFakeFaultTestCommand(); }
+pub fn fakeReadbackTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printFakeReadbackTestCommand(); }
+pub fn writeAttemptedTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printWriteAttemptedTestCommand(); }
+pub fn writePerformedTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printWritePerformedTestCommand(); }
+pub fn activeStage2TestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printActiveStage2TestCommand(); }
+pub fn guestEnteredTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printGuestEnteredTestCommand(); }
+pub fn firstInstructionTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printFirstInstructionTestCommand(); }
+pub fn invariantConsumptionTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printInvariantConsumptionCommand(); }
+pub fn invariantCorruptionTestHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printInvariantCorruptionCommand(); }
 
 pub fn printCsrBoundary() void { hgatp_csr_write_boundary.printStatusCommand(); }
 pub fn createCsrBoundary() void { hgatp_csr_write_boundary.printCreateCommand(); }
