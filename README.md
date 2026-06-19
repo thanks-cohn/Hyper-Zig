@@ -83,6 +83,14 @@ The promise of Hyper-Zig is not merely the destination.
 The promise is that every step toward that destination is visible, reproducible, and understandable.
 
 
+
+
+### HV39 Guarded HGATP CSR Write Eligibility Executor Foundation
+
+HV39 builds a guarded HGATP CSR write eligibility executor. It consumes existing HV38 CSR boundary state, constructs an eligibility request, executes real eligibility-control-flow, records `evaluator_built=true` during build, records `evaluator_entered=true` only during evaluate, records `evaluator_returned=true` only after evaluate, records the denied-before-hardware execution path, records CSR-write-skipped, records raw-write-skipped, exposes step accounting, exposes a trap slot without claiming a trap, exposes a readback slot without performing readback, proves source integrity, proves CSR write remains not called, proves raw write remains not called, and preserves `hgatp_write_attempted=false`, `hgatp_write_performed=false`, `active_stage2=false`, `guest_entered=false`, and `first_guest_instruction_executed=false`.
+
+HV39 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute trap return, write HGATP, call the CSR write path, call the raw hardware write path, observe a real trap, perform readback, activate second-stage translation, or prove active virtualization.
+
 ### HV38 Guarded HGATP CSR Write Boundary Foundation
 
 HV38 adds `kernel/hypervisor/hgatp_csr_write_boundary.zig`, a real software-controlled CSR write boundary subsystem. It consumes the HV37 trap-capture preparation object, constructs a boundary request, validates source fingerprints, evaluates authorization while keeping `authorized_to_write=false`, records denial/readiness accounting, protects against replayed boundary nonces, records an execution-readiness record, and exposes shell commands under `hv csr-boundary`.
@@ -103,7 +111,7 @@ Exact validation commands:
 ./scripts/validate-hyperzig.sh
 ```
 
-Current milestone: HV38 Guarded HGATP CSR Write Boundary Foundation.
+Current milestone: HV39 Guarded HGATP CSR Write Eligibility Executor Foundation.
 
 Next milestone: continue the guarded HGATP CSR write boundary toward a future safe hardware write without claiming a write until it exists.
 
@@ -156,7 +164,7 @@ The result is not just a kernel. It is a public construction path for a RISC-V h
 Current verified milestone chain:
 
 ```text
-HV0 -> HV38
+HV0 -> HV39
 ```
 
 Hyper-Zig currently provides:
