@@ -952,3 +952,41 @@ Commands added:
 - `hv hgatp-csr-write-eligibility invariant-corruption-test`
 
 Smoke proof: `./smoke/smoke-hv39-hgatp-csr-write-eligibility-v0.sh` and `./smoke/smoke-hv39-hgatp-csr-write-eligibility-negative-v0.sh`.
+
+## HV40 Guest Entry Contract commands
+
+HV40 adds a guest-entry contract subsystem. These commands construct and validate a software-only execution-state contract for a future guest-entry attempt while preserving no-entry, no-execution, no-trap-return, no-HGATP-write, and no-active-stage2 invariants.
+
+- `hv guest-entry-contract` / `hv-guest-entry-contract` / `hv guest-entry-contract status`
+- `hv guest-entry-contract build`
+- `hv guest-entry-contract validate`
+- `hv guest-entry-contract fields`
+- `hv guest-entry-contract checksum`
+- `hv guest-entry-contract decision`
+- `hv guest-entry-contract blockers`
+- `hv guest-entry-contract next`
+- `hv guest-entry-contract reset`
+- `hv guest-entry-contract source`
+- `hv guest-entry-contract register-frame`
+- `hv guest-entry-contract execution-frame`
+- `hv guest-entry-contract trap-return-target`
+- `hv guest-entry-contract boot-sources`
+- `hv guest-entry-contract linux-handoff`
+- `hv guest-entry-contract safety`
+- `hv guest-entry-contract require-hv39-test`
+- `hv guest-entry-contract invalid-hv39-test`
+- `hv guest-entry-contract source-integrity-test`
+- `hv guest-entry-contract invalid-guest-pc-test`
+- `hv guest-entry-contract invalid-guest-sp-test`
+- `hv guest-entry-contract invalid-register-frame-test`
+- `hv guest-entry-contract invalid-execution-frame-test`
+- `hv guest-entry-contract invalid-trap-return-target-test`
+- `hv guest-entry-contract guest-ready-test`
+- `hv guest-entry-contract trap-return-ready-test`
+- `hv guest-entry-contract guest-entered-test`
+- `hv guest-entry-contract first-instruction-test`
+- `hv guest-entry-contract trap-return-executed-test`
+- `hv guest-entry-contract active-stage2-test`
+- `hv guest-entry-contract hgatp-written-test`
+- `hv guest-entry-contract invariant-consumption-test`
+- `hv guest-entry-contract invariant-corruption-test`

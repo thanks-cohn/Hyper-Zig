@@ -38,6 +38,7 @@ const hgatp_hardware_executor = @import("hgatp_hardware_executor.zig");
 const hgatp_trap_capture_prep = @import("hgatp_trap_capture_prep.zig");
 const hgatp_csr_write_boundary = @import("hgatp_csr_write_boundary.zig");
 const hgatp_csr_write_eligibility = @import("hgatp_csr_write_eligibility.zig");
+const guest_entry_contract = @import("guest_entry_contract.zig");
 
 pub fn init() void {
     vm.init();
@@ -78,6 +79,7 @@ pub fn init() void {
     hgatp_trap_capture_prep.init(vm.object().id, vcpu.object().id);
     hgatp_csr_write_boundary.init(vm.object().id, vcpu.object().id);
     hgatp_csr_write_eligibility.init(vm.object().id, vcpu.object().id);
+    guest_entry_contract.init(vm.object().id, vcpu.object().id);
 }
 
 pub fn printStatus() void {
@@ -125,6 +127,7 @@ pub fn printStatus() void {
     hgatp_trap_capture_prep.printStatusCommand();
     hgatp_csr_write_boundary.printStatusCommand();
     hgatp_csr_write_eligibility.printStatusCommand();
+    guest_entry_contract.printStatusCommand();
     uart.write("hv: guest_trap_return=MISSING\r\n");
     uart.write("hv: second_stage_translation=MISSING\r\n");
 
@@ -139,6 +142,40 @@ pub fn printStatus() void {
 
 
 
+
+pub fn printGuestEntryContract() void { guest_entry_contract.printStatusCommand(); }
+pub fn buildGuestEntryContract() void { guest_entry_contract.printBuildCommand(); }
+pub fn validateGuestEntryContract() void { guest_entry_contract.printValidateCommand(); }
+pub fn fieldsGuestEntryContract() void { guest_entry_contract.printFieldsCommand(); }
+pub fn checksumGuestEntryContract() void { guest_entry_contract.printChecksumCommand(); }
+pub fn decisionGuestEntryContract() void { guest_entry_contract.printDecisionCommand(); }
+pub fn blockersGuestEntryContract() void { guest_entry_contract.printBlockersCommand(); }
+pub fn nextGuestEntryContract() void { guest_entry_contract.printNextCommand(); }
+pub fn resetGuestEntryContract() void { guest_entry_contract.printResetCommand(); }
+pub fn sourceGuestEntryContract() void { guest_entry_contract.printSourceCommand(); }
+pub fn registerFrameGuestEntryContract() void { guest_entry_contract.printRegisterFrameCommand(); }
+pub fn executionFrameGuestEntryContract() void { guest_entry_contract.printExecutionFrameCommand(); }
+pub fn trapReturnTargetGuestEntryContract() void { guest_entry_contract.printTrapReturnTargetCommand(); }
+pub fn bootSourcesGuestEntryContract() void { guest_entry_contract.printBootSourcesCommand(); }
+pub fn linuxHandoffGuestEntryContract() void { guest_entry_contract.printLinuxHandoffCommand(); }
+pub fn safetyGuestEntryContract() void { guest_entry_contract.printSafetyCommand(); }
+pub fn requireHv39TestGuestEntryContract() void { guest_entry_contract.printRequireHv39TestCommand(); }
+pub fn invalidHv39TestGuestEntryContract() void { guest_entry_contract.printInvalidHv39TestCommand(); }
+pub fn sourceIntegrityTestGuestEntryContract() void { guest_entry_contract.printSourceIntegrityTestCommand(); }
+pub fn invalidGuestPcTestGuestEntryContract() void { guest_entry_contract.printInvalidGuestPcTestCommand(); }
+pub fn invalidGuestSpTestGuestEntryContract() void { guest_entry_contract.printInvalidGuestSpTestCommand(); }
+pub fn invalidRegisterFrameTestGuestEntryContract() void { guest_entry_contract.printInvalidRegisterFrameTestCommand(); }
+pub fn invalidExecutionFrameTestGuestEntryContract() void { guest_entry_contract.printInvalidExecutionFrameTestCommand(); }
+pub fn invalidTrapReturnTargetTestGuestEntryContract() void { guest_entry_contract.printInvalidTrapReturnTargetTestCommand(); }
+pub fn guestReadyTestGuestEntryContract() void { guest_entry_contract.printGuestReadyTestCommand(); }
+pub fn trapReturnReadyTestGuestEntryContract() void { guest_entry_contract.printTrapReturnReadyTestCommand(); }
+pub fn guestEnteredTestGuestEntryContract() void { guest_entry_contract.printGuestEnteredTestCommand(); }
+pub fn firstInstructionTestGuestEntryContract() void { guest_entry_contract.printFirstInstructionTestCommand(); }
+pub fn trapReturnExecutedTestGuestEntryContract() void { guest_entry_contract.printTrapReturnExecutedTestCommand(); }
+pub fn activeStage2TestGuestEntryContract() void { guest_entry_contract.printActiveStage2TestCommand(); }
+pub fn hgatpWrittenTestGuestEntryContract() void { guest_entry_contract.printHgatpWrittenTestCommand(); }
+pub fn invariantConsumptionTestGuestEntryContract() void { guest_entry_contract.printInvariantConsumptionTestCommand(); }
+pub fn invariantCorruptionTestGuestEntryContract() void { guest_entry_contract.printInvariantCorruptionTestCommand(); }
 
 pub fn printHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printStatusCommand(); }
 pub fn buildHgatpCsrWriteEligibility() void { hgatp_csr_write_eligibility.printBuildCommand(); }

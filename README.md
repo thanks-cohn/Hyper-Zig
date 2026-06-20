@@ -452,3 +452,9 @@ HV36 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions,
 HV37 builds guarded HGATP trap/fault capture preparation around the HV36 hardware executor state. It consumes the HV36 hardware executor object, fingerprints that source before and after build and prepare, prepares an honest trap slot, prepares an honest fault slot, executes preparation control-flow, proves no trap is fabricated, proves no fault is fabricated, proves the CSR write function remains not called, proves the raw write function remains not called, and preserves all no-write and no-activation invariants.
 
 HV37 does not boot Linux, boot BusyBox, boot Alpine, execute guest instructions, enter guest mode, execute trap return, write HGATP, call a CSR write, call a raw write, perform readback, activate second-stage translation, or prove active virtualization.
+
+### HV40 Guest Entry Contract Foundation
+
+HV40 adds `kernel/hypervisor/guest_entry_contract.zig`, a software-only guest-entry contract subsystem. It constructs guest-entry contract state, guest execution frame state, guest register frame state, and trap-return target state. It consumes HV39 state and existing guest boot preparation state where available, records guest PC, records guest stack, records guest `a0`/`a1` handoff registers, and preserves all no-entry and no-execution invariants.
+
+HV40 does not enter guest mode, execute guest instructions, execute trap return, write HGATP, activate stage2, boot Linux, or boot BusyBox.
